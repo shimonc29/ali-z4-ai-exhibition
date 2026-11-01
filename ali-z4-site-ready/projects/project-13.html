@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בישול ממה שיש</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Rubik -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom scrollbar for horizontal lists */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .recipe-card-hover {
+            transition: all 0.3s ease;
+        }
+        .recipe-card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col pb-16">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center text-brand-600">
+                    <i class="fa-solid fa-fire-burner text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-800">בישול ממה שיש</h1>
+            </div>
+            <button class="text-slate-400 hover:text-brand-600 transition-colors">
+                <i class="fa-regular fa-user text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6 space-y-8">
+        
+        <!-- HOME VIEW -->
+        <div id="homeView" class="space-y-8">
+            <!-- Ingredients Input Section -->
+            <section class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                <h2 class="text-lg font-semibold mb-4 text-slate-700">מה יש לך במקרר או במזווה?</h2>
+                
+                <!-- Input Row -->
+                <div class="flex gap-2 mb-4">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                        </div>
+                        <input type="text" id="ingredientInput" 
+                            class="block w-full rounded-xl border-0 py-3 pr-10 pl-4 text-slate-900 ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-sm sm:leading-6 bg-slate-50" 
+                            placeholder="הקלד מצרך (למשל: עגבניה, ביצים, פסטה)...">
+                    </div>
+                    <button id="addBtn" class="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm whitespace-nowrap">
+                        הוסף
+                    </button>
+                </div>
+
+                <!-- Quick Add Categories -->
+                <div class="mb-4">
+                    <p class="text-xs font-medium text-slate-500 mb-2">הוספה מהירה:</p>
+                    <div class="flex overflow-x-auto custom-scrollbar gap-2 pb-3" id="quickAddContainer">
+                        <!-- Quick add buttons will be generated here -->
+                    </div>
+                </div>
+
+                <!-- My Pantry (Active Ingredients) -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-semibold text-slate-700">המזווה שלי (<span id="pantryCount">0</span>)</h3>
+                        <button id="clearPantryBtn" class="text-xs text-red-500 hover:text-red-700 font-medium hidden">נקה הכל</button>
+                    </div>
+                    <div id="pantryList" class="flex flex-wrap gap-2 min-h-[40px]">
+                        <p class="text-sm text-slate-400 italic w-full text-center py-2" id="emptyPantryMsg">המזווה ריק. הוסף מצרכים כדי לראות מתכונים!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recipes Results Section -->
+            <section>
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">מה אפשר להכין?</h2>
+                        <p id="recipesCountBadge" class="text-sm text-slate-500 mt-1 font-medium"></p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-slate-500">
+                        <span>מויין לפי:</span>
+                        <select id="sortSelect" class="bg-transparent font-medium text-slate-700 focus:outline-none cursor-pointer">
+                            <option value="match">הכי מתאים</option>
+                            <option value="time">זמן הכנה</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="recipesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Recipe cards will be injected here -->
+                </div>
+                
+                <div id="noRecipesMsg" class="hidden text-center py-10">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                        <i class="fa-solid fa-utensils text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-slate-700 mb-1">לא מצאנו מתכונים</h3>
+                    <p class="text-slate-500">נסה להוסיף עוד מצרכים למזווה שלך.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- FAVORITES VIEW -->
+        <div id="favoritesView" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold text-slate-800">המועדפים שלי</h2>
+            <div id="favoritesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Favorite recipe cards -->
+            </div>
+            <div id="noFavoritesMsg" class="text-center py-10">
+                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-300">
+                    <i class="fa-solid fa-heart text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-slate-700 mb-1">אין מועדפים עדיין</h3>
+                <p class="text-slate-500">לחץ על הלב במתכונים כדי לשמור אותם כאן.</p>
+            </div>
+        </div>
+
+        <!-- RECOMMENDED VIEW -->
+        <div id="recommendedView" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold text-slate-800">מומלצים בשבילך <i class="fa-solid fa-star text-orange-400 ml-1"></i></h2>
+            <p class="text-slate-600 mb-2">בחרנו עבורך כמה מתכונים מיוחדים שכדאי לנסות:</p>
+            <div id="recommendedGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Recommended recipe cards -->
+            </div>
+        </div>
+
+        <!-- COMPLETED VIEW -->
+        <div id="completedView" class="hidden space-y-6">
+            <div class="bg-brand-50 rounded-2xl p-6 text-center border border-brand-100">
+                <h2 class="text-3xl font-bold text-brand-600 mb-2" id="completedCountLabel">0</h2>
+                <p class="text-brand-800 font-medium">מתכונים סיימתי בהצלחה!</p>
+            </div>
+            <div id="completedGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Completed recipe cards -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-slate-200 fixed bottom-0 w-full z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="max-w-4xl mx-auto flex justify-around p-2">
+            <button onclick="switchView('home')" id="navHome" class="flex flex-col items-center w-16 py-1 text-brand-600 transition-colors">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                <span class="text-[10px] font-bold mt-1">בית</span>
+            </button>
+            <button onclick="switchView('recommended')" id="navRecommended" class="flex flex-col items-center w-16 py-1 text-slate-400 hover:text-orange-500 transition-colors">
+                <i class="fa-solid fa-star text-xl mb-1"></i>
+                <span class="text-[10px] font-bold mt-1">מומלצים</span>
+            </button>
+            <button onclick="switchView('favorites')" id="navFavorites" class="flex flex-col items-center w-16 py-1 text-slate-400 hover:text-red-500 transition-colors">
+                <i class="fa-solid fa-heart text-xl mb-1"></i>
+                <span class="text-[10px] font-bold mt-1">מועדפים</span>
+            </button>
+            <button onclick="switchView('completed')" id="navCompleted" class="flex flex-col items-center w-16 py-1 text-slate-400 hover:text-brand-600 transition-colors">
+                <i class="fa-solid fa-check-circle text-xl mb-1"></i>
+                <span class="text-[10px] font-bold mt-1">סיימתי</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- App Logic -->
+    <script>
+        // --- Data ---
+        
+        const ingredientIcons = {
+            "פסטה": "🍝", "אורז": "🍚", "קינואה": "🥗", "תפוח אדמה": "🥔", "בטטה": "🍠",
+            "כרובית": "🥦", "פתיתים": "🍲", "טורטייה": "🌮", "לחם": "🍞", "חזה עוף": "🍗",
+            "בקר טחון": "🥩", "טופו": "🧊", "סלמון": "🍣", "דג אמנון": "🐟", "ביצים": "🥚",
+            "מלפפון": "🥒", "גזר": "🥕", "קמח": "🌾", "אטריות": "🍜", "בצק עלים": "🥐",
+            "עדשים": "🧆", "גרגרי חומוס": "🧆", "בצל": "🧅", "שום": "🧄", "שמן זית": "🫒",
+            "מלח": "🧂", "עגבניה": "🍅", "פלפל אדום": "🌶️", "פטריות": "🍄", "קישוא": "🥒",
+            "חציל": "🍆", "תירס": "🌽", "אפונה": "🫛", "שעועית ירוקה": "🫘", "רוטב סויה": "🫙",
+            "דבש": "🍯", "סילאן": "🍯", "שמנת חמוצה": "🥛", "גבינה צהובה": "🧀", "פרמזן": "🧀",
+            "חלב קוקוס": "🥥", "רסק עגבניות": "🥫", "חמאה": "🧈", "שמנת מתוקה": "🥛",
+            "לימון": "🍋", "פלפל שחור": "🧂", "פפריקה": "🌶️", "כמון": "🟤", "כורכום": "🟡",
+            "זיתים": "🫒", "תרד": "🥬", "גבינת פטה": "🧀", "טחינה": "🫙", "ברוקולי": "🥦",
+            "כוסברה": "🌿", "פטרוזיליה": "🌿", "אגוזי מלך": "🥜", "שומשום": "🌾", "צ'ילי חריף": "🌶️",
+            "יוגורט": "🍦", "חלב": "🥛"
+        };
+        const getIcon = (ing) => ingredientIcons[ing] || "🛒";
+
+        // Mock Categories for Quick Add
+        const quickCategories = [
+            { id: 'dairy', label: 'חלבי', items: ['חלב', 'ביצים', 'גבינה צהובה', 'חמאה', 'שמנת חמוצה'] },
+            { id: 'veg', label: 'ירקות', items: ['עגבניה', 'מלפפון', 'בצל', 'שום', 'תפוח אדמה'] },
+            { id: 'pantry', label: 'מזווה', items: ['פסטה', 'שמן זית', 'קמח', 'אורז', 'מלח'] }
+        ];
+
+        // Generate a Massive Mock Recipe Database
+        const recipesDB = [];
+        const recipeBases = [
+            { 
+                title: "פסטה", 
+                ing: "פסטה", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "ילדים"] 
+            },
+            { 
+                title: "אורז", 
+                ing: "אורז", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1593975876402-9426f4327bc4?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "תוספת", "ללא גלוטן"] 
+            },
+            { 
+                title: "קינואה", 
+                ing: "קינואה", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1586201375761-83865001e8ac?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא", "ללא גלוטן"] 
+            },
+            { 
+                title: "תפוח אדמה", 
+                ing: "תפוח אדמה", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "תוספת", "ללא גלוטן"] 
+            },
+            { 
+                title: "בטטה", 
+                ing: "בטטה", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1596632467339-38b8bd111da8?w=500&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא", "תוספת"] 
+            },
+            { 
+                title: "כרובית", 
+                ing: "כרובית", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1568625502763-2a5c6c747355?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1635359740523-e28328c6e267?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא", "דל פחמימה"] 
+            },
+            { 
+                title: "פתיתים", 
+                ing: "פתיתים", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "ילדים", "מהיר"] 
+            },
+            { 
+                title: "טורטייה", 
+                ing: "טורטייה", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "מהיר"] 
+            },
+            { 
+                title: "לחם / טוסט", 
+                ing: "לחם", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1525385133512-2f3bdd039054?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1481070555726-e2fe83477d15?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "ארוחת בוקר"] 
+            },
+            { 
+                title: "חזה עוף", 
+                ing: "חזה עוף", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1532550907401-a500c9a57431?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["בשרי"] 
+            },
+            { 
+                title: "קציצות בקר", 
+                ing: "בקר טחון", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["בשרי"] 
+            },
+            { 
+                title: "טופו", 
+                ing: "טופו", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא"] 
+            },
+            { 
+                title: "סלמון", 
+                ing: "סלמון", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["בריא", "דגים"] 
+            },
+            { 
+                title: "אמנון", 
+                ing: "דג אמנון", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["בריא", "דגים"] 
+            },
+            { 
+                title: "חביתה", 
+                ing: "ביצים", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "ללא גלוטן"] 
+            },
+            { 
+                title: "שקשוקה", 
+                ing: "ביצים", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1614548485293-1620c0250df7?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "ללא גלוטן"] 
+            },
+            { 
+                title: "סלט עשיר", 
+                ing: "מלפפון", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא", "ללא גלוטן"] 
+            },
+            { 
+                title: "מרק", 
+                ing: "גזר", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1603105037880-880cd41f40fa?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא"] 
+            },
+            { 
+                title: "פנקייק", 
+                ing: "קמח", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1528207776546-384cb1119b76?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["מתוק", "צמחוני"] 
+            },
+            { 
+                title: "פיצה", 
+                ing: "קמח", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "ילדים"] 
+            },
+            { 
+                title: "נודלס", 
+                ing: "אטריות", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "אסייתי"] 
+            },
+            { 
+                title: "מאפה", 
+                ing: "בצק עלים", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1579697096985-41fe1430e5d6?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["צמחוני", "מושחת"] 
+            },
+            { 
+                title: "תבשיל עדשים", 
+                ing: "עדשים", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1582576163090-09d3b6f8a969?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "בריא"] 
+            },
+            { 
+                title: "תבשיל חומוס", 
+                ing: "גרגרי חומוס", 
+                imgs: [
+                    "https://images.unsplash.com/photo-1548943487-a2e4e43b4859?w=500&auto=format&fit=crop&q=80", 
+                    "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=500&auto=format&fit=crop&q=80"
+                ], 
+                tags: ["טבעוני", "מזין"] 
+            }
+        ];
+
+        const recipeMethods = [
+            "בתנור", "במחבת", "בסיר אחד", "מוקפץ", "ברוטב", "קריספי", "קל ומהיר", "ביתי", "בסגנון אסייתי", "אפוי", "בתיבול עשבי תיבול"
+        ];
+
+        const additionalIngredients = [
+            "בצל", "שום", "שמן זית", "מלח", "עגבניה", "פלפל אדום", "גזר", "פטריות", "קישוא", 
+            "חציל", "תירס", "אפונה", "שעועית ירוקה", "רוטב סויה", "דבש", "סילאן", "שמנת חמוצה", 
+            "גבינה צהובה", "פרמזן", "חלב קוקוס", "רסק עגבניות", "חמאה", "שמנת מתוקה", "לימון", "פלפל שחור", "פפריקה", "כמון", "כורכום",
+            "זיתים", "תרד", "גבינת פטה", "טחינה", "ברוקולי", "כוסברה", "פטרוזיליה", "אגוזי מלך", "שומשום", "צ'ילי חריף", "יוגורט"
+        ];
+
+        // Generate 1000 recipes for "countless" experience
+        for (let i = 1; i <= 1000; i++) {
+            const base = recipeBases[Math.floor(Math.random() * recipeBases.length)];
+            const method = recipeMethods[Math.floor(Math.random() * recipeMethods.length)];
+            
+            // --- Kosher Logic (כשרות) ---
+            const isMeatBase = base.tags.includes("בשרי");
+            const dairyItems = ["שמנת חמוצה", "גבינה צהובה", "פרמזן", "חמאה", "שמנת מתוקה", "גבינת פטה", "יוגורט", "חלב"];
+            
+            let safeAdditionsPool = [...additionalIngredients];
+            if (isMeatBase) {
+                // If base is meat, strictly remove all dairy items to prevent mixing meat and milk
+                safeAdditionsPool = safeAdditionsPool.filter(ing => !dairyItems.includes(ing));
+            }
+            
+            // Randomly select 3 to 7 additional ingredients from the kosher-safe pool
+            const numAdditions = Math.floor(Math.random() * 5) + 3;
+            const shuffledAdditions = safeAdditionsPool.sort(() => 0.5 - Math.random());
+            const selectedAdditions = shuffledAdditions.slice(0, numAdditions);
+            
+            // Ensure unique ingredients list
+            const allIngredients = [...new Set([base.ing, ...selectedAdditions])];
+            
+            // Determine and assign the correct Kosher Tag
+            const isDairyFinal = allIngredients.some(ing => dairyItems.includes(ing));
+            const kosherTag = isMeatBase ? "כשר: בשרי" : (isDairyFinal ? "כשר: חלבי" : "כשר: פרווה");
+            
+            // Replace old tags with the new detailed Kosher tag
+            const finalTags = [...base.tags.filter(t => t !== "בשרי" && t !== "חלבי" && t !== "פרווה"), kosherTag];
+            
+            // Generate varied titles
+            let extraIngTitle = selectedAdditions[0];
+            let title = `${base.title} ${method} עם ${extraIngTitle}`;
+            if (Math.random() > 0.6) {
+                title = `${base.title} ${method}`;
+            } else if (Math.random() > 0.8) {
+                title = `${base.title} ו${extraIngTitle} ${method}`;
+            }
+            
+            const times = ['10 דק\'', '15 דק\'', '20 דק\'', '30 דק\'', '45 דק\'', 'שעה', 'שעה וחצי'];
+            const difficulties = ['קל מאוד', 'קל', 'בינוני', 'מאתגר'];
+            const time = times[Math.floor(Math.random() * times.length)];
+            const diff = difficulties[Math.floor(Math.random() * difficulties.length)];
+            
+            const img = base.imgs[Math.floor(Math.random() * base.imgs.length)];
+
+            // Generate dynamic instructions based on the method
+            let instructions = [
+                "הכנת המצרכים: מתחילים בשטיפה יסודית של כל המצרכים הטריים. קולפים וחותכים את הירקות לקוביות שוות או לפרוסות, כדי שיבושלו בצורה אחידה. מכינים מראש את כל התבלינים כדי שיהיו זמינים ונגישים במהלך הבישול."
+            ];
+            
+            if (method.includes("תנור") || method.includes("אפוי")) {
+                instructions.push("חימום והרכבה: מחממים תנור ל-180 מעלות (או 200 מעלות לצלייה קריספית). מרפדים תבנית בנייר אפייה ומשמנים קלות. מסדרים את המרכיבים בשכבה אחידה, מזלפים מעל שמן ומפזרים את התבלינים באופן שווה מכל הכיוונים.");
+                instructions.push(`אפייה: מכניסים לתנור החם ואופים למשך כ-${time}. מומלץ לסובב את התבנית באמצע האפייה ולערבב קלות כדי שהמנה תקבל צבע זהוב ואחיד מכל הצדדים.`);
+            } else if (method.includes("מחבת") || method.includes("מוקפץ") || method.includes("קריספי")) {
+                instructions.push("טיגון ראשוני: מחממים מחבת רחבה או סיר סוטאז' על אש בינונית-גבוהה. מוסיפים מעט שמן, וכשהוא חם, מכניסים קודם כל את המרכיבים שדורשים זמן בישול ארוך יותר (כמו בצל או ירקות קשים). מטגנים מספר דקות עד להזהבה קלה, ואז מוסיפים את שאר המרכיבים.");
+                instructions.push(`המשך בישול במחבת: מנמיכים מעט את האש וממשיכים לבשל תוך כדי ערבוב והקפצה מדי פעם במשך כ-${time}, עד שכל המרכיבים מתרככים, משחימים ומקבלים מרקם מושלם.`);
+            } else if (method.includes("סיר") || method.includes("ברוטב") || base.title === "מרק") {
+                instructions.push("בישול בסיר: מחממים סיר על אש בינונית, מוסיפים מעט שמן ומטגנים קלות את הבצל והתבלינים כדי לפתוח את הטעמים. מכניסים את שאר המרכיבים פנימה, מערבבים היטב ויוצקים מים חמים או ציר עד לכיסוי המרכיבים. מביאים לרתיחה עדינה.");
+                instructions.push(`צמצום ובישול: מנמיכים את האש, מכסים את הסיר במכסה ומבשלים למשך כ-${time}. כ-10 דקות לפני הסוף, אפשר להסיר את המכסה כדי לאפשר לרוטב להסמיך ולהצטמצם למידה הרצויה.`);
+            } else {
+                instructions.push("ערבוב והרכבת המנה: מעבירים את כל המצרכים החתוכים והמוכנים לקערת ערבוב גדולה. מוסיפים את התבלינים, הרטבים (שמן, לימון, מלח ופלפל) בשלבים, תוך כדי ערבוב עדין כדי שהטעמים יעטפו את כל המרכיבים בצורה מושלמת.");
+                instructions.push(`השהייה וספיגת טעמים: מומלץ לתת למנה לעמוד כ-${time} בטמפרטורת החדר או במקרר (אם זו מנה קרה) כדי שהטעמים יתמזגו וייספגו בצורה אופטימלית בתוך המרכיבים.`);
+            }
+            
+            instructions.push("צלחות והגשה: לקראת סיום, טועמים את המנה ובודקים האם חסר מלח, פלפל או חמיצות. מתקנים תיבול לפי הטעם האישי. מעבירים לכלי הגשה יפה, אפשר לעטר במעט עשבי תיבול טריים קצוצים (כמו פטרוזיליה או כוסברה) מלמעלה. מגישים חם ובתאבון!");
+
+            recipesDB.push({
+                id: i,
+                title: title,
+                time: time,
+                difficulty: diff,
+                image: img,
+                ingredients: allIngredients,
+                tags: finalTags,
+                instructions: instructions,
+                likesCount: 0,
+                dislikesCount: 0,
+                comments: []
+            });
+        }
+
+        // --- Helper: Render Stars HTML ---
+        function renderStars(rating, sizeClass = "text-xs") {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHtml += `<i class="fa-solid fa-star text-amber-400 ${sizeClass}"></i>`;
+                } else {
+                    starsHtml += `<i class="fa-regular fa-star text-slate-300 ${sizeClass}"></i>`;
+                }
+            }
+            return starsHtml;
+        }
+
+        function calculateAverageRating(recipe) {
+            if (!recipe.comments || recipe.comments.length === 0) return 0;
+            const ratings = recipe.comments.map(c => c.rating || 5);
+            const sum = ratings.reduce((acc, curr) => acc + curr, 0);
+            return (sum / ratings.length).toFixed(1);
+        }
+
+        // --- State ---
+        let userPantry = new Set();
+        let currentSort = 'match'; // 'match' or 'time'
+        let heartedRecipes = new Set();
+        let userLikedRecipes = new Set();
+        let userDislikedRecipes = new Set();
+        let completedRecipes = new Set();
+        let recommendedRecipes = [];
+
+        // --- DOM Elements ---
+        const ingredientInput = document.getElementById('ingredientInput');
+        const addBtn = document.getElementById('addBtn');
+        const pantryList = document.getElementById('pantryList');
+        const pantryCount = document.getElementById('pantryCount');
+        const emptyPantryMsg = document.getElementById('emptyPantryMsg');
+        const clearPantryBtn = document.getElementById('clearPantryBtn');
+        const quickAddContainer = document.getElementById('quickAddContainer');
+        const recipesGrid = document.getElementById('recipesGrid');
+        const noRecipesMsg = document.getElementById('noRecipesMsg');
+        const sortSelect = document.getElementById('sortSelect');
+        const recipesCountBadge = document.getElementById('recipesCountBadge');
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const noFavoritesMsg = document.getElementById('noFavoritesMsg');
+        const recommendedGrid = document.getElementById('recommendedGrid');
+        const completedGrid = document.getElementById('completedGrid');
+        const completedCountLabel = document.getElementById('completedCountLabel');
+
+        // --- Initialization ---
+        function init() {
+            generateRecommended();
+            renderQuickAdd();
+            renderPantry();
+            updateRecipes();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            addBtn.addEventListener('click', handleManualAdd);
+            ingredientInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleManualAdd();
+            });
+            clearPantryBtn.addEventListener('click', () => {
+                userPantry.clear();
+                updateState();
+            });
+            sortSelect.addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                updateRecipes();
+            });
+        }
+
+        // --- Core Functions ---
+        
+        function handleManualAdd() {
+            const val = ingredientInput.value.trim();
+            if (val) {
+                // Split by comma for multiple additions
+                const items = val.split(',').map(i => i.trim()).filter(i => i);
+                items.forEach(item => userPantry.add(item));
+                ingredientInput.value = '';
+                updateState();
+            }
+        }
+
+        function addIngredient(name) {
+            userPantry.add(name);
+            updateState();
+        }
+
+        function removeIngredient(name) {
+            userPantry.delete(name);
+            updateState();
+        }
+
+        function updateState() {
+            renderPantry();
+            updateRecipes();
+        }
+
+        // --- View & Interaction Logic ---
+        function switchView(viewName) {
+            document.getElementById('homeView').classList.add('hidden');
+            document.getElementById('favoritesView').classList.add('hidden');
+            document.getElementById('recommendedView').classList.add('hidden');
+            document.getElementById('completedView').classList.add('hidden');
+            
+            document.getElementById('navHome').classList.replace('text-brand-600', 'text-slate-400');
+            document.getElementById('navFavorites').classList.replace('text-red-500', 'text-slate-400');
+            document.getElementById('navRecommended').classList.replace('text-orange-500', 'text-slate-400');
+            document.getElementById('navCompleted').classList.replace('text-brand-600', 'text-slate-400');
+
+            if(viewName === 'home') {
+                document.getElementById('homeView').classList.remove('hidden');
+                document.getElementById('navHome').classList.replace('text-slate-400', 'text-brand-600');
+            } else if(viewName === 'favorites') {
+                document.getElementById('favoritesView').classList.remove('hidden');
+                document.getElementById('navFavorites').classList.replace('text-slate-400', 'text-red-500');
+                renderFavorites();
+            } else if(viewName === 'recommended') {
+                document.getElementById('recommendedView').classList.remove('hidden');
+                document.getElementById('navRecommended').classList.replace('text-slate-400', 'text-orange-500');
+                renderRecommended();
+            } else if(viewName === 'completed') {
+                document.getElementById('completedView').classList.remove('hidden');
+                document.getElementById('navCompleted').classList.replace('text-slate-400', 'text-brand-600');
+                renderCompleted();
+            }
+        }
+
+        function toggleHeart(recipeId) {
+            if (heartedRecipes.has(recipeId)) {
+                heartedRecipes.delete(recipeId);
+            } else {
+                heartedRecipes.add(recipeId);
+            }
+            updateViews();
+        }
+
+        function toggleLike(recipeId) {
+            if (userLikedRecipes.has(recipeId)) {
+                userLikedRecipes.delete(recipeId);
+            } else {
+                userLikedRecipes.add(recipeId);
+                userDislikedRecipes.delete(recipeId); // מבטל את הבוז אם היה
+            }
+            updateViews();
+        }
+
+        function toggleDislike(recipeId) {
+            if (userDislikedRecipes.has(recipeId)) {
+                userDislikedRecipes.delete(recipeId);
+            } else {
+                userDislikedRecipes.add(recipeId);
+                userLikedRecipes.delete(recipeId); // מבטל את הלייק אם היה
+            }
+            updateViews();
+        }
+
+        function updateViews() {
+            updateRecipes();
+            renderFavorites();
+            renderRecommended();
+            renderCompleted();
+        }
+
+        // --- Rendering ---
+
+        function renderQuickAdd() {
+            quickAddContainer.innerHTML = '';
+            
+            // Get all flattened items
+            const commonItems = [
+                'שמן זית', 'מלח', 'שום', 'בצל', 'עגבניה', 'ביצים', 'פסטה', 'תפוח אדמה', 
+                'אורז', 'קמח', 'גבינה צהובה', 'לחם', 'חלב', 'רסק עגבניות'
+            ];
+            
+            commonItems.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'whitespace-nowrap px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-600 hover:border-brand-500 hover:text-brand-600 transition-colors shadow-sm flex items-center gap-1';
+                btn.innerHTML = `<span>${getIcon(item)}</span> <span>${item}</span> <span class="text-xs mr-1 opacity-60">+</span>`;
+                btn.onclick = () => addIngredient(item);
+                quickAddContainer.appendChild(btn);
+            });
+        }
+
+        function renderPantry() {
+            pantryList.innerHTML = '';
+            pantryCount.textContent = userPantry.size;
+            
+            if (userPantry.size === 0) {
+                emptyPantryMsg.style.display = 'block';
+                clearPantryBtn.classList.add('hidden');
+            } else {
+                emptyPantryMsg.style.display = 'none';
+                clearPantryBtn.classList.remove('hidden');
+                
+                userPantry.forEach(item => {
+                    const tag = document.createElement('div');
+                    tag.className = 'flex items-center gap-2 bg-brand-50 border border-brand-100 text-brand-900 px-3 py-1.5 rounded-lg text-sm font-medium animate-[fadeIn_0.2s_ease-out]';
+                    
+                    tag.innerHTML = `
+                        <span>${getIcon(item)} ${item}</span>
+                        <button class="text-brand-400 hover:text-red-500 transition-colors focus:outline-none" onclick="removeIngredient('${item}')">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    `;
+                    pantryList.appendChild(tag);
+                });
+            }
+        }
+
+        function updateRecipes() {
+            const processedRecipes = recipesDB.map(recipe => {
+                // Calculate matches
+                let matchCount = 0;
+                let missingIngredients = [];
+                
+                recipe.ingredients.forEach(reqItem => {
+                    if (userPantry.has(reqItem)) {
+                        matchCount++;
+                    } else {
+                        missingIngredients.push(reqItem);
+                    }
+                });
+
+                const matchPercentage = (matchCount / recipe.ingredients.length) * 100;
+
+                return {
+                    ...recipe,
+                    matchCount,
+                    missingIngredients,
+                    matchPercentage
+                };
+            });
+
+            // Filter out recipes with 0 matches if pantry is not empty
+            let filteredRecipes = processedRecipes;
+            if (userPantry.size > 0) {
+                filteredRecipes = processedRecipes.filter(r => r.matchCount > 0);
+            }
+
+            // Sorting
+            filteredRecipes.sort((a, b) => {
+                if (currentSort === 'match') {
+                    // Sort by percentage descending, then missing count ascending
+                    if (b.matchPercentage !== a.matchPercentage) {
+                        return b.matchPercentage - a.matchPercentage;
+                    }
+                    return a.missingIngredients.length - b.missingIngredients.length;
+                } else if (currentSort === 'time') {
+                    // Extract minutes (basic string parsing for demo)
+                    const timeA = parseInt(a.time) || 999;
+                    const timeB = parseInt(b.time) || 999;
+                    return timeA - timeB;
+                }
+                return 0;
+            });
+
+            renderRecipesGrid(filteredRecipes);
+        }
+
+        function createRecipeCardElement(recipe) {
+            // Determine match status UI
+            let matchBadgeHtml = '';
+            if (userPantry.size === 0) {
+                matchBadgeHtml = `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-medium">${recipe.ingredients.length} מצרכים</span>`;
+            } else if (recipe.missingIngredients && recipe.missingIngredients.length === 0) {
+                matchBadgeHtml = `<span class="bg-brand-100 text-brand-700 text-xs px-2 py-1 rounded font-medium"><i class="fa-solid fa-check mr-1"></i> יש לך הכל!</span>`;
+            } else if (recipe.missingIngredients && recipe.missingIngredients.length <= 2) {
+                matchBadgeHtml = `<span class="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded font-medium">חסרים ${recipe.missingIngredients.length} מצרכים</span>`;
+            } else if (recipe.missingIngredients) {
+                matchBadgeHtml = `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-medium">חסרים ${recipe.missingIngredients.length} מצרכים</span>`;
+            } else {
+                matchBadgeHtml = `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-medium">${recipe.ingredients.length} מצרכים</span>`;
+            }
+
+            // Tags HTML
+            const tagsHtml = (recipe.tags || []).map(tag => 
+                `<span class="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">${tag}</span>`
+            ).join('');
+
+            const isHearted = heartedRecipes.has(recipe.id);
+            const heartIcon = isHearted ? 'fa-solid text-red-500' : 'fa-regular text-white';
+            
+            const isLiked = userLikedRecipes.has(recipe.id);
+            const likeTextClass = isLiked ? 'text-blue-600' : 'text-slate-500';
+            const likeIconClass = isLiked ? 'fa-solid text-blue-600' : 'fa-regular text-slate-400';
+            const displayLikes = recipe.likesCount + (isLiked ? 1 : 0);
+
+            const isDisliked = userDislikedRecipes.has(recipe.id);
+            const dislikeTextClass = isDisliked ? 'text-red-600' : 'text-slate-500';
+            const dislikeIconClass = isDisliked ? 'fa-solid text-red-600' : 'fa-regular text-slate-400';
+            const displayDislikes = recipe.dislikesCount + (isDisliked ? 1 : 0);
+
+            const ingredientsWithIcons = recipe.ingredients.map(ing => `${getIcon(ing)} ${ing}`);
+
+            // Dynamic reliable image fallback with food illustration & title
+            const encodedTitle = encodeURIComponent(recipe.title);
+            const fallbackImg = `https://placehold.co/600x400/16a34a/ffffff?text=${encodedTitle}`;
+
+            // Rating display
+            const avgRating = calculateAverageRating(recipe);
+            const ratingDisplay = avgRating > 0 ? 
+                `<span class="bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-star text-amber-400 text-[10px]"></i> ${avgRating}</span>` : '';
+
+            const card = document.createElement('article');
+            card.className = 'bg-white rounded-2xl overflow-hidden border border-slate-100 recipe-card-hover cursor-pointer flex flex-col h-full';
+            card.innerHTML = `
+                <div class="h-48 w-full overflow-hidden relative bg-slate-100">
+                    <img src="${recipe.image}" alt="${recipe.title}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImg}';" class="w-full h-full object-cover">
+                    <div class="absolute top-3 right-3 flex gap-2">
+                        <button class="heart-btn text-white hover:text-red-400 transition-colors bg-black/30 rounded-full w-8 h-8 flex items-center justify-center backdrop-blur-sm">
+                            <i class="${heartIcon} fa-heart"></i>
+                        </button>
+                        <button class="share-btn text-white hover:text-brand-400 transition-colors bg-black/30 rounded-full w-8 h-8 flex items-center justify-center backdrop-blur-sm" title="שתף מתכון">
+                            <i class="fa-solid fa-share-nodes text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-slate-700 shadow-sm flex items-center gap-1">
+                        <i class="fa-regular fa-clock"></i> ${recipe.time}
+                    </div>
+                </div>
+                <div class="p-4 flex-grow flex flex-col">
+                    <div class="flex justify-between items-start mb-2 gap-2">
+                        <div class="flex flex-col gap-1">
+                            <h3 class="font-bold text-lg text-slate-800 leading-tight">${recipe.title}</h3>
+                            ${ratingDisplay}
+                        </div>
+                        <div class="flex gap-1 flex-shrink-0">
+                            <button class="like-btn flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100 ${likeTextClass}">
+                                <i class="fa-thumbs-up ${likeIconClass}"></i>
+                                <span class="text-xs font-bold">${displayLikes}</span>
+                            </button>
+                            <button class="dislike-btn flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100 ${dislikeTextClass}">
+                                <i class="fa-thumbs-down ${dislikeIconClass}"></i>
+                                <span class="text-xs font-bold">${displayDislikes}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mb-4 flex-wrap">
+                        ${tagsHtml}
+                    </div>
+
+                    <div class="mt-auto">
+                        <div class="mb-3">
+                            ${matchBadgeHtml}
+                        </div>
+                        <div class="text-sm text-slate-600 line-clamp-2 mb-4">
+                            <span class="font-medium">מצרכים:</span> ${ingredientsWithIcons.join(', ')}
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 flex justify-between items-center mt-2">
+                            <button class="view-comments-btn flex items-center gap-1.5 text-slate-500 hover:text-brand-600 transition-colors text-[13px] font-medium">
+                                <i class="fa-regular fa-comments pointer-events-none"></i>
+                                <span class="pointer-events-none">תגובות (${recipe.comments.length})</span>
+                            </button>
+                            <button class="add-comment-btn flex items-center gap-1.5 text-slate-500 hover:text-brand-600 transition-colors text-[13px] font-medium">
+                                <i class="fa-solid fa-pen pointer-events-none"></i>
+                                <span class="pointer-events-none">כתוב תגובה ודרג</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            card.onclick = (e) => {
+                if(e.target.closest('.heart-btn')) {
+                    toggleHeart(recipe.id);
+                    return;
+                }
+                if(e.target.closest('.share-btn')) {
+                    handleShareRecipe(recipe);
+                    return;
+                }
+                if(e.target.closest('.like-btn')) {
+                    toggleLike(recipe.id);
+                    return;
+                }
+                if(e.target.closest('.dislike-btn')) {
+                    toggleDislike(recipe.id);
+                    return;
+                }
+                if(e.target.closest('.add-comment-btn')) {
+                    handleAddComment(recipe.id);
+                    return;
+                }
+                if(e.target.closest('.view-comments-btn')) {
+                    handleViewComments(recipe.id);
+                    return;
+                }
+                showRecipeDetails(recipe);
+            };
+            
+            return card;
+        }
+
+        function renderRecipesGrid(recipes) {
+            recipesGrid.innerHTML = '';
+            
+            if (recipes.length === 0) {
+                recipesGrid.classList.add('hidden');
+                noRecipesMsg.classList.remove('hidden');
+                recipesCountBadge.textContent = '';
+                return;
+            }
+            
+            recipesGrid.classList.remove('hidden');
+            noRecipesMsg.classList.add('hidden');
+
+            // Show all recipes
+            recipesCountBadge.innerHTML = `<i class="fa-solid fa-layer-group ml-1"></i> מציג <strong>${recipes.length}</strong> מתכונים!`;
+
+            recipes.forEach(recipe => {
+                recipesGrid.appendChild(createRecipeCardElement(recipe));
+            });
+        }
+
+        function renderFavorites() {
+            if(!favoritesGrid) return;
+            favoritesGrid.innerHTML = '';
+            const favorites = recipesDB.filter(r => heartedRecipes.has(r.id));
+            
+            if (favorites.length === 0) {
+                noFavoritesMsg.classList.remove('hidden');
+            } else {
+                noFavoritesMsg.classList.add('hidden');
+                favorites.forEach(recipe => {
+                    favoritesGrid.appendChild(createRecipeCardElement(recipe));
+                });
+            }
+        }
+
+        function generateRecommended() {
+            // Pick 12 random recipes for the recommended section
+            const shuffled = [...recipesDB].sort(() => 0.5 - Math.random());
+            recommendedRecipes = shuffled.slice(0, 12);
+        }
+
+        function renderRecommended() {
+            if(!recommendedGrid) return;
+            recommendedGrid.innerHTML = '';
+            
+            recommendedRecipes.forEach(recipe => {
+                recommendedGrid.appendChild(createRecipeCardElement(recipe));
+            });
+        }
+
+        function renderCompleted() {
+            if(!completedGrid) return;
+            completedGrid.innerHTML = '';
+            const completed = recipesDB.filter(r => completedRecipes.has(r.id));
+            
+            completedCountLabel.textContent = completed.length;
+            
+            completed.forEach(recipe => {
+                completedGrid.appendChild(createRecipeCardElement(recipe));
+            });
+        }
+
+        // --- Share Recipe Function ---
+        function handleShareRecipe(recipe) {
+            const shareText = `מצאתי מתכון מעולה באפליקציית "בישול ממה שיש"!\n\n🍳 ${recipe.title}\n⏱️ זמן הכנה: ${recipe.time}\n🛒 מצרכים: ${recipe.ingredients.join(', ')}\n\nבתאבון!`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: recipe.title,
+                    text: shareText
+                }).catch(() => {});
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = shareText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                createGenericModal('המתכון הועתק!', '<p class="text-center text-slate-700 font-medium py-4"><i class="fa-solid fa-circle-check text-brand-500 text-3xl block mb-2"></i>פרטי המתכון הועתקו בהצלחה ללוח!</p>', 'מעולה', (closeModal) => closeModal(), true);
+            }
+        }
+
+        function showRecipeDetails(recipe) {
+            // In a full app, this would navigate to a new page or open a modal.
+            // For MVP, we simply show a nice native-like interaction.
+            const btnText = 'סיימתי להכין את זה!';
+                
+            // Custom Modal replacement for alert()
+            createModal(recipe.title, `
+                <div class="mb-4 text-center">
+                    <img src="${recipe.image}" class="w-full h-48 object-cover rounded-xl mb-4">
+                    <p class="text-slate-600 mb-2"><strong>זמן הכנה:</strong> ${recipe.time} | <strong>קושי:</strong> ${recipe.difficulty}</p>
+                </div>
+                <div class="mb-5">
+                    <h4 class="font-bold text-slate-800 mb-2">מצרכים דרושים:</h4>
+                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1 mb-4">
+                        ${recipe.ingredients.map(ing => {
+                            const hasIt = userPantry.has(ing);
+                            return `<li class="${hasIt ? 'text-brand-600 font-medium' : ''}">
+                                ${getIcon(ing)} ${ing} ${hasIt ? '<i class="fa-solid fa-check ml-1"></i>' : ''}
+                            </li>`;
+                        }).join('')}
+                    </ul>
+                    
+                    <h4 class="font-bold text-slate-800 mb-2">אופן ההכנה:</h4>
+                    <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2 pr-2 marker:font-medium marker:text-brand-500">
+                        ${recipe.instructions.map(step => `<li class="pl-2">${step}</li>`).join('')}
+                    </ol>
+                </div>
+            `, btnText, recipe);
+        }
+
+        // --- Custom Modal (No Alerts Allowed) ---
+        function createModal(title, contentHtml, actionText, recipe = null) {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]';
+            
+            const modal = document.createElement('div');
+            modal.className = 'bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all custom-scrollbar';
+            
+            modal.innerHTML = `
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10">
+                    <h3 class="text-lg font-bold text-slate-800">${title}</h3>
+                    <button id="closeModalBtn" class="text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    ${contentHtml}
+                </div>
+                <div class="px-6 py-4 bg-slate-50 flex flex-col gap-2 sm:flex-row-reverse sticky bottom-0 z-10">
+                    <button id="actionModalBtn" class="w-full inline-flex justify-center rounded-xl bg-brand-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-brand-500 sm:w-auto">
+                        ${actionText}
+                    </button>
+                    <button id="cancelModalBtn" class="mt-3 w-full inline-flex justify-center rounded-xl bg-white px-3 py-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto">
+                        סגור
+                    </button>
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            const closeFn = () => {
+                document.body.removeChild(overlay);
+            };
+            
+            document.getElementById('closeModalBtn').onclick = closeFn;
+            document.getElementById('cancelModalBtn').onclick = closeFn;
+            document.getElementById('actionModalBtn').onclick = () => {
+                if (recipe) {
+                    completedRecipes.add(recipe.id);
+                    renderCompleted();
+                }
+                const btn = document.getElementById('actionModalBtn');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> אלופים!';
+                btn.classList.replace('bg-brand-600', 'bg-slate-800');
+                setTimeout(closeFn, 1000);
+            };
+            overlay.onclick = (e) => {
+                if(e.target === overlay) closeFn();
+            };
+        }
+
+        // --- Comments Functions ---
+        function handleAddComment(recipeId) {
+            const recipe = recipesDB.find(r => r.id === recipeId);
+            let selectedRating = 5;
+
+            const modalContentHtml = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">דירוג במתכון:</label>
+                        <div class="flex items-center gap-2 justify-center py-2 bg-white rounded-xl border border-slate-200" id="starRatingPicker">
+                            <button type="button" data-star="1" class="star-picker-btn text-2xl text-amber-400 hover:scale-110 transition-transform"><i class="fa-solid fa-star"></i></button>
+                            <button type="button" data-star="2" class="star-picker-btn text-2xl text-amber-400 hover:scale-110 transition-transform"><i class="fa-solid fa-star"></i></button>
+                            <button type="button" data-star="3" class="star-picker-btn text-2xl text-amber-400 hover:scale-110 transition-transform"><i class="fa-solid fa-star"></i></button>
+                            <button type="button" data-star="4" class="star-picker-btn text-2xl text-amber-400 hover:scale-110 transition-transform"><i class="fa-solid fa-star"></i></button>
+                            <button type="button" data-star="5" class="star-picker-btn text-2xl text-amber-400 hover:scale-110 transition-transform"><i class="fa-solid fa-star"></i></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">התגובה שלך:</label>
+                        <textarea id="commentInput" class="w-full bg-white border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 outline-none text-slate-700 resize-none shadow-inner" rows="3" placeholder="כתוב את דעתך על המתכון..."></textarea>
+                    </div>
+                </div>
+            `;
+
+            createGenericModal(`הוסף תגובה ודירוג: ${recipe.title}`, modalContentHtml, 'פרסם תגובה', (closeModal) => {
+                const val = document.getElementById('commentInput').value.trim();
+                if(val) {
+                    recipe.comments.push({
+                        text: val,
+                        rating: selectedRating,
+                        date: new Date().toLocaleDateString('he-IL')
+                    });
+                    updateViews(); // Update UI to reflect the new comment count and updated rating
+                    closeModal();
+                }
+            });
+
+            // Interactive Star Rating Logic inside Modal
+            setTimeout(() => {
+                const stars = document.querySelectorAll('#starRatingPicker .star-picker-btn');
+                stars.forEach(btn => {
+                    btn.onclick = () => {
+                        const val = parseInt(btn.getAttribute('data-star'));
+                        selectedRating = val;
+                        stars.forEach((s, idx) => {
+                            const icon = s.querySelector('i');
+                            if (idx < val) {
+                                icon.className = 'fa-solid fa-star text-amber-400';
+                            } else {
+                                icon.className = 'fa-regular fa-star text-slate-300';
+                            }
+                        });
+                    };
+                });
+            }, 50);
+        }
+
+        function handleViewComments(recipeId) {
+            const recipe = recipesDB.find(r => r.id === recipeId);
+            let html = '<div class="space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">';
+            if(recipe.comments.length === 0) {
+                html += `
+                    <div class="text-center text-slate-500 py-8">
+                        <i class="fa-regular fa-comment-dots text-4xl mb-3 text-slate-300 block"></i>
+                        <p class="font-medium text-slate-600">אין עדיין תגובות</p>
+                        <p class="text-sm">היה הראשון להגיב ולדרג את המתכון!</p>
+                    </div>`;
+            } else {
+                recipe.comments.forEach(c => {
+                    const ratingStars = renderStars(c.rating || 5, "text-xs");
+                    html += `
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <div class="flex items-center gap-1">${ratingStars}</div>
+                            <div class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                                <i class="fa-regular fa-clock"></i> ${c.date}
+                            </div>
+                        </div>
+                        <div class="text-sm text-slate-700 leading-relaxed">${c.text}</div>
+                    </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            createGenericModal(`תגובות ודירוגים: ${recipe.title}`, html, 'סגור', (closeModal) => {
+                closeModal();
+            }, true);
+        }
+
+        function createGenericModal(title, contentHtml, actionText, onAction, isCancelOnly = false) {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]';
+            
+            const modal = document.createElement('div');
+            modal.className = 'bg-slate-50 rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl transform transition-all';
+            
+            let buttonsHtml = '';
+            if (isCancelOnly) {
+                buttonsHtml = `<button id="genCancelBtn" class="w-full inline-flex justify-center rounded-xl bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-300 transition-colors">
+                        ${actionText}
+                    </button>`;
+            } else {
+                buttonsHtml = `
+                    <button id="genActionBtn" class="w-full inline-flex justify-center rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-brand-500 transition-colors sm:w-auto">
+                        ${actionText}
+                    </button>
+                    <button id="genCancelBtn" class="mt-3 w-full inline-flex justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-100 transition-colors sm:mt-0 sm:w-auto">
+                        ביטול
+                    </button>
+                `;
+            }
+
+            modal.innerHTML = `
+                <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-white rounded-t-2xl shrink-0">
+                    <h3 class="text-lg font-bold text-slate-800 truncate pr-2" title="${title}">${title}</h3>
+                    <button id="genCloseBtn" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto custom-scrollbar flex-grow">
+                    ${contentHtml}
+                </div>
+                <div class="px-6 py-4 bg-white flex flex-col gap-3 sm:flex-row-reverse rounded-b-2xl border-t border-slate-200 shrink-0">
+                    ${buttonsHtml}
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            const closeFn = () => {
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                }
+            };
+            
+            document.getElementById('genCloseBtn').onclick = closeFn;
+            document.getElementById('genCancelBtn').onclick = closeFn;
+            if (!isCancelOnly) {
+                document.getElementById('genActionBtn').onclick = () => onAction(closeFn);
+            }
+            overlay.onclick = (e) => {
+                if(e.target === overlay) closeFn();
+            };
+        }
+
+        // Add some basic keyframe animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(5px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Run Init
+        window.onload = init;
+
+    </script>
+</body>
+</html>

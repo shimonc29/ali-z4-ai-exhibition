@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לומדים את הדרך - פלטפורמת למידה אינטראקטיבית</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Assistant -->
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Assistant', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f8fafc;
+        }
+        .slide-transition {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md">
+                        <i class="fa-solid font-bold fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold text-slate-900 block leading-tight">לומדים את הדרך</span>
+                        <span class="text-xs text-brand-600 font-semibold">מבינים, פותרים, מצליחים</span>
+                    </div>
+                </div>
+
+                <!-- Navigation links -->
+                <nav class="hidden md:flex space-x-6 space-x-reverse font-medium text-slate-600">
+                    <button onclick="navigateTo('home')" id="nav-home" class="hover:text-brand-600 transition-colors py-2 border-b-2 border-brand-600 text-brand-600 font-bold">דף הבית</button>
+                    <button onclick="navigateTo('categories')" id="nav-categories" class="hover:text-brand-600 transition-colors py-2 border-b-2 border-transparent">מקצועות לימוד</button>
+                    <button onclick="navigateTo('forum')" id="nav-forum" class="hover:text-brand-600 transition-colors py-2 border-b-2 border-transparent">קהילת עזרה בדרך</button>
+                </nav>
+
+                <!-- User profile badge mockup -->
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <!-- Social Share Buttons -->
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="shareOnWhatsApp()" title="שתף ב-WhatsApp" class="bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 p-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-whatsapp text-emerald-600 text-base"></i>
+                        </button>
+                        <button onclick="shareOnFacebook()" title="שתף בפייסבוק" class="bg-blue-50 border border-blue-200 text-blue-800 hover:bg-blue-100 p-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-facebook text-blue-600 text-base"></i>
+                        </button>
+                        <button onclick="shareOnTwitter()" title="שתף ב-X (טוויטר)" class="bg-slate-100 border border-slate-300 text-slate-800 hover:bg-slate-200 p-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-x-twitter text-slate-800 text-base"></i>
+                        </button>
+                        <button onclick="shareOnTelegram()" title="שתף בטלגרם" class="bg-sky-50 border border-sky-200 text-sky-800 hover:bg-sky-100 p-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-telegram text-sky-600 text-base"></i>
+                        </button>
+                    </div>
+
+                    <!-- Site Rating Stars Trigger Button -->
+                    <button onclick="openStarRatingModal()" class="bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95">
+                        <i class="fa-solid fa-star text-amber-500 text-sm"></i>
+                        <span>דירוג האתר</span>
+                        <span id="header-user-rating-badge" class="bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded-md text-[10px] hidden"></span>
+                    </button>
+
+                    <div class="bg-slate-100 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-trophy text-amber-500"></i>
+                        <span>120 נקודות דרך</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- VIEW 1: HOME / CATEGORY SELECTION VIEW (MAIN ENTRY) -->
+        <section id="view-home" class="space-y-8">
+            <!-- Hero banner -->
+            <div class="bg-gradient-to-l from-brand-600 to-indigo-700 text-white rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">שיטת הלמידה החדשה</span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">בחר מקצוע להתחלת הלמידה!</h1>
+                    <p class="text-lg text-blue-100 mb-8">כל מקצוע כולל נושאי לימוד מגוונים, מצגות הסבר ממוקדות ותרגול אינטראקטיבי עם רמזים בשלבים.</p>
+                </div>
+            </div>
+
+            <!-- Subject Grid Selection -->
+            <div class="space-y-4">
+                <h2 class="text-2xl font-extrabold text-slate-900">בחר את מקצוע הלימוד המבוקש:</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-5" id="categories-grid">
+                    <!-- Subject Category Cards dynamically generated -->
+                </div>
+            </div>
+
+            <!-- Features highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-blue-100 text-brand-600 rounded-xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-file-powerpoint"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">1. מצגות קצרות וממוקדות</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">לפני כל תרגול עוברים על מצגת מובנית המציגה את המושגים, הכללים ודוגמה פתורה.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">2. בוחן עם רמזים מדורגים</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">נתקעת בתרגיל? לא מגלים לך את התשובה הסופית. מקבלים רמזים בשלבים שמנחים אותך לפתרון.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">3. עזרה הדדית ממוקדת דרך</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">פורום שבו חברים מסבירים איך לגשת לבעיה ומאיפה להתחיל, מבלי לחשוף את התשובה הסופית.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: TOPICS FOR SELECTED SUBJECT -->
+        <section id="view-subjects" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <button onclick="navigateTo('home')" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg font-bold mb-2 transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-right"></i> חזרה לכל המקצועות
+                    </button>
+                    <h2 id="selected-category-title" class="text-2xl font-extrabold text-slate-900">נושאי לימוד</h2>
+                    <p class="text-slate-500 text-sm">בחר את הנושא שברצונך ללמוד ולתרגל כעת:</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-grid">
+                <!-- Topic Cards injected dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW 3: PRESENTATION (MACEGET) VIEW -->
+        <section id="view-presentation" class="hidden space-y-6">
+            <!-- Header bar for lesson -->
+            <div class="flex flex-wrap justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm gap-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="navigateTo('subjects')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                        <i class="fa-solid fa-arrow-right text-lg"></i>
+                    </button>
+                    <div>
+                        <span id="lesson-subject-tag" class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-md">מתמטיקה</span>
+                        <h2 id="lesson-title" class="text-xl font-bold text-slate-900">משוואות ממעלה ראשונה</h2>
+                    </div>
+                </div>
+
+                <!-- Step indicator -->
+                <div class="flex items-center space-x-2 space-x-reverse text-sm font-semibold text-slate-500" id="slide-indicators">
+                    <!-- Dynamic slide numbers -->
+                </div>
+            </div>
+
+            <!-- Slide Box Card -->
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden min-h-[420px] flex flex-col justify-between">
+                <!-- Slide Header Banner -->
+                <div class="bg-slate-900 text-white px-8 py-4 flex justify-between items-center">
+                    <span class="font-bold text-sm text-slate-400" id="slide-step-label">שקופית 1 מתוך 3</span>
+                    <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full" id="slide-topic-badge">הסבר מרכזי</span>
+                </div>
+
+                <!-- Slide Main Body -->
+                <div class="p-8 md:p-12 flex-grow flex flex-col justify-center" id="slide-content-area">
+                    <!-- Dynamic content inserted by JS -->
+                </div>
+
+                <!-- Slide Navigation Footer -->
+                <div class="bg-slate-50 px-8 py-4 border-t border-slate-200 flex justify-between items-center">
+                    <button id="btn-prev-slide" onclick="changeSlide(-1)" class="px-5 py-2.5 border border-slate-300 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-right ml-2"></i> לשקופית הקודמת
+                    </button>
+
+                    <button id="btn-next-slide" onclick="changeSlide(1)" class="px-6 py-2.5 bg-brand-600 text-white rounded-xl font-bold hover:bg-brand-700 shadow-md">
+                        לשקופית הבאה <i class="fa-solid fa-chevron-left mr-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: QUIZ / PRACTICE VIEW -->
+        <section id="view-quiz" class="hidden space-y-6">
+            <!-- Quiz Header -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <button onclick="openPresentationForCurrent()" class="text-xs bg-brand-50 text-brand-600 font-bold px-3 py-2 rounded-xl border border-brand-200 hover:bg-brand-100 transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>רענון זיכרון במצגת</span>
+                    </button>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">תרגול מעשי</span>
+                        <h3 id="quiz-title" class="font-bold text-slate-800">בוחן בדיקת הבנה</h3>
+                    </div>
+                </div>
+                <div class="text-sm font-bold text-slate-600">
+                    שאלה <span id="quiz-current-num">1</span> מתוך <span id="quiz-total-num">3</span>
+                </div>
+            </div>
+
+            <!-- Quiz Main Card -->
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8 space-y-6">
+                <!-- Question text -->
+                <div>
+                    <span class="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">אתגר דרך</span>
+                    <h3 id="quiz-question-text" class="text-xl md:text-2xl font-bold text-slate-900 mt-3"></h3>
+                </div>
+
+                <!-- Input or Multiple Choices -->
+                <div id="quiz-options-container" class="space-y-3">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- HINT SYSTEM AREA (Core feature requested) -->
+                <div class="mt-8 pt-6 border-t border-slate-100 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                            <span>זקוק לעזרה? קבל רמז לדרך הפתרון</span>
+                        </h4>
+                        <span id="hint-counter-badge" class="text-xs font-semibold text-slate-500">רמז 0 מתוך 2</span>
+                    </div>
+
+                    <!-- Display Active Hints -->
+                    <div id="active-hints-container" class="space-y-3">
+                        <!-- Dynamic Hints appended here -->
+                    </div>
+
+                    <button id="btn-request-hint" onclick="revealNextHint()" class="w-full sm:w-auto px-5 py-2.5 bg-amber-50 border border-amber-300 text-amber-800 font-bold rounded-xl hover:bg-amber-100 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i>
+                        <span>חשוף את השלב הבא בפתרון (רמז)</span>
+                    </button>
+                </div>
+
+                <!-- Feedback Banner -->
+                <div id="quiz-feedback-box" class="hidden p-4 rounded-xl border text-sm font-medium"></div>
+
+                <!-- Action button -->
+                <div class="pt-4 flex justify-end">
+                    <button id="btn-submit-quiz" onclick="checkQuizAnswer()" class="px-8 py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 shadow-md">
+                        בדוק תשובה
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: COMMUNITY FORUM (Core Feature for learning the steps) -->
+        <section id="view-forum" class="hidden space-y-6">
+            <div class="flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">קהילת עזרה בדרך הפתרון</h2>
+                    <p class="text-slate-500 text-sm">כאן שואלים איך לגשת לתרגיל ולקבל הכוונה — ללא גילוי התשובה הסופית!</p>
+                </div>
+                <button onclick="toggleModal('modal-new-question', true)" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>שאל שאלה חדשה</span>
+                </button>
+            </div>
+
+            <!-- Forum Filter / Rules banner -->
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3 text-sm text-blue-900">
+                <i class="fa-solid fa-shield-halved text-brand-600 text-lg mt-0.5"></i>
+                <div>
+                    <span class="font-bold">חוק הקהילה שלנו:</span> עוזרים לחברים להבין מאיפה להתחיל ואיזו נוסחה להפעיל. מענה המכיל רק תשובה מסופרת סופית יימחק על ידי המערכת!
+                </div>
+            </div>
+
+            <!-- Questions List -->
+            <div class="space-y-4" id="forum-questions-list">
+                <!-- Forum items injected dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: NEW QUESTION -->
+    <div id="modal-new-question" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                <h3 class="font-bold text-lg text-slate-900">העלאת שאלה לקהילה</h3>
+                <button onclick="toggleModal('modal-new-question', false)" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="form-new-question" onsubmit="handleNewQuestionSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">נושא הלימוד</label>
+                    <select id="q-subject" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        <option>מתמטיקה</option>
+                        <option>פיזיקה</option>
+                        <option>דקדוק אנגלית</option>
+                        <option>תכנות</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">מה השאלה או התרגיל?</label>
+                    <input type="text" id="q-title" required placeholder="לדוגמה: איך פותרים משוואה עם סוגריים?" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">מה כבר ניסית לעשות ובאיזה שלב נתקעת?</label>
+                    <textarea id="q-details" rows="3" required placeholder="פתחתי סוגריים בצד ימין אבל אני לא בטוח מה לעשות עם המינוס..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="toggleModal('modal-new-question', false)" class="px-5 py-2.5 border border-slate-300 text-slate-600 rounded-xl font-semibold hover:bg-slate-50">ביטול</button>
+                    <button type="submit" class="px-6 py-2.5 bg-brand-600 text-white rounded-xl font-bold hover:bg-brand-700 shadow-md">פרסם שאלה</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: 5 STAR RATING SYSTEM -->
+    <div id="modal-star-rating" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-6 shadow-2xl border border-slate-100 relative">
+            <button onclick="toggleModal('modal-star-rating', false)" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-sm">
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold text-slate-900">דירוג האתר</h3>
+                <p class="text-slate-500 text-sm mt-1">איך הייתה חווית הלמידה שלך באתר? לחץ על הכוכבים לדירוג:</p>
+            </div>
+
+            <!-- 5 Interactive Stars -->
+            <div class="flex justify-center items-center gap-2 dir-ltr" id="stars-container">
+                <button onclick="setStarRating(1)" onmouseenter="hoverStarRating(1)" onmouseleave="resetStarHover()" class="star-btn text-3xl text-slate-300 hover:scale-125 transition-all p-1">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+                <button onclick="setStarRating(2)" onmouseenter="hoverStarRating(2)" onmouseleave="resetStarHover()" class="star-btn text-3xl text-slate-300 hover:scale-125 transition-all p-1">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+                <button onclick="setStarRating(3)" onmouseenter="hoverStarRating(3)" onmouseleave="resetStarHover()" class="star-btn text-3xl text-slate-300 hover:scale-125 transition-all p-1">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+                <button onclick="setStarRating(4)" onmouseenter="hoverStarRating(4)" onmouseleave="resetStarHover()" class="star-btn text-3xl text-slate-300 hover:scale-125 transition-all p-1">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+                <button onclick="setStarRating(5)" onmouseenter="hoverStarRating(5)" onmouseleave="resetStarHover()" class="star-btn text-3xl text-slate-300 hover:scale-125 transition-all p-1">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+            </div>
+
+            <div id="star-rating-feedback-text" class="text-sm font-bold text-amber-600 h-5"></div>
+
+            <div class="pt-2 flex justify-center gap-3">
+                <button onclick="saveStarRating()" id="btn-save-stars" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-md transition-colors disabled:opacity-50" disabled>
+                    שמור דירוג
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 space-y-6">
+            <!-- Site Comments & Feedback Section -->
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-brand-600"></i>
+                        <span>תגובות ומשוב על האתר</span>
+                    </h3>
+                    <span id="site-comments-count-badge" class="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full">2 תגובות</span>
+                </div>
+
+                <!-- Comment Form -->
+                <form id="form-site-comment" onsubmit="handleSiteCommentSubmit(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="site-comment-author" required placeholder="השם שלך (למשל: דניאל)" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                    <textarea id="site-comment-text" rows="2" required placeholder="מה דעתך על האתר? יש לך רעיונות לשיפור?" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none resize-none"></textarea>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                            <span>שלח תגובה</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Comments List -->
+                <div id="site-comments-list" class="space-y-3 pt-2">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-right text-slate-500 text-sm border-t border-slate-200 pt-6">
+                <p>© 2026 לומדים את הדרך — פלטפורמה לימודית המקדמת חשיבה עצמאית והבנת דרך הפתרון.</p>
+                
+                <div class="flex items-center gap-3 flex-wrap justify-center">
+                    <!-- Footer Social Share Group -->
+                    <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-2xl border border-slate-200">
+                        <span class="text-xs font-bold text-slate-600">שתף את האתר:</span>
+                        <button onclick="shareOnWhatsApp()" title="שתף ב-WhatsApp" class="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                        </button>
+                        <button onclick="shareOnFacebook()" title="שתף בפייסבוק" class="p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-facebook text-sm"></i>
+                        </button>
+                        <button onclick="shareOnTwitter()" title="שתף ב-X (טוויטר)" class="p-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-x-twitter text-sm"></i>
+                        </button>
+                        <button onclick="shareOnTelegram()" title="שתף בטלגרם" class="p-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl transition-all shadow-sm active:scale-95">
+                            <i class="fa-brands fa-telegram text-sm"></i>
+                        </button>
+                        <button onclick="shareViaEmail()" title="שתף בדוא״ל" class="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-all shadow-sm active:scale-95">
+                            <i class="fa-solid fa-envelope text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Site Rating (Like/Dislike) Widget -->
+                    <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-200">
+                        <span class="text-xs font-bold text-slate-600">מה דעתך על האתר?</span>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-site-like" onclick="rateSite('like')" class="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 text-slate-700 hover:text-emerald-600 hover:border-emerald-300 rounded-xl transition-all shadow-sm active:scale-95">
+                                <i class="fa-solid fa-thumbs-up"></i>
+                                <span id="site-like-count" class="font-bold text-xs">42</span>
+                            </button>
+                            <button id="btn-site-dislike" onclick="rateSite('dislike')" class="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 text-slate-700 hover:text-rose-600 hover:border-rose-300 rounded-xl transition-all shadow-sm active:scale-95">
+                                <i class="fa-solid fa-thumbs-down"></i>
+                                <span id="site-dislike-count" class="font-bold text-xs">3</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- SOCIAL SHARE FUNCTIONS ---
+        function shareOnWhatsApp() {
+            const shareText = encodeURIComponent("היי! כדאי לך להכיר את 'לומדים את הדרך' - אתר לימודי אינטראקטיבי המציע מצגות קצרות, ותרגול עם רמזים בשלבים להבנת דרך הפתרון! 🎓✨");
+            const shareUrl = encodeURIComponent(window.location.href);
+            window.open(`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const shareUrl = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, '_blank');
+        }
+
+        function shareOnTwitter() {
+            const shareText = encodeURIComponent("לומדים את הדרך - פלטפורמת למידה אינטראקטיבית עם מצגות ותרגילים!");
+            const shareUrl = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`, '_blank');
+        }
+
+        function shareOnTelegram() {
+            const shareText = encodeURIComponent("היי! כדאי לך להכיר את 'לומדים את הדרך' - אתר לימודי אינטראקטיבי!");
+            const shareUrl = encodeURIComponent(window.location.href);
+            window.open(`https://t.me/share/url?url=${shareUrl}&text=${shareText}`, '_blank');
+        }
+
+        function shareViaEmail() {
+            const subject = encodeURIComponent("ממליץ בחום: לומדים את הדרך - אתר לימודי אינטראקטיבי");
+            const body = encodeURIComponent("היי,\n\nרציתי להמליץ לך על אתר 'לומדים את הדרך' למצגות ותרגול לימודי בשלבים:\n" + window.location.href);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        // --- CATEGORIES LIST ---
+        const categoriesList = [
+            { id: 'math', title: 'מתמטיקה', icon: 'fa-calculator', color: 'bg-blue-500 text-white' },
+            { id: 'english', title: 'אנגלית', icon: 'fa-language', color: 'bg-indigo-500 text-white' },
+            { id: 'hebrew', title: 'עברית', icon: 'fa-pen-nib', color: 'bg-amber-500 text-white' },
+            { id: 'science', title: 'מדעים', icon: 'fa-flask', color: 'bg-emerald-500 text-white' },
+            { id: 'physics', title: 'פיזיקה', icon: 'fa-bolt', color: 'bg-purple-500 text-white' },
+            { id: 'torah', title: 'תורה', icon: 'fa-scroll', color: 'bg-yellow-600 text-white' },
+            { id: 'navi', title: 'נביא', icon: 'fa-book-bookmark', color: 'bg-orange-500 text-white' },
+            { id: 'mishna', title: 'משנה', icon: 'fa-book-open text-white', color: 'bg-teal-600 text-white' },
+            { id: 'gemara', title: 'גמרא', icon: 'fa-book-atlas', color: 'bg-cyan-700 text-white' }
+        ];
+
+        // --- DATA STORE FOR TOPICS PER SUBJECT ---
+        const lessonsData = [
+            // ==================== מתמטיקה (10+ נושאים) ====================
+            {
+                id: 'math-eq',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'משוואות ממעלה ראשונה',
+                icon: 'fa-calculator',
+                slides: [
+                    {
+                        stepBadge: 'מושג יסוד',
+                        contentHtml: `
+                            <h3 class="text-2xl font-bold text-slate-900 mb-4">מהי משוואה ממעלה ראשונה?</h3>
+                            <p class="text-slate-600 text-base leading-relaxed mb-4">
+                                משוואה היא מאזניים שבהם שני האגפים שווים זה לזה. המטרה שלנו היא למצוא את ערכו של הנעלם (בדרך כלל מרומז באות <strong>X</strong>).
+                            </p>
+                            <div class="bg-blue-50 border-r-4 border-brand-600 p-4 rounded-r-xl">
+                                <span class="font-bold text-brand-800">כלל הזהב:</span> כל פעולה שנעשה באגף אחד (חיבור, חיסור, כפל או חילוק) – חייבים לבצע בדיוק אותה פעולה גם באגף השני!
+                            </div>
+                        `
+                    },
+                    {
+                        stepBadge: 'שלבי הפתרון',
+                        contentHtml: `
+                            <h3 class="text-2xl font-bold text-slate-900 mb-4">4 השלבים לפתרון כל משוואה</h3>
+                            <ol class="space-y-3 text-slate-700 text-base font-medium list-decimal list-inside">
+                                <li class="p-2 bg-slate-50 rounded-lg"><strong>פתיחת סוגריים:</strong> במידה וקיימים סוגריים במשוואה.</li>
+                                <li class="p-2 bg-slate-50 rounded-lg"><strong>כינוס איברים דומים:</strong> סידור נעלמים באגף אחד ומספרים באגף השני.</li>
+                                <li class="p-2 bg-slate-50 rounded-lg"><strong>בידוד הנעלם:</strong> חילוק במקדם של X.</li>
+                            </ol>
+                        `
+                    },
+                    {
+                        stepBadge: 'דוגמה פתורה',
+                        contentHtml: `
+                            <h3 class="text-2xl font-bold text-slate-900 mb-2">דוגמה צעד-אחר-צעד: 2x + 4 = 10</h3>
+                            <div class="space-y-3 font-mono text-sm">
+                                <div class="bg-slate-100 p-3 rounded-xl">
+                                    <span class="text-slate-500 block font-sans text-xs">שלב 1: חיסור 4 משני האגפים</span>
+                                    <span class="text-lg font-bold text-slate-800">2x = 10 - 4  =>  2x = 6</span>
+                                </div>
+                                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                                    <span class="text-emerald-700 block font-sans text-xs">שלב 2: חילוק ב-2 לקבלת X</span>
+                                    <span class="text-lg font-bold text-emerald-800">x = 6 / 2  =>  x = 3</span>
+                                </div>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: 'מהו הצעד הראשון הנכון לפתרון המשוואה: 3x - 5 = 10 ?',
+                        options: [
+                            'להוסיף 5 לשני האגפים במשוואה',
+                            'לחלק את 10 ב-3',
+                            'להחסיר 5 מ-10'
+                        ],
+                        correctIndex: 0,
+                        hints: ['רמז 1: אנחנו רוצים להיפטר מה- 5- בצד ימין.', 'רמז 2: הפעולה ההפוכה מחיסור 5 היא חיבור 5.'],
+                        explanation: 'נכון מאוד! נוסיף 5 לשני האגפים ונקבל: 3x = 15.'
+                    }
+                ]
+            },
+            {
+                id: 'math-directed-numbers',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'מספרים מכוונים (חיוביים ושליליים)',
+                icon: 'fa-plus-minus',
+                slides: [{ stepBadge: 'ציר המספרים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חוקי הסימנים בחיבור וחיסור</h3><p class="text-slate-600 leading-relaxed mb-4">מספרים שליליים נמצאים משמאל לאפס. מפגש סימנים: (+)(-) הופך למינוס, (-)(-) הופך לפלוס.</p>` }],
+                quiz: [{ question: 'מהי התוצאה של התרגיל: (-7) + (-3) ?', options: ['-10', '-4', '10'], correctIndex: 0, hints: ['רמז 1: חיבור של שני מספרים שליליים מגדיל את החוב השלילי.'], explanation: 'נכון מאוד! 7- ועוד 3- שווה 10-.' }]
+            },
+            {
+                id: 'math-fractions',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'שברים פשוטים ומכנה משותף',
+                icon: 'fa-pie-chart',
+                slides: [{ stepBadge: 'מושג השבר', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מהו מכנה משותף?</h3><p class="text-slate-600">כדי לחדד חיבור וחיסור שברים, יש להביא את כל השברים לאותו המכנה.</p>` }],
+                quiz: [{ question: 'מהו המכנה המשותף הקטן ביותר עבור השברים 1/3 ו-1/4?', options: ['12', '7', '24'], correctIndex: 0, hints: ['רמז 1: חפש מספר שמתחלק גם ב-3 וגם ב-4.'], explanation: 'נכון! 3 × 4 = 12.' }]
+            },
+            {
+                id: 'math-powers',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'חזקות ושורשים',
+                icon: 'fa-superscript',
+                slides: [{ stepBadge: 'כללי חזקות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מהי חזקה?</h3><p class="text-slate-600">חזקה היא כפול מקוצר של מספר בעצמו כמה פעמים.</p>` }],
+                quiz: [{ question: 'כמה הם 3 בחזקת 3 (3³)?', options: ['27', '9', '18'], correctIndex: 0, hints: ['רמז 1: 3 × 3 × 3.'], explanation: 'מעולה! 3 × 3 = 9, ו-9 × 3 = 27.' }]
+            },
+            {
+                id: 'math-percent',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'חישובי אחוזים',
+                icon: 'fa-percent',
+                slides: [{ stepBadge: 'הגדרת האחוז', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מהו אחוז?</h3><p class="text-slate-600">אחוז הוא חלק מתוך 100.</p>` }],
+                quiz: [{ question: 'כמה הם 20% מתוך 50?', options: ['10', '20', '5'], correctIndex: 0, hints: ['רמז 1: 20% הם חמישית (1/5) מתוך השלם.'], explanation: 'מעולה! 50 חלקי 5 שווה 10.' }]
+            },
+            {
+                id: 'math-geometry-shapes',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'גיאומטריה: היקף ושטח מרובעים',
+                icon: 'fa-shapes',
+                slides: [{ stepBadge: 'נוסחאות שטח', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חישוב שטח מלבן וריבוע</h3><p class="text-slate-600">שטח מלבן = אורך × רוחב.</p>` }],
+                quiz: [{ question: 'מהו השטח של מלבן שאורכו 8 ס"מ ורוחבו 5 ס"מ?', options: ['40 סמ"ר', '26 סמ"ר', '13 סמ"ר'], correctIndex: 0, hints: ['רמז 1: הכפל אורך ברוחב.'], explanation: 'נכון מאוד! 8 × 5 = 40.' }]
+            },
+            {
+                id: 'math-pythagoras',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'משפט פיתגורס',
+                icon: 'fa-draw-polygon',
+                slides: [{ stepBadge: 'משולש ישר זווית', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">a² + b² = c²</h3><p class="text-slate-600">סכום ריבועי הניצבים שווה לריבוע היתר.</p>` }],
+                quiz: [{ question: 'במשולש ישר זווית הניצבים הם 3 ו-4. מה אורך היתר?', options: ['5', '7', '25'], correctIndex: 0, hints: ['רמז: 3² + 4² = 9 + 16 = 25.'], explanation: 'יפה מאוד! שורש 25 הוא 5.' }]
+            },
+            {
+                id: 'math-ratios',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'יחס ופרופורציה',
+                icon: 'fa-scale-unbalanced',
+                slides: [{ stepBadge: 'הגדרת היחס', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מהו יחס?</h3><p class="text-slate-600">יחס הוא השוואה בין שתי כמויות באמצעות חילוק.</p>` }],
+                quiz: [{ question: 'אם היחס בין כדורים אדומים לכחולים הוא 2:3, ויש 6 כדורים אדומים, כמה כדורים כחולים יש?', options: ['9', '6', '12'], correctIndex: 0, hints: ['רמז: היחס הוכפל ב-3 (2×3=6), לכן נכפיל גם את 3 ב-3.'], explanation: 'נכון! 3 × 3 = 9 כדורים כחולים.' }]
+            },
+            {
+                id: 'math-decimals',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'מספרים עשרוניים ופעולות חשבון',
+                icon: 'fa-cubes',
+                slides: [{ stepBadge: 'עשרוניים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">נקודה עשרונית</h3><p class="text-slate-600">בחיבור וחיסור עשרוניים מקפידים להציב נקודה מתחת לנקודה.</p>` }],
+                quiz: [{ question: 'כמה הם 2.5 + 1.75 ?', options: ['4.25', '3.80', '4.50'], correctIndex: 0, hints: ['רמז: 2.50 + 1.75 = 4.25.'], explanation: 'נכון מאוד! התוצאה היא 4.25.' }]
+            },
+            {
+                id: 'math-prob',
+                categoryId: 'math',
+                subject: 'מתמטיקה',
+                title: 'יסודות ההסתברות',
+                icon: 'fa-dice',
+                slides: [{ stepBadge: 'מאורעות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חישוב סיכוי למאורע</h3><p class="text-slate-600">הסתברות = (מספר המקרים הרצויים) / (סך כל המקרים האפשריים).</p>` }],
+                quiz: [{ question: 'מהי ההסתברות לקבל את המספר 6 בהטלת קובייה הוגנת בעלת 6 פאות?', options: ['1/6', '1/2', '6/6'], correctIndex: 0, hints: ['רmז: יש פאה אחת עם 6 מתוך 6 פאות בסך הכל.'], explanation: 'נכון! הסיכוי הוא 1 ל-6.' }]
+            },
+
+            // ==================== אנגלית (10+ נושאים) ====================
+            {
+                id: 'eng-present-simple',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Present Simple (הווה פשוט)',
+                icon: 'fa-clock',
+                slides: [{ stepBadge: 'שימוש בזמן', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">Present Simple</h3><p class="text-slate-600">הרגלים, עובדות ופעולות שגרתיות.</p>` }],
+                quiz: [{ question: 'He ____ to school every day.', options: ['walks', 'walk', 'walking'], correctIndex: 0, hints: ['רמז: בגוף He/She/It מוסיפים s לפועל.'], explanation: 'נכון! walks.' }]
+            },
+            {
+                id: 'eng-present-progressive',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Present Progressive (הווה ממושך)',
+                icon: 'fa-spinner',
+                slides: [{ stepBadge: 'פעולה עכשווית', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">am/is/are + V-ing</h3><p class="text-slate-600">פעולה המתרחשת ממש ברגע זה.</p>` }],
+                quiz: [{ question: 'They ____ soccer right now.', options: ['are playing', 'is playing', 'play'], correctIndex: 0, hints: ['רמז: They דורש are.'], explanation: 'נכון! standard am/is/are + ing.' }]
+            },
+            {
+                id: 'eng-past-simple',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Past Simple (עבר פשוט)',
+                icon: 'fa-history',
+                slides: [{ stepBadge: 'חוקי עבר', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פעלים בעבר פשוט</h3><p class="text-slate-600">הוספת ed לפועל רגיל.</p>` }],
+                quiz: [{ question: 'מהי צורת העבר של הפועל Play?', options: ['Played', 'Playes', 'Playing'], correctIndex: 0, hints: ['רמז: פועל רגיל מוסיף ed.'], explanation: 'נכון! Played.' }]
+            },
+            {
+                id: 'eng-past-progressive',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Past Progressive (עבר ממושך)',
+                icon: 'fa-hourglass-half',
+                slides: [{ stepBadge: 'was/were + ing', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">תיאור פעולה ממושכת בעבר</h3><p class="text-slate-600">Was/Were + V-ing</p>` }],
+                quiz: [{ question: 'I ____ reading a book when you called.', options: ['was', 'were', 'am'], correctIndex: 0, hints: ['רמז: בגוף I בעבר משתמשים ב-was.'], explanation: 'נכון! I was reading.' }]
+            },
+            {
+                id: 'eng-future-simple',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Future Simple (עתיד פשוט)',
+                icon: 'fa-forward',
+                slides: [{ stepBadge: 'Will + Verb', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">שימוש ב-Will</h3><p class="text-slate-600">לתיאור תוכניות ואירועים בעתיד.</p>` }],
+                quiz: [{ question: 'We ____ visit our friends tomorrow.', options: ['will', 'was', 'did'], correctIndex: 0, hints: ['רמז: מילת העתיד היא will.'], explanation: 'נכון! We will visit.' }]
+            },
+            {
+                id: 'eng-modals',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Modals & Semi-Modals (פועלי עזר)',
+                icon: 'fa-key',
+                slides: [{ stepBadge: 'Can, Must, Should', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">יכולת, חובה והמלצה</h3><p class="text-slate-600">Can (יכולת), Must (חובה), Should (המלצה).</p>` }],
+                quiz: [{ question: 'You ____ stop at a red light.', options: ['must', 'can', 'may'], correctIndex: 0, hints: ['רמז: עורכי הדרך מחייבים עצירה - מדובר בחובה.'], explanation: 'נכון! Must מביע חובה.' }]
+            },
+            {
+                id: 'eng-parts-of-speech',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Nouns, Verbs & Adjectives',
+                icon: 'fa-font',
+                slides: [{ stepBadge: 'סיווג מילים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חלקי הדיבור באנגלית</h3><p class="text-slate-600">שמות עצם, פעלים ותוארי שם.</p>` }],
+                quiz: [{ question: 'איזה חלק דיבור הוא המילה "Beautiful"?', options: ['Adjective (תואר שם)', 'Verb (פועל)', 'Noun (שם עצם)'], correctIndex: 0, hints: ['רמז: מתאר עצם.'], explanation: 'נכון! Adjective.' }]
+            },
+            {
+                id: 'eng-comparatives',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Comparatives & Superlatives (דרגות השוואה)',
+                icon: 'fa-arrow-up-right-dots',
+                slides: [{ stepBadge: '-er / -est', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">השוואה בין תארים</h3><p class="text-slate-600">Bigger than, The biggest.</p>` }],
+                quiz: [{ question: 'An elephant is ____ than a dog.', options: ['bigger', 'big', 'biggest'], correctIndex: 0, hints: ['רמז: בהשוואה בין שניים מוסיפים er.'], explanation: 'נכון! Bigger than.' }]
+            },
+            {
+                id: 'eng-prepositions',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Prepositions of Time & Place (מילות יחס)',
+                icon: 'fa-location-dot',
+                slides: [{ stepBadge: 'In, On, At', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מילות יחס לזמן ומקום</h3><p class="text-slate-600">In (שנים/חודשים), On (ימים/תאריכים), At (שעות).</p>` }],
+                quiz: [{ question: 'The class starts ____ 8:00 AM.', options: ['at', 'on', 'in'], correctIndex: 0, hints: ['רמז: לפני שעה מדויקת משתמשים ב-at.'], explanation: 'נכון! At 8:00 AM.' }]
+            },
+            {
+                id: 'eng-vocabulary-building',
+                categoryId: 'english',
+                subject: 'אנגלית',
+                title: 'Prefixes & Suffixes (קידומות וסיומות)',
+                icon: 'fa-puzzle-piece',
+                slides: [{ stepBadge: 'הרחבת אוצר מילים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">Un-, Dis-, -ful, -less</h3><p class="text-slate-600">שינוי משמעות מילים באמצעות מוספיות.</p>` }],
+                quiz: [{ question: 'מהי המשמעות של הקידומת Un- במילה Happy -> Unhappy?', options: ['היפוך/שלילה (לא מאושר)', 'שוב פעם', 'יותר מדי'], correctIndex: 0, hints: ['רמז: Un מעביר למשמעות הפוכה.'], explanation: 'נכון! Un מביא משמעות שלילית/הפוכה.' }]
+            },
+
+            // ==================== עברית (10+ נושאים) ====================
+            {
+                id: 'heb-roots',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'זיהוי שורשים במשפחות מילים',
+                icon: 'fa-pen-nib',
+                slides: [{ stepBadge: 'יסודות הלשון', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מהו שורש?</h3><p class="text-slate-600">3 אותיות יסוד המופיעות בכל מילה באותה המשפחה.</p>` }],
+                quiz: [{ question: 'מהו השורש של המילה "מכתב"?', options: ['כ.ת.ב', 'מ.כ.ת', 'ת.ב.כ'], correctIndex: 0, hints: ['רמז: כותב, מכתבה, מכתב.'], explanation: 'נכון! כ.ת.ב.' }]
+            },
+            {
+                id: 'heb-binyanim',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'שבעת הבניינים לפועל',
+                icon: 'fa-cubes-stacked',
+                slides: [{ stepBadge: 'בנייני הפועל', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פעל, פיעל, הפעיל...</h3><p class="text-slate-600">זיהוי הבניין לפי צורת עבר-נסתר (הוא אתמול).</p>` }],
+                quiz: [{ question: 'באיזה בניין נמצא הפועל "הכתיב"?', options: ['הפעיל', 'פעל', 'פיעל'], correctIndex: 0, hints: ['רמז: הוא אתמול ____ (הכתיב - במשקל השורש).'], explanation: 'נכון! בניין הפעיל.' }]
+            },
+            {
+                id: 'heb-punctuation',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'סימני פיסוק ותחביר',
+                icon: 'fa-quote-right',
+                slides: [{ stepBadge: 'פיסוק נכון', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פסיקים, נקודות ומירכאות</h3><p class="text-slate-600">כללי הפיסוק התקניים.</p>` }],
+                quiz: [{ question: 'מתי שמים נקודתיים (:)?', options: ['לפני ציטוט או פירוט', 'בסוף כל משפט', 'לפני מילת קישור'], correctIndex: 0, hints: ['רמז: כאשר מציגים פירוט דברים.'], explanation: 'נכון! נקודתיים מצביעות על פירוט.' }]
+            },
+            {
+                id: 'heb-parts-of-speech',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'חלקי הדיבור: שם עצם, פועל ותואר',
+                icon: 'fa-tags',
+                slides: [{ stepBadge: 'סיווג מילים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">הבחנה בין חלקי הדיבור</h3><p class="text-slate-600">עצם, תואר, פועל ומילת קישור.</p>` }],
+                quiz: [{ question: 'איזה חלק דיבור היא המילה "רצו"?', options: ['פועל', 'שם עצם', 'תואר'], correctIndex: 0, hints: ['רמז: מציין פעולה בזמן עבר.'], explanation: 'נכון! רצו הוא פועל.' }]
+            },
+            {
+                id: 'heb-conjunctions',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'מילות קישור וקשרים לוגיים',
+                icon: 'fa-link',
+                slides: [{ stepBadge: 'קשר לוגי', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">למרות, מפני ש-, לכן</h3><p class="text-slate-600">סיבה, תוצאה, ניגוד וויתור.</p>` }],
+                quiz: [{ question: 'איזו מילת קישור מביעה סיבה?', options: ['מפני ש-', 'לכן', 'אולם'], correctIndex: 0, hints: ['רמז: עונה על השאלה "מדוע?".'], explanation: 'נכון! מפני ש- מביאה סיבה.' }]
+            },
+            {
+                id: 'heb-nif`al',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'בניין נפעל (סביל וחוזר)',
+                icon: 'fa-arrow-rotate-left',
+                slides: [{ stepBadge: 'סביל', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">בניין נפעל</h3><p class="text-slate-600">נכתב, נשבר, נכנס.</p>` }],
+                quiz: [{ question: 'מהו השורש של המילה "נרשם"?', options: ['ר.ש.מ', 'נ.ר.ש', 'ר.ש.ב'], correctIndex: 0, hints: ['רמז: נ\' היא אות הבניין נפעל.'], explanation: 'נכון! השורש הוא ר.ש.מ.' }]
+            },
+            {
+                id: 'heb-synonyms',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'מילים נרדפות וניגודים',
+                icon: 'fa-equals',
+                slides: [{ stepBadge: 'אוצר מילים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מילים בעלות משמעות דומה</h3><p class="text-slate-600">חמה/שמש, ירח/לבנה, שמחה/גילה.</p>` }],
+                quiz: [{ question: 'איזו מילה היא מילה נרדפת למילה "אילן"?', options: ['עץ', 'פרח', 'שיח'], correctIndex: 0, hints: ['רמז: גדל ביער ובעל גזע.'], explanation: 'נכון! אילן = עץ.' }]
+            },
+            {
+                id: 'heb-smichut',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'צירופי סמיכות ותייקון בלשון',
+                icon: 'fa-paperclip',
+                slides: [{ stepBadge: 'סמיכות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">נסמך וסומך</h3><p class="text-slate-600">בית-ספר, בית-ספרנו, בגדי-שבת.</p>` }],
+                quiz: [{ question: 'איפה מוסיפים את ה\' הידיעה בצירוף סמיכות (לדוגמה: בית ספר)?', options: ['רק למילה השנייה (בית הספר)', 'רק למילה הראשונה (הבית ספר)', 'לשתיהן'], correctIndex: 0, hints: ['רמז: ה\' הידיעה נצמדת לסומך (המילה השנייה).'], explanation: 'נכון! בית הספר ולא הבית ספר.' }]
+            },
+            {
+                id: 'heb-active-passive',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'פעיל וסביל בבניינים',
+                icon: 'fa-hand-pointer',
+                slides: [{ stepBadge: 'פעיל מול סביל', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פעל/פיעל/הפעיל לעומת פועל/הופעל/נפעל</h3><p class="text-slate-600">מי ביצע את הפעולה?</p>` }],
+                quiz: [{ question: 'האם המילה "שורט" מביעה פעיל או סביל?', options: ['סביל', 'פעיל', 'ניטרלי'], correctIndex: 0, hints: ['רמז: המילה שורט היא בבניין פועל (פֻּעַל).'], explanation: 'נכון! שורט מביע סביל.' }]
+            },
+            {
+                id: 'heb-guttural-letters',
+                categoryId: 'hebrew',
+                subject: 'עברית',
+                title: 'אותיות גרוניות (אהו"ח)',
+                icon: 'fa-wind',
+                slides: [{ stepBadge: 'גרוניות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">א\', ה\', ח\', ע\'</h3><p class="text-slate-600">אותיות גרוניות אינן מקבלות דגש חזק.</p>` }],
+                quiz: [{ question: 'אילו מבין האותיות הבאות הן אותיות גרוניות?', options: ['א, ה, ח, ע', 'ב, ג, ד, כ', 'ש, ש, ת, ר'], correctIndex: 0, hints: ['רמז: האותיות היוצאות מהגרון.'], explanation: 'נכון! אהח"ע הן הגרוניות.' }]
+            },
+
+            // ==================== פיזיקה (10+ נושאים) ====================
+            {
+                id: 'physics-speed',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'מהירות, זמן ומרחק',
+                icon: 'fa-bolt',
+                slides: [{ stepBadge: 'נוסחת תנועה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">X = V × t</h3><p class="text-slate-600">קשר בין מרחק, מהירות וזמן.</p>` }],
+                quiz: [{ question: 'רכב עבר 120 ק"מ ב-2 שעות. מה מהירותו?', options: ['60 קמ"ש', '240 קמ"ש', '122 קמ"ש'], correctIndex: 0, hints: ['רמז: חילוק מרחק בזמן (120/2).'], explanation: 'נכון! 60 קמ"ש.' }]
+            },
+            {
+                id: 'physics-newton',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'חוקי ניוטון לתנועה',
+                icon: 'fa-apple-whole',
+                slides: [{ stepBadge: 'חוקי ניוטון', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">F = m × a</h3><p class="text-slate-600">כוח, מסה ותאוצה.</p>` }],
+                quiz: [{ question: 'מה קורה לגוף שלא פועל עליו כוח (חוק ההתמדה)?', options: ['שומר על מהירותו הקבועה או על מנוחתו', 'נעצר מיד', 'מאיץ'], correctIndex: 0, hints: ['רמז: חוק ההתמדה הראשוני.'], explanation: 'נכון! שומר על מצבו.' }]
+            },
+            {
+                id: 'physics-gravity',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'כוח הכובד ותאוצת הכובד (g)',
+                icon: 'fa-arrow-down-long',
+                slides: [{ stepBadge: 'כבידה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">W = m × g</h3><p class="text-slate-600">כוח המשיכה של כדור הארץ (g ≈ 10 m/s²).</p>` }],
+                quiz: [{ question: 'מה משקלו של גוף שמסתו 5 ק"ג על כדור הארץ (כש-g=10)?', options: ['50 ניוטון', '5 ניוטון', '0.5 ניוטון'], correctIndex: 0, hints: ['רמז: 5 × 10 = ?'], explanation: 'נכון! 50 ניוטון.' }]
+            },
+            {
+                id: 'physics-work-energy',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'עבודה ואנרגיה מכנית',
+                icon: 'fa-battery-full',
+                slides: [{ stepBadge: 'עבודה ואנרגיה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">W = F × d</h3><p class="text-slate-600">אנרגיה קינטית (תנועה) ואנרגיה פוטנציאלית (גובה).</p>` }],
+                quiz: [{ question: 'איזו אנרגיה יש לאבן המונחת בראש הר גבוה?', options: ['אנרגיה פוטנציאלית (גובה)', 'אנרגיה קינטית (תנועה)', 'אנרגיית חום'], correctIndex: 0, hints: ['רמז: בשל מיקומה בגובה.'], explanation: 'נכון! אנרגיה פוטנציאלית מוקנית מגובה.' }]
+            },
+            {
+                id: 'physics-density',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'צפיפות ומסה סגולית',
+                icon: 'fa-weight-hanging',
+                slides: [{ stepBadge: 'צפיפות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">ρ = m / V</h3><p class="text-slate-600">צפיפות = מסה חלקי נפח.</p>` }],
+                quiz: [{ question: 'חומר שמסתו 20 גרם ונפחו 10 סמ"ק - מהי צפיפותו?', options: ['2 גרם/סמ"ק', '200 גרם/סמ"ק', '0.5 גרם/סמ"ק'], correctIndex: 0, hints: ['רמז: 20 חלקי 10.'], explanation: 'נכון! 20/10 = 2.' }]
+            },
+            {
+                id: 'physics-pressure',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'לחץ וחוק פסקל',
+                icon: 'fa-compress',
+                slides: [{ stepBadge: 'לחץ P = F / A', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">לחץ במוצקים ובנוזלים</h3><p class="text-slate-600">לחץ הינו כוח המופעל על יחידת שטח.</p>` }],
+                quiz: [{ question: 'כאשר מקטינים את השטח שעליו מופעל כוח, מה קורה ללחץ?', options: ['הלחץ גדל', 'הלחץ קטן', 'הלחץ נשאר ללא שינוי'], correctIndex: 0, hints: ['רמז: עקב החילוק בשטח קטן יותר.'], explanation: 'נכון! השטח הקטן מגדיל את הלחץ.' }]
+            },
+            {
+                id: 'physics-electricity',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'חשמליות וחוק אוהם (V = I × R)',
+                icon: 'fa-plug-circle-bolt',
+                slides: [{ stepBadge: 'מעגל חשמלי', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מתח, זרם והתנגדות</h3><p class="text-slate-600">V (מתח) = I (זרם) × R (התנגדות).</p>` }],
+                quiz: [{ question: 'אם המתח במעגל הוא 12V וההתנגדות 4 Ohm, מהו הזרם (I)?', options: ['3 אמפר', '48 אמפר', '16 אמפר'], correctIndex: 0, hints: ['רמז: זרם = מתח חלקי התנגדות (12/4).'], explanation: 'נכון! 12 / 4 = 3A.' }]
+            },
+            {
+                id: 'physics-optics',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'אופטיקה: החזרה ושבירת אור',
+                icon: 'fa-lightbulb',
+                slides: [{ stepBadge: 'חוק החזרת האור', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">זווית פגיעה = זווית החזרה</h3><p class="text-slate-600">התנהגות קרני אור במעבר בין תווכים.</p>` }],
+                quiz: [{ question: 'מה קורה לקרן אור המועברת מאוויר לתוך מים?', options: ['שבירה (שינוי כיוון)', 'היא נעלמת', 'היא נעה בקו ישר לחלוטין ללא שינוי'], correctIndex: 0, hints: ['רמז: שינוי צפיפות התווך גורם לשבירה.'], explanation: 'נכון! קרן האור נשברת.' }]
+            },
+            {
+                id: 'physics-heat',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'תרמודינמיקה ומעברי חום',
+                icon: 'fa-temperature-high',
+                slides: [{ stepBadge: 'מעבר חום', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">הולכה, הסעה וקרינה</h3><p class="text-slate-600">חום עובר תמיד מגוף חם יותר לגוף קר יותר.</p>` }],
+                quiz: [{ question: 'באיזה אופן מגיע חום השמש לכדור הארץ דרך הריק בחלל?', options: ['קרינה', 'הולכה', 'הסעה'], correctIndex: 0, hints: ['רמז: בריק אין חלקיקים להולכה, לכן זה עובר בקרינה.'], explanation: 'נכון! קרינה אלקטרומגנטית.' }]
+            },
+            {
+                id: 'physics-simple-machines',
+                categoryId: 'physics',
+                subject: 'פיזיקה',
+                title: 'מכונות פשוטות (מנוף וגלגלת)',
+                icon: 'fa-gears',
+                slides: [{ stepBadge: 'רווח מכני', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חוק המנוף</h3><p class="text-slate-600">כוח × זרוע הכוח = משא × זרוע המשא.</p>` }],
+                quiz: [{ question: 'כיצד מנוף עוזר לנו להרים משא כבד?', options: ['על ידי הגדלת זרוע הכוח (הארכת המרחק)', 'על ידי הפחתת המסה', 'על ידי ביטול הכבידה'], correctIndex: 0, hints: ['רמז: ככל שהזרוע ארוכה יותר מופעל פחות כוח.'], explanation: 'נכון! הארכת הזרוע מעניקה רווח מכני.' }]
+            },
+
+            // ==================== מדעים (10+ נושאים) ====================
+            {
+                id: 'science-water-cycle',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מחזור המים בטבע',
+                icon: 'fa-cloud-rain',
+                slides: [{ stepBadge: 'תופעות טבע', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">אידוי, עיבוי, משקעים</h3><p class="text-slate-600">תנועת המים בכדור הארץ.</p>` }],
+                quiz: [{ question: 'מהו התהליך שבו אדי מים הופכים לטיפות נוזל בעננים?', options: ['עיבוי', 'אידוי', 'חלחול'], correctIndex: 0, hints: ['רמז: מגז לנוזל.'], explanation: 'נכון! עיבוי.' }]
+            },
+            {
+                id: 'science-states-of-matter',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מצבי צבירה ומעברים',
+                icon: 'fa-icicles',
+                slides: [{ stepBadge: 'מוצק, נוזל, גז', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">שינויי מצב צבירה</h3><p class="text-slate-600">התכה, הקפאה, אידוי ועיבוי.</p>` }],
+                quiz: [{ question: 'מה נקרא המעבר ממוצק לנוזל?', options: ['התכה', 'קיפאון', 'התאיידות'], correctIndex: 0, hints: ['רמז: קרח שנמס.'], explanation: 'נכון! התכה.' }]
+            },
+            {
+                id: 'science-photosynthesis',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'פוטוסינתזה בצמחים',
+                icon: 'fa-leaf',
+                slides: [{ stepBadge: 'הזנת הצמח', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">יצירת מזון מאור השמש</h3><p class="text-slate-600">פחמן דו-חמצני + מים + אור שמש -> סוכר + חמצן.</p>` }],
+                quiz: [{ question: 'איזה גז נפלט מהצמח בתהליך הפוטוסינתזה?', options: ['חמצן', 'פחמן דו-חמצני', 'חנקן'], correctIndex: 0, hints: ['רמז: הגז החיוני לנשימת בעלי החיים.'], explanation: 'נכון! הצמח פולט חמצן.' }]
+            },
+            {
+                id: 'science-cell-structure',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מבנה התא החי',
+                icon: 'fa-dna',
+                slides: [{ stepBadge: 'יחידת החיים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">אברוני התא</h3><p class="text-slate-600">גרעין התא, ציטופלזמה, קרום התא ומייטוכונדריה.</p>` }],
+                quiz: [{ question: 'איזה אברון בתא מכיל את החומר התורשתי (DNA)?', options: ['גרעין התא', 'קרום התא', 'דופן התא'], correctIndex: 0, hints: ['רמז: מרכז השליטה והפיקוד של התא.'], explanation: 'נכון! גרעין התא.' }]
+            },
+            {
+                id: 'science-human-digestion',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מערכת העיכול בגוף האדם',
+                icon: 'fa-utensils',
+                slides: [{ stepBadge: 'פירוק המזון', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">תחנות העיכול</h3><p class="text-slate-600">פה, קיבה, מעי דק ומעי גס.</p>` }],
+                quiz: [{ question: 'באיזה איבר מתרחש עיקר פירוק המזון וספיגת רכיבי התזונה לדם?', options: ['המעי הדק', 'הפה', 'המעי הגס'], correctIndex: 0, hints: ['רמז: הצינור הארוך שבו נספגים אבות המזון.'], explanation: 'נכון! המעי הדק.' }]
+            },
+            {
+                id: 'science-solar-system',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מערכת השמש וכוכבי הלכת',
+                icon: 'fa-globe',
+                slides: [{ stepBadge: 'אסטרונומיה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">סביב השמש</h3><p class="text-slate-600">כוכבי הלכת הסובבים את השמש במסלולם.</p>` }],
+                quiz: [{ question: 'איזה כוכב לכת הוא הקרוב ביותר לשמש?', options: ['כוכב חמה (מרקורי)', 'מאדים', 'כדור הארץ'], correctIndex: 0, hints: ['רמז: חמה מלשון חום השמש.'], explanation: 'נכון! כוכב חמה.' }]
+            },
+            {
+                id: 'science-ecosystem',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מערכות אקולוגיות ושרשרת המזון',
+                icon: 'fa-tree',
+                slides: [{ stepBadge: 'אקולוגיה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">יצרנים, צרכנים ומפרקים</h3><p class="text-slate-600">קשרי הגומלין בין יצורים חיים לסביבתם.</p>` }],
+                quiz: [{ question: 'מי נמצא בתחילת כל שרשרת מזון ביבשה?', options: ['הצמחים (היצרנים)', 'הטורפים', 'החיידקים'], correctIndex: 0, hints: ['רמז: היצורים שמפיקים מזון מאור השמש.'], explanation: 'נכון! הצמחים המייצרים מזון.' }]
+            },
+            {
+                id: 'science-elements-periodic',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'יסודות, תרכובות ותערובות',
+                icon: 'fa-atom',
+                slides: [{ stepBadge: 'כימיה בסיסית', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חלקיקי החומר</h3><p class="text-slate-600">אטומים, מולקולות וטבלת היסודות.</p>` }],
+                quiz: [{ question: 'מהי מים (H2O)?', options: ['תרכובת של חמצן ומימן', 'יסוד בודד', 'תערובות גזים'], correctIndex: 0, hints: ['רמז: מורכבים משני יסודות קשורים יחד.'], explanation: 'נכון! תרכובת של מימן וחמצן.' }]
+            },
+            {
+                id: 'science-respiration',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מערכת הנשימה וחילוף גזים',
+                icon: 'fa-lungs',
+                slides: [{ stepBadge: 'נשימה תאית', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">קליטת חמצן ופליטת פחמן דו-חמצני</h3><p class="text-slate-600">ריאות, נאדיות הריאה ומחזור הדם.</p>` }],
+                quiz: [{ question: 'איפה מתרחש חילוף הגזים (חמצן ופחמן דו-חמצני) בריאות?', options: ['בנאדיות הריאה', 'בקנה הנשימה', 'בסרעפת'], correctIndex: 0, hints: ['רמז: השקיקים הזעירים שבקצה הריאות.'], explanation: 'נכון! בנאדיות הריאה.' }]
+            },
+            {
+                id: 'science-magnetism',
+                categoryId: 'science',
+                subject: 'מדעים',
+                title: 'מגנטיות ושדות מגנטיים',
+                icon: 'fa-magnet',
+                slides: [{ stepBadge: 'כוחות מגנטיים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">קוטב צפון וקוטב דרום</h3><p class="text-slate-600">קוטבים זהים דוחים, קוטבים מנוגדים נמשכים.</p>` }],
+                quiz: [{ question: 'מה קורה כשמקרבים קוטב צפון של מגנט אחד לקוטב צפון של מגנט שני?', options: ['הם דוחים זה את זה', 'הם נמשכים זה לזה', 'שום דבר לא קורה'], correctIndex: 0, hints: ['רמז: קוטבים דומים דוחים.'], explanation: 'נכון! קוטבים זהים נדחים.' }]
+            },
+
+            // ==================== תורה (10+ נושאים) ====================
+            {
+                id: 'torah-bereshit',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'סדר בריאת העולם (בראשית)',
+                icon: 'fa-scroll',
+                slides: [{ stepBadge: 'ששת ימי בראשית', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">בריאת העולם</h3><p class="text-slate-600">סדר הנבראים בכל יום.</p>` }],
+                quiz: [{ question: 'מה נברא ביום הראשון לבריאה?', options: ['האור', 'השמש והירח', 'האילנות'], correctIndex: 0, hints: ['רמז: "ויאמר אלקים יהי..."'], explanation: 'נכון! האור.' }]
+            },
+            {
+                id: 'torah-noach',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'פרשת נח - התיבה והמבול',
+                icon: 'fa-ship',
+                slides: [{ stepBadge: 'דור המבול', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">נח ובניית התיבה</h3><p class="text-slate-600">הצלת נח ובעלי החיים ואות הקשת בענן.</p>` }],
+                quiz: [{ question: 'מה היה האות שנתן ה\' לנח שלא יביא עוד מבול לכרות את הארץ?', options: ['הקשת בענן', 'יונה עם עלה זית', 'עמוד האש'], correctIndex: 0, hints: ['רמז: "את קשתי נתתי בענן..."'], explanation: 'נכון! הקשת בענן.' }]
+            },
+            {
+                id: 'torah-avot',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'פרשת לך לך - מסעות אברהם אבינו',
+                icon: 'fa-people-roof',
+                slides: [{ stepBadge: 'אבות האומה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">"לך לך מארצך"</h3><p class="text-slate-600">ציווי ה\' לאברהם וההבטחה על הארץ.</p>` }],
+                quiz: [{ question: 'לאיזו ארץ הצטווה אברהם אבינו ללכת?', options: ['ארץ כנען', 'מצרים', 'בבל'], correctIndex: 0, hints: ['רמז: הארץ המובטחת.'], explanation: 'נכון! ארץ כנען.' }]
+            },
+            {
+                id: 'torah-yitzchak',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'תולדות יצחק וחפירת הבארות',
+                icon: 'fa-water',
+                slides: [{ stepBadge: 'מידת הגבורה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חפירת הבארות בגרר</h3><p class="text-slate-600">עשק, שטנה ורחובות.</p>` }],
+                quiz: [{ question: 'מה היה שמה של הבאר השלישית שחפר יצחק שבעקבותיה אמר "כי עתה הרחיב ה\' לנו"?', options: ['רחובות', 'עשק', 'שטנה'], correctIndex: 0, hints: ['רמז: מלשון הרחיב.'], explanation: 'נכון! רחובות.' }]
+            },
+            {
+                id: 'torah-yaakov-esav',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'יעקב ועשו - הבכורה והברכות',
+                icon: 'fa-handshake-angle',
+                slides: [{ stepBadge: 'מכירת הבכורה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">נזיד העדשים והברכות</h3><p class="text-slate-600">מכירת הבכורה וקבלת ברכות יצחק.</p>` }],
+                quiz: [{ question: 'תמורת מה מכר עשו את בכורתו ליעקב?', options: ['נזיד עדשים אדום', 'כסף וזהב', 'צאן ובקר'], correctIndex: 0, hints: ['רמז: "הלעיטני נא מן האדום האדום הזה..."'], explanation: 'נכון! תמורת נזיד עדשים.' }]
+            },
+            {
+                id: 'torah-yossef',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'יוסף ואחיו - חלומות ומכירה',
+                icon: 'fa-shirt',
+                slides: [{ stepBadge: 'חלומות יוסף', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חלומות האלומות והכוכבים</h3><p class="text-slate-600">כתונת הפסים, ירידת יוסף למצרים ופתרון החלומות.</p>` }],
+                quiz: [{ question: 'מה פתר יוסף בחלומות פרעה על 7 הפרות השמנות והרזות?', options: ['7 שני שבע ו-7 שני רעב', '7 שנים של מלחמה', '7 מלכים'], correctIndex: 0, hints: ['רמז: תקופה של שפע ואחריה מחסור במזון.'], explanation: 'נכון! 7 שני שבע ו-7 שני רעב.' }]
+            },
+            {
+                id: 'torah-shemot-moshe',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'ספר שמות - לידת משה והסנה הבוער',
+                icon: 'fa-fire',
+                slides: [{ stepBadge: 'התגלות ה\' למשה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">הסנה איננו אוכל</h3><p class="text-slate-600">הבטחת הגאולה ושליחות משה אל פרעה.</p>` }],
+                quiz: [{ question: 'באיזה הר ראה משה את הסנה הבוער באש והסנה איננו אוכל?', options: ['הר חורב (סיני)', 'הר נבו', 'הר הכרמל'], correctIndex: 0, hints: ['רמז: הר האלקים.'], explanation: 'נכון! הר חורב.' }]
+            },
+            {
+                id: 'torah-plagues',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'עשר המכות ומכת בכורות',
+                icon: 'fa-locust',
+                slides: [{ stepBadge: 'יציאת מצרים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">ד"ם צפרדֵע כנים...</h3><p class="text-slate-600">עשר המכות שהביא הקב"ה על מצרים.</p>` }],
+                quiz: [{ question: 'מה הייתה המכה הראשונה מבין עשר המכות במצרים?', options: ['מכת דם', 'מכת צפרדע', 'מכת חושך'], correctIndex: 0, hints: ['רמז: מה שנהפך מימי הנילוס.'], explanation: 'נכון! המכה הראשונה הייתה דם.' }]
+            },
+            {
+                id: 'torah-matan-torah',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'מתן תורה ועשרת הדיברות',
+                icon: 'fa-tablets',
+                slides: [{ stepBadge: 'מעמד הר סיני', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">קבלת התורה בהר סיני</h3><p class="text-slate-600">עשרת הדיברות על לוחות האבן.</p>` }],
+                quiz: [{ question: 'איזו דיברה עוסקת בכבוד הורים בעשרת הדיברות?', options: ['כבד את אביך ואת אמך', 'זכור את יום השבת', 'לא תגנוב'], correctIndex: 0, hints: ['רמז: הציווי לכבד את האבא והאמא.'], explanation: 'נכון! "כבד את אביך ואת אמך".' }]
+            },
+            {
+                id: 'torah-mishkan',
+                categoryId: 'torah',
+                subject: 'תורה',
+                title: 'המשכן וכליו במדבר',
+                icon: 'fa-tent',
+                slides: [{ stepBadge: 'קודש הקדשים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">ארון הברית, המנורה והשולחן</h3><p class="text-slate-600">בניית המשכן במדבר על ידי בצלאל בן אורי.</p>` }],
+                quiz: [{ question: 'מי היה האומן הראשי שנבחר לבנות את המשכן וכליו?', options: ['בצלאל בן אורי', 'יהושע בן נון', 'אהרן הכהן'], correctIndex: 0, hints: ['רמז: משבט יהודה, מלא בחכמה ותבונה.'], explanation: 'נכון! בצלאל בן אורי.' }]
+            },
+
+            // ==================== נביא (10+ נושאים) ====================
+            {
+                id: 'navi-yehoshua',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'ספר יהושע - הכניסה לארץ',
+                icon: 'fa-book-bookmark',
+                slides: [{ stepBadge: 'הנהגת יהושע', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חציית הירדן</h3><p class="text-slate-600">כניסת בני ישראל לארץ בהנהגת יהושע.</p>` }],
+                quiz: [{ question: 'איזה נהר חצו בני ישראל בכניסה לארץ?', options: ['נהר הירדן', 'נהר פרת', 'נילוס'], correctIndex: 0, hints: ['רמז: הנהר במזרח הארץ.'], explanation: 'נכון! נהר הירדן.' }]
+            },
+            {
+                id: 'navi-jericho',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'כיבוש יריחו וחומותיה',
+                icon: 'fa-bullhorn',
+                slides: [{ stepBadge: 'כיבוש יריחו', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">סביב חומות יריחו</h3><p class="text-slate-600">שבעת הימים, תקיעת השופרות ונפילת החומה.</p>` }],
+                quiz: [{ question: 'כמה פעמים סבבו בני ישראל את חומת יריחו ביום השביעי?', options: ['7 פעמים', 'פעם אחת', '12 פעמים'], correctIndex: 0, hints: ['רמז: כמנין ימי השבוע.'], explanation: 'נכון! ביום השביעי סבבו 7 פעמים.' }]
+            },
+            {
+                id: 'navi-shoftim-devorah',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'ספר שופטים - דבורה הנביאה וברק',
+                icon: 'fa-shield-halved',
+                slides: [{ stepBadge: 'תקופת השופטים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">הניצחון על סיסרא</h3><p class="text-slate-600">מלחמת הר תבור ושירת דבורה.</p>` }],
+                quiz: [{ question: 'תחת איזה אילן הייתה יושבת דבורה הנביאה לשפוט את ישראל?', options: ['תומר דבורה', 'אלון מורה', 'זית'], correctIndex: 0, hints: ['רמז: נקרא על שמה.'], explanation: 'נכון! תחת תומר דבורה.' }]
+            },
+            {
+                id: 'navi-gideon',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'גדעון השופט וניצחון 300 הלוחמים',
+                icon: 'fa-vessel-drinking',
+                slides: [{ stepBadge: 'המבחן במים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מבחן הלקוק במים</h3><p class="text-slate-600">בחירת 300 הלוחמים והכנעת מדיין.</p>` }],
+                quiz: [{ question: 'איזה כלי החזיקו לוחמי גדעון בידם יחד עם השופרות בעת ההתקפה?', options: ['כדים ולפידים בתוכם', 'חרבות זהב', 'קשתות וחצים'], correctIndex: 0, hints: ['רמז: כדים ריקים ובתוכם אור.'], explanation: 'נכון! כדים ולפידים.' }]
+            },
+            {
+                id: 'navi-shimshon',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'שמשון הגיבור ועלילותיו',
+                icon: 'fa-hand-fist',
+                slides: [{ stepBadge: 'נזיר אלקים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">גבורת שמשון במועצת פלשתים</h3><p class="text-slate-600">החידה, כוחו בשערו והושעת ישראל.</p>` }],
+                quiz: [{ question: 'במה היה תלוי כוחו המיוחד של שמשון?', options: ['בשיער ראשו (נזירותו)', 'בחרבו', 'בטבעת מלוכה'], correctIndex: 0, hints: ['רמז: מחלפות ראשו שלא עלה עליהן תער.'], explanation: 'נכון! בשערו.' }]
+            },
+            {
+                id: 'navi-shmuel-call',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'ספר שמואל - הקדשת שמואל הנביא',
+                icon: 'fa-person-praying',
+                slides: [{ stepBadge: 'משכן שילה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">קריאת ה\' לשמואל בנהורו</h3><p class="text-slate-600">"דבר כי שומע עבדך".</p>` }],
+                quiz: [{ question: 'מי היה הכהן הגדול במשכן שילה שגידל את שמואל הנער?', options: ['עלי הכהן', 'פנחס', 'אלעזר'], correctIndex: 0, hints: ['רמז: הכהן שבירך את חנה.'], explanation: 'נכון! עלי הכהן.' }]
+            },
+            {
+                id: 'navi-shaul-king',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'המלך הראשון - המלכת שאול',
+                icon: 'fa-crown',
+                slides: [{ stepBadge: 'ראשית המלוכה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חיפוש האתונות והמלכת שאול</h3><p class="text-slate-600">משחיחת שאול למלך על ידי שמואל הנביא.</p>` }],
+                quiz: [{ question: 'מאיזה שבט הגיע שאול המלך?', options: ['בנימין', 'יהודה', 'אפרים'], correctIndex: 0, hints: ['רמז: השבט הקטן בנחלות.'], explanation: 'נכון! משבט בנימין.' }]
+            },
+            {
+                id: 'navi-david-goliath',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'דוד וגוליית בעמק האלה',
+                icon: 'fa-gem',
+                slides: [{ stepBadge: 'ניצחון האמונה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חלוקי הנחל והקלע</h3><p class="text-slate-600">גבורת דוד הרועה מול גוליית הפלשתי.</p>` }],
+                quiz: [{ question: 'באיזה כלי נשק השתמש דוד כדי להכריע את גוליית?', options: ['מקל וקלע עם אבנים', 'רומח כבד', 'חרב פיפיות'], correctIndex: 0, hints: ['רמז: 5 חלוקי נחל מן הנחל.'], explanation: 'נכון! קלע ואבנים.' }]
+            },
+            {
+                id: 'navi-shlomo-wisdom',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'שלמה המלך ובניין בית המקדש',
+                icon: 'fa-building-columns',
+                slides: [{ stepBadge: 'חכמת שלמה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">בניין הבית הראשון בירושלים</h3><p class="text-slate-600">משפט שלמה ובניין בית המקדש הראשון.</p>` }],
+                quiz: [{ question: 'כמה שנים נמשך בניין בית המקדש הראשון על ידי שלמה המלך?', options: ['7 שנים', '40 שנה', '10 שנים'], correctIndex: 0, hints: ['רמז: כמנין ימי השבוע בחישוב שנים.'], explanation: 'נכון! 7 שנים.' }]
+            },
+            {
+                id: 'navi-eliyahu-carmel',
+                categoryId: 'navi',
+                subject: 'נביא',
+                title: 'אליהו הנביא במבחן הר הכרמל',
+                icon: 'fa-fire-flame-curved',
+                slides: [{ stepBadge: 'אליהו בהר הכרמל', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">אש מן השמים</h3><p class="text-slate-600">המבחן מול נביאי הבעל והכרזת "ה\' הוא האלקים".</p>` }],
+                quiz: [{ question: 'מה אמרו כל העם כשראו את האש יורדת על המזבח של אליהו?', options: ['"ה\' הוא האלקים!"', '"הורדנו גשם!"', '"נעשה ונשמע!"'], correctIndex: 0, hints: ['רמז: ההכרזה שאנו אומרים בסוף יום כיפור.'], explanation: 'נכון! "ה\' הוא האלקים".' }]
+            },
+
+            // ==================== משנה (10+ נושאים) ====================
+            {
+                id: 'mishna-brachot',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת ברכות - זמני קריאת שמע',
+                icon: 'fa-book-open',
+                slides: [{ stepBadge: 'סדר זרעים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מאימתי קורין את שמע?</h3><p class="text-slate-600">זמני קריאת שמע של ערבית ושל שחרית.</p>` }],
+                quiz: [{ question: 'מהי המסכת הפותחת את ששת סדרי משנה?', options: ['מסכת ברכות', 'מסכת פאה', 'מסכת שבת'], correctIndex: 0, hints: ['רמז: הראשונה בסדר זרעים.'], explanation: 'נכון! מסכת ברכות.' }]
+            },
+            {
+                id: 'mishna-peah',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת פאה - מתנות עניים',
+                icon: 'fa-wheat-awn',
+                slides: [{ stepBadge: 'מתנות עניים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פאה, לקט ושכחה</h3><p class="text-slate-600">השארת פינת השדה והשיבולים לעניים.</p>` }],
+                quiz: [{ question: 'מהי "פאה" לפי המשנה?', options: ['פינת השדה שמשאירים לעניים בעת הקציר', 'מעשר שני', 'ביכורים'], correctIndex: 0, hints: ['רמז: קצה ופינה בשדה.'], explanation: 'נכון! פינת השדה שנשארת לעניים.' }]
+            },
+            {
+                id: 'mishna-bikkurim',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת ביכורים - הובלת הביכורים למקדש',
+                icon: 'fa-basket-shopping',
+                slides: [{ stepBadge: 'ראשית הפרי', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פירות שבעת המינים</h3><p class="text-slate-600">הבאת הביכורים לירושלים בשמחה ובחליל.</p>` }],
+                quiz: [{ question: 'מאיזה פירות מביאים ביכורים למקדש?', options: ['משבעת המינים בלבד', 'מכל פרי שגדל', 'מפירות הדר'], correctIndex: 0, hints: ['רמז: ארץ חיטה ושעורה וגפן...'], explanation: 'נכון! משבעת המינים ששתובחה בהם ארץ ישראל.' }]
+            },
+            {
+                id: 'mishna-shabbat-malachot',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת שבת - ל"ט אבות מלאכות',
+                icon: 'fa-hands-holding',
+                slides: [{ stepBadge: 'סדר מועד', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">39 אבות מלאכה</h3><p class="text-slate-600">אפות מלאכה הלמדות ממלאכת המשכן.</p>` }],
+                quiz: [{ question: 'כמה אבות מלאכות נמנו במשנה במסכת שבת?', options: ['39 (ל"ט)', '40', '30'], correctIndex: 0, hints: ['רמז: ארבעים חסר אחת.'], explanation: 'נכון! 39 מלאכות.' }]
+            },
+            {
+                id: 'mishna-pesachim',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת פסחים - בדיקת חמץ וליל הסדר',
+                icon: 'fa-bread-slice',
+                slides: [{ stepBadge: 'ליל ארבעה עשר', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">"אור לארבעה עשר בודקין את החמץ"</h3><p class="text-slate-600">בדיקת חמץ לאור הנר וסדר ליל הפסח.</p>` }],
+                quiz: [{ question: 'באיזה אור בודקים את החמץ בליל ארבעה עשר?', options: ['לאור הנר', 'לאור השמש', 'לאור הירח בלבד'], correctIndex: 0, hints: ['רמז: נר יחיד המאיר בחורים ובסדקים.'], explanation: 'נכון! לאור הנר.' }]
+            },
+            {
+                id: 'mishna-yoma',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת יומא - עבודת כהן גדול ביום הכיפורים',
+                icon: 'fa-synagogue',
+                slides: [{ stepBadge: 'אחת בשנה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">קודש הקדשים</h3><p class="text-slate-600">סדר עבודת יום הכיפורים בבית המקדש.</p>` }],
+                quiz: [{ question: 'כמה פעמים נכנס כהן גדול לקודש הקדשים ביום הכיפורים?', options: ['4 פעמים', 'פעם אחת', '7 פעמים'], correctIndex: 0, hints: ['רמז: נכנס בקטורת, בדם הפר, בדם השעיר ובפציעת הכף והמחתה.'], explanation: 'נכון! 4 פעמים.' }]
+            },
+            {
+                id: 'mishna-succah',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת סוכה - הלכות סוכה וארבעת המינים',
+                icon: 'fa-campground',
+                slides: [{ stepBadge: 'סוכה כשרה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">סוכה שהיא גבוהה למעלה מעשרים אמה</h3><p class="text-slate-600">כללי הסכך, הדפנות ונטילת לולב.</p>` }],
+                quiz: [{ question: 'איזה מבין ארבעת המינים נמשל למי שיש בו טעם וריח (תורה ומעשים טובים)?', options: ['אתרוג', 'לולב', 'הדס'], correctIndex: 0, hints: ['רמז: פרי עץ הדר שנאכל ויש לו ריח טוב.'], explanation: 'נכון! האתרוג.' }]
+            },
+            {
+                id: 'mishna-rosh-hashana',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת ראש השנה - קידוש החודש ותקיעת שופר',
+                icon: 'fa-bullhorn',
+                slides: [{ stepBadge: 'ארבעה ראשי שנים', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">קבלת עדים וסדר התקיעות</h3><p class="text-slate-600">ראיית הלבנה החדשה ותקיעה בשופר של איל.</p>` }],
+                quiz: [{ question: 'מאיזה קרן של בעל חיים עושים שופר כשר לראש השנה?', options: ['איל (כבש)', 'פר', 'צבי'], correctIndex: 0, hints: ['רמז: זכר לאילו של יצחק.'], explanation: 'נכון! שופר של איל.' }]
+            },
+            {
+                id: 'mishna-sanhedrin',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'מסכת סנהדרין - בתי דין ודיני נפשות',
+                icon: 'fa-gavel',
+                slides: [{ stepBadge: 'סדר נזיקין', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">סנהדרין גדולה וסנהדרין קטנה</h3><p class="text-slate-600">הרכב השופטים (23 ו-71) וחקירת עדים.</p>` }],
+                quiz: [{ question: 'כמה שופטים היו מכהנים בסנהדרין הגדולה בירושלים?', options: ['71 שופטים', '23 שופטים', '3 שופטים'], correctIndex: 0, hints: ['רמז: כמנין הזקנים שגרף משה במדבר + משה.'], explanation: 'נכון! 71 שופטים.' }]
+            },
+            {
+                id: 'mishna-avot-morals',
+                categoryId: 'mishna',
+                subject: 'משנה',
+                title: 'פרקי אבות - מוסר ומידות טובות',
+                icon: 'fa-heart',
+                slides: [{ stepBadge: 'דרך ארץ', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">"משה קיבל תורה מסיני..."</h3><p class="text-slate-600">מאמרי חז"ל על אהבת התורה, כבוד חברים ומידות.</p>` }],
+                quiz: [{ question: 'איזה חכם אמר: "אם אין אני לי, מי לי? וכשאני לעצמי, מה אני?"', options: ['הלל הזקן', 'שמאי', 'רבי עקיבא'], correctIndex: 0, hints: ['רmז: זוגו של שמאי.'], explanation: 'נכון! הלל הזקן.' }]
+            },
+
+            // ==================== גמרא (10+ נושאים) ====================
+            {
+                id: 'gemara-bava-metzia',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת בבא מציעא - אלו מציאות',
+                icon: 'fa-book-atlas',
+                slides: [{ stepBadge: 'אבדה ומציאה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">פרק שני - אלו מציאות</h3><p class="text-slate-600">כללי השבת אבידה וזיהוי סימנים בחפץ שנמצא.</p>` }],
+                quiz: [{ question: 'מה מחייב את המוצא אבדה להכריז עליה?', options: ['אם יש בה סימן', 'אם היא חסרת ערך', 'אם מצאה בים'], correctIndex: 0, hints: ['רמז: דבר שיכול להוכיח בעלות.'], explanation: 'נכון! מציאה שיש בה סימן.' }]
+            },
+            {
+                id: 'gemara-shnayim-ochazin',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'בבא מציעא - "שניים אוחזין בטלית"',
+                icon: 'fa-hand-holding-hand',
+                slides: [{ stepBadge: 'פתחי המסכת', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">זה אומר אני מצאתיה וזה אומר אני מצאתיה</h3><p class="text-slate-600">שבועה וחלוקת הטלית בין שני הצדדים.</p>` }],
+                quiz: [{ question: 'כאשר שניים אוחזים בטלית וכל אחד טוען "כולה שלי", כיצד נפסק הדין?', options: ['יחלוקו (חצי חצי בשבועה)', 'הראשון מקבל הכל', 'משליכים אותה'], correctIndex: 0, hints: ['רמז: חלוקה שווה ביניהם.'], explanation: 'נכון! יחלוקו.' }]
+            },
+            {
+                id: 'gemara-bava-kama-avot',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת בבא קמא - ארבעה אבות נזיקין',
+                icon: 'fa-triangle-exclamation',
+                slides: [{ stepBadge: 'דיני ממונות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">שור, בור, מבעה והבאר</h3><p class="text-slate-600">ארבעת אבות הנזיקין והאחריות לנזק.</p>` }],
+                quiz: [{ question: 'איזה אב נזיקין מדובר על חפירות בור ברשות הרבים שהזיק?', options: ['בור', 'שור', 'הבאר'], correctIndex: 0, hints: ['רמז: חפירה באדמה.'], explanation: 'נכון! אב נזיקין בור.' }]
+            },
+            {
+                id: 'gemara-brachot-tefillah',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת ברכות - "תפילות אבות תיקנון"',
+                icon: 'fa-synagogue',
+                slides: [{ stepBadge: 'מקור התפילות', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מתי תוקנו 3 התפילות?</h3><p class="text-slate-600">מחלוקת רבי יוסי ברבי חנינא ורבי יהושע בן לוי.</p>` }],
+                quiz: [{ question: 'לפי הדעה ש"תפילות אבות תיקנון", מי תיקן תפילת שחרית?', options: ['אברהם אבינו', 'יצחק אבינו', 'יעקב אבינו'], correctIndex: 0, hints: ['רמז: "וישכם אברהם בבקר..."'], explanation: 'נכון! אברהם אבינו.' }]
+            },
+            {
+                id: 'gemara-shabbat-chanukah',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת שבת - סוגיית "מאי חנוכה?"',
+                icon: 'fa-candlestick-holder',
+                slides: [{ stepBadge: 'נס פך השמן', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מאי חנוכה?</h3><p class="text-slate-600">כניסת חשמונאים למקדש, נס פך השמן וקביעת 8 ימי חנוכה.</p>` }],
+                quiz: [{ question: 'כמה ימים דלק פך השמן שהיה אמור להספיק ליום אחד בלבד?', options: ['8 ימים', '7 ימים', '10 ימים'], correctIndex: 0, hints: ['רמז: כמנין ימי חג החנוכה.'], explanation: 'נכון! 8 ימים.' }]
+            },
+            {
+                id: 'gemara-pesachim-chametz',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת פסחים - ביטול חמץ ובודקין',
+                icon: 'fa-fire-burner',
+                slides: [{ stepBadge: 'בל יראה ובל ימצא', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">ביטול בלב וביעור בפועל</h3><p class="text-slate-600">גדר חובת בדיקת חמץ מדרבנן ומדאורייתא.</p>` }],
+                quiz: [{ question: 'מדוע צריך לבטל את החמץ בלב בנוסף לבדיקתו וביעורו?', options: ['שמא נשאר חמץ שלא מצאנו', 'כדי לחסוך בדיקה', 'זה במקום הבדיקה'], correctIndex: 0, hints: ['רמז: חשש שמא יש חמץ נסתר שלא ראינו.'], explanation: 'נכון! שמא ימצא חמץ שלא שמנו לב אליו.' }]
+            },
+            {
+                id: 'gemara-rosh-hashana-shofar',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת ראש השנה - סדר תקיעות שופר',
+                icon: 'fa-music',
+                slides: [{ stepBadge: 'תקיעה שברים תרועה', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">שיעור תקיעות ותרועה</h3><p class="text-slate-600">מבנה מאה תקיעות וסדר התקיעות במלכויות זכרונות ושופרות.</p>` }],
+                quiz: [{ question: 'מהי היללה הקטועה נקוטה במשנה (גנזת/יבבה)?', options: ['תרועה', 'תקיעה', 'פשוטה'], correctIndex: 0, hints: ['רמז: קולות קצרים ורצופים.'], explanation: 'נכון! תרועה.' }]
+            },
+            {
+                id: 'gemara-kiddushin-mitvot',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת קידושין - מצוות האב על הבן',
+                icon: 'fa-child',
+                slides: [{ stepBadge: 'חיוב האב לבנו', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">חובות הורים בלמידה ובחינוך</h3><p class="text-slate-600">למדו תורה, אומנות (מקצוע) ודרך ארץ.</p>` }],
+                quiz: [{ question: 'מה מהדברים הבאים הוא מחיוב האב ללמד את בנו לפי הגמרא?', options: ['ללמדו תורה ואומנות (מקצוע)', 'ללמדו לשנגן בכינור', 'ללמדו לצייר'], correctIndex: 0, hints: ['רמז: מקצוע להתפרנס ממנו בכבוד.'], explanation: 'נכון! תורה ואומנות (מקצוע).' }]
+            },
+            {
+                id: 'gemara-gittin-kamza',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת גיטין - אגדות החורבן (קמצה ובר קמצה)',
+                icon: 'fa-land-mine-on',
+                slides: [{ stepBadge: 'חורבן הבית', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">על קמצה ובר קמצה חרבה ירושלים</h3><p class="text-slate-600">זהירות משנאת חינם וחשיבות השלום והסבלנות.</p>` }],
+                quiz: [{ question: 'איזו מידה רעה הובילה לחורבן בית המקדש השני לפי סוגיית הגמרא?', options: ['שנאת חינם', 'גזל', 'עצלות'], correctIndex: 0, hints: ['רמז: הבושה והאיבה בין אדם לחברו.'], explanation: 'נכון! שנאת חינם.' }]
+            },
+            {
+                id: 'gemara-taanit-rain',
+                categoryId: 'gemara',
+                subject: 'גמרא',
+                title: 'מסכת תענית - תפילות על הגשמים (חוני המעגל)',
+                icon: 'fa-cloud-showers-water',
+                slides: [{ stepBadge: 'עג מעגל', contentHtml: `<h3 class="text-2xl font-bold text-slate-900 mb-4">מעשה חוני המעגל והגשם</h3><p class="text-slate-600">תפילת צדיקים בעת עצירת גשמים ובניית המעגל.</p>` }],
+                quiz: [{ question: 'מה עשה חוני כשראה שיש עצירת גשמים ורצה להתפלל?', options: ['עג עוגה (מעגל) ועמד בתוכה עד שירד גשם', 'עלה לראש ההר', 'נסע לבבל'], correctIndex: 0, hints: ['רמז: בגלל זה נקרא חוני "המעגל".'], explanation: 'נכון! עג מעגל ונשבע לא לצאת ממנו עד ירידת גשמי רצון.' }]
+            }
+        ];
+
+        let forumQuestions = [
+            {
+                id: 1,
+                author: 'יונתן כ.',
+                subject: 'מתמטיקה',
+                title: 'איך ניגשים למשוואה עם סוגריים ומינוס לפני הסוגריים?',
+                details: 'כשיש מינוס לפני סוגריים, איך הסימנים בפנים משתנים?',
+                answers: [
+                    { author: 'דניאל מ.', text: 'כשיש מינוס לפני סוגריים, זה כאילו מכפילים ב-(1-). כל סימן בתוך הסוגריים מתהפך: פלוס הופך למינוס, ומינוס הופך לפלוס.' }
+                ]
+            }
+        ];
+
+        let currentCategory = null;
+        let currentLesson = null;
+        let currentSlideIndex = 0;
+        let currentQuizIndex = 0;
+        let revealedHintsCount = 0;
+
+        // Star rating state
+        let selectedStars = 0;
+        let savedStars = 0;
+
+        function openStarRatingModal() {
+            selectedStars = savedStars;
+            updateStarsUI(selectedStars);
+            toggleModal('modal-star-rating', true);
+        }
+
+        function hoverStarRating(count) {
+            updateStarsUI(count);
+        }
+
+        function resetStarHover() {
+            updateStarsUI(selectedStars);
+        }
+
+        function setStarRating(count) {
+            selectedStars = count;
+            updateStarsUI(count);
+            const saveBtn = document.getElementById('btn-save-stars');
+            if (saveBtn) saveBtn.disabled = false;
+        }
+
+        function updateStarsUI(count) {
+            const starBtns = document.querySelectorAll('#stars-container .star-btn');
+            starBtns.forEach((btn, index) => {
+                if (index < count) {
+                    btn.className = 'star-btn text-3xl text-amber-400 hover:scale-125 transition-all p-1';
+                } else {
+                    btn.className = 'star-btn text-3xl text-slate-300 hover:scale-125 transition-all p-1';
+                }
+            });
+
+            const labels = ['', 'טעון שיפור 😞', 'סביר 🙂', 'טוב 👍', 'מעולה! 😀', 'מצוין ביותר! 🌟'];
+            const feedbackText = document.getElementById('star-rating-feedback-text');
+            if (feedbackText) {
+                feedbackText.textContent = labels[count] || '';
+            }
+        }
+
+        function saveStarRating() {
+            if (selectedStars === 0) return;
+            savedStars = selectedStars;
+            
+            const badge = document.getElementById('header-user-rating-badge');
+            if (badge) {
+                badge.textContent = `${savedStars}/5 ★`;
+                badge.classList.remove('hidden');
+            }
+
+            toggleModal('modal-star-rating', false);
+        }
+
+        // Site rating state
+        let siteLikes = 42;
+        let siteDislikes = 3;
+        let userSiteVote = null; // 'like', 'dislike', or null
+
+        // Site comments state
+        let siteComments = [
+            { id: 1, author: 'אלעד כ.', text: 'אתר מעולה! המצגות הקצרות עוזרות לי להבין את החומר ממש מהר לפני הבוחן.', date: 'לפני שעה' },
+            { id: 2, author: 'נועם מ.', text: 'המנגנון של הרמזים פשוט אלוף! מדרבן לחשוב לבד בפתרון תרגילים.', date: 'לפני 3 שעות' }
+        ];
+
+        function renderSiteComments() {
+            const list = document.getElementById('site-comments-list');
+            const badge = document.getElementById('site-comments-count-badge');
+            if (badge) badge.textContent = `${siteComments.length} תגובות`;
+            if (!list) return;
+
+            list.innerHTML = siteComments.map(c => `
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slate-900">${c.author}</span>
+                        <span class="text-slate-400 font-medium">${c.date}</span>
+                    </div>
+                    <p class="text-slate-700 text-sm leading-relaxed">${c.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function handleSiteCommentSubmit(e) {
+            e.preventDefault();
+            const authorInput = document.getElementById('site-comment-author');
+            const textInput = document.getElementById('site-comment-text');
+
+            if (!authorInput.value.trim() || !textInput.value.trim()) return;
+
+            siteComments.unshift({
+                id: Date.now(),
+                author: authorInput.value.trim(),
+                text: textInput.value.trim(),
+                date: 'עכשיו'
+            });
+
+            authorInput.value = '';
+            textInput.value = '';
+            renderSiteComments();
+        }
+
+        function rateSite(type) {
+            const likeBtn = document.getElementById('btn-site-like');
+            const dislikeBtn = document.getElementById('btn-site-dislike');
+            const likeCountEl = document.getElementById('site-like-count');
+            const dislikeCountEl = document.getElementById('site-dislike-count');
+
+            if (userSiteVote === type) {
+                // Cancel vote
+                if (type === 'like') siteLikes--;
+                else siteDislikes--;
+                userSiteVote = null;
+            } else {
+                // Remove previous vote if exists
+                if (userSiteVote === 'like') siteLikes--;
+                if (userSiteVote === 'dislike') siteDislikes--;
+
+                // Add new vote
+                if (type === 'like') siteLikes++;
+                if (type === 'dislike') siteDislikes++;
+                userSiteVote = type;
+            }
+
+            likeCountEl.textContent = siteLikes;
+            dislikeCountEl.textContent = siteDislikes;
+
+            // Update UI styles
+            if (userSiteVote === 'like') {
+                likeBtn.className = 'flex items-center gap-1.5 px-3 py-1 bg-emerald-500 text-white border border-emerald-600 rounded-xl transition-all shadow-sm active:scale-95';
+                dislikeBtn.className = 'flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 text-slate-700 hover:text-rose-600 rounded-xl transition-all shadow-sm active:scale-95';
+            } else if (userSiteVote === 'dislike') {
+                likeBtn.className = 'flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 text-slate-700 hover:text-emerald-600 rounded-xl transition-all shadow-sm active:scale-95';
+                dislikeBtn.className = 'flex items-center gap-1.5 px-3 py-1 bg-rose-500 text-white border border-rose-600 rounded-xl transition-all shadow-sm active:scale-95';
+            } else {
+                likeBtn.className = 'flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 text-slate-700 hover:text-emerald-600 hover:border-emerald-300 rounded-xl transition-all shadow-sm active:scale-95';
+                dislikeBtn.className = 'flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 text-slate-700 hover:text-rose-600 hover:border-rose-300 rounded-xl transition-all shadow-sm active:scale-95';
+            }
+        }
+
+        // Navigation Controller
+        function navigateTo(viewId) {
+            const views = ['view-home', 'view-subjects', 'view-presentation', 'view-quiz', 'view-forum'];
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) target.classList.remove('hidden');
+
+            // Update header nav active styles
+            ['nav-home', 'nav-categories', 'nav-forum'].forEach(navId => {
+                const navEl = document.getElementById(navId);
+                if (navEl) {
+                    navEl.classList.remove('border-brand-600', 'text-brand-600', 'font-bold');
+                    navEl.classList.add('border-transparent');
+                }
+            });
+
+            if (viewId === 'home') {
+                document.getElementById('nav-home')?.classList.add('border-brand-600', 'text-brand-600', 'font-bold');
+                renderCategoryGrid();
+            } else if (viewId === 'categories' || viewId === 'subjects') {
+                document.getElementById('nav-categories')?.classList.add('border-brand-600', 'text-brand-600', 'font-bold');
+            } else if (viewId === 'forum') {
+                document.getElementById('nav-forum')?.classList.add('border-brand-600', 'text-brand-600', 'font-bold');
+                renderForum();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Subject Categories on Home
+        function renderCategoryGrid() {
+            const grid = document.getElementById('categories-grid');
+            if (!grid) return;
+            grid.innerHTML = categoriesList.map(cat => `
+                <div onclick="selectCategory('${cat.id}')" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer flex flex-col items-center text-center space-y-3">
+                    <div class="w-14 h-14 ${cat.color} rounded-2xl flex items-center justify-center text-2xl shadow-md">
+                        <i class="fa-solid ${cat.icon}"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-800">${cat.title}</h3>
+                    <span class="text-xs bg-slate-100 text-slate-600 font-semibold px-2.5 py-1 rounded-full">
+                        ${lessonsData.filter(l => l.categoryId === cat.id).length} נושאים
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        // Select Category & Show Topics
+        function selectCategory(catId) {
+            currentCategory = categoriesList.find(c => c.id === catId);
+            const titleEl = document.getElementById('selected-category-title');
+            if (titleEl && currentCategory) {
+                titleEl.textContent = `נושאי לימוד ב${currentCategory.title}`;
+            }
+
+            const topics = lessonsData.filter(l => l.categoryId === catId);
+            const grid = document.getElementById('subjects-grid');
+            if (grid) {
+                grid.innerHTML = topics.map(topic => `
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 text-brand-600 font-bold text-sm">
+                                <i class="fa-solid ${topic.icon}"></i>
+                                <span>${topic.subject}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900">${topic.title}</h3>
+                        </div>
+                        <button onclick="startLesson('${topic.id}')" class="w-full py-2.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>התחל מצגת ותרגול</span>
+                        </button>
+                    </div>
+                `).join('');
+            }
+            navigateTo('subjects');
+        }
+
+        // Start Lesson Presentation
+        function startLesson(lessonId) {
+            currentLesson = lessonsData.find(l => l.id === lessonId);
+            if (!currentLesson) return;
+            currentSlideIndex = 0;
+            renderSlide();
+            navigateTo('presentation');
+        }
+
+        // Render Current Slide
+        function renderSlide() {
+            if (!currentLesson || !currentLesson.slides) return;
+            const slide = currentLesson.slides[currentSlideIndex];
+            const total = currentLesson.slides.length;
+
+            document.getElementById('lesson-subject-tag').textContent = currentLesson.subject;
+            document.getElementById('lesson-title').textContent = currentLesson.title;
+            document.getElementById('slide-step-label').textContent = `שקופית ${currentSlideIndex + 1} מתוך ${total}`;
+            document.getElementById('slide-topic-badge').textContent = slide.stepBadge || 'הסבר מרכזי';
+            document.getElementById('slide-content-area').innerHTML = slide.contentHtml;
+
+            // Slide indicators
+            const indContainer = document.getElementById('slide-indicators');
+            if (indContainer) {
+                indContainer.innerHTML = Array.from({ length: total }, (_, i) => `
+                    <div class="w-3 h-3 rounded-full ${i === currentSlideIndex ? 'bg-brand-600' : 'bg-slate-300'}"></div>
+                `).join('');
+            }
+
+            // Buttons state
+            const prevBtn = document.getElementById('btn-prev-slide');
+            const nextBtn = document.getElementById('btn-next-slide');
+            if (prevBtn) prevBtn.disabled = currentSlideIndex === 0;
+
+            if (nextBtn) {
+                if (currentSlideIndex === total - 1) {
+                    nextBtn.innerHTML = 'עבור לבוחן האינטראקטיבי <i class="fa-solid fa-pen-to-square mr-2"></i>';
+                    nextBtn.onclick = startQuiz;
+                } else {
+                    nextBtn.innerHTML = 'לשקופית הבאה <i class="fa-solid fa-chevron-left mr-2"></i>';
+                    nextBtn.onclick = () => changeSlide(1);
+                }
+            }
+        }
+
+        function changeSlide(direction) {
+            if (!currentLesson) return;
+            currentSlideIndex += direction;
+            if (currentSlideIndex < 0) currentSlideIndex = 0;
+            if (currentSlideIndex >= currentLesson.slides.length) {
+                startQuiz();
+                return;
+            }
+            renderSlide();
+        }
+
+        // Quiz Controller
+        function startQuiz() {
+            if (!currentLesson || !currentLesson.quiz || currentLesson.quiz.length === 0) return;
+            currentQuizIndex = 0;
+            revealedHintsCount = 0;
+            renderQuizQuestion();
+            navigateTo('quiz');
+        }
+
+        function openPresentationForCurrent() {
+            currentSlideIndex = 0;
+            renderSlide();
+            navigateTo('presentation');
+        }
+
+        function renderQuizQuestion() {
+            const quizItem = currentLesson.quiz[currentQuizIndex];
+            if (!quizItem) return;
+
+            document.getElementById('quiz-title').textContent = currentLesson.title;
+            document.getElementById('quiz-current-num').textContent = currentQuizIndex + 1;
+            document.getElementById('quiz-total-num').textContent = currentLesson.quiz.length;
+            document.getElementById('quiz-question-text').textContent = quizItem.question;
+
+            // Options
+            const optsContainer = document.getElementById('quiz-options-container');
+            optsContainer.innerHTML = quizItem.options.map((opt, idx) => `
+                <label class="flex items-center p-4 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors gap-3">
+                    <input type="radio" name="quiz-opt" value="${idx}" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                    <span class="text-slate-800 font-medium">${opt}</span>
+                </label>
+            `).join('');
+
+            // Reset Feedback & Hints
+            const fb = document.getElementById('quiz-feedback-box');
+            fb.classList.add('hidden');
+            fb.className = 'hidden p-4 rounded-xl border text-sm font-medium';
+
+            revealedHintsCount = 0;
+            updateHintsUI();
+        }
+
+        function revealNextHint() {
+            const quizItem = currentLesson.quiz[currentQuizIndex];
+            if (!quizItem || !quizItem.hints) return;
+            if (revealedHintsCount < quizItem.hints.length) {
+                revealedHintsCount++;
+                updateHintsUI();
+            }
+        }
+
+        function updateHintsUI() {
+            const quizItem = currentLesson.quiz[currentQuizIndex];
+            const maxHints = quizItem && quizItem.hints ? quizItem.hints.length : 0;
+
+            document.getElementById('hint-counter-badge').textContent = `רמז ${revealedHintsCount} מתוך ${maxHints}`;
+
+            const container = document.getElementById('active-hints-container');
+            if (container && quizItem && quizItem.hints) {
+                container.innerHTML = quizItem.hints.slice(0, revealedHintsCount).map(hint => `
+                    <div class="bg-amber-50 border-r-4 border-amber-500 p-3.5 rounded-r-xl text-amber-900 text-sm font-medium animate-fade-in">
+                        ${hint}
+                    </div>
+                `).join('');
+            }
+
+            const btn = document.getElementById('btn-request-hint');
+            if (btn) {
+                btn.disabled = revealedHintsCount >= maxHints;
+                if (revealedHintsCount >= maxHints) {
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function checkQuizAnswer() {
+            const selected = document.querySelector('input[name="quiz-opt"]:checked');
+            const fb = document.getElementById('quiz-feedback-box');
+            if (!selected) {
+                fb.className = 'p-4 rounded-xl border bg-amber-50 border-amber-200 text-amber-800 text-sm font-medium';
+                fb.textContent = 'אנא בחר תשובה לפני הבדיקה.';
+                fb.classList.remove('hidden');
+                return;
+            }
+
+            const quizItem = currentLesson.quiz[currentQuizIndex];
+            const val = parseInt(selected.value, 10);
+
+            if (val === quizItem.correctIndex) {
+                fb.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900 text-sm font-medium';
+                fb.textContent = quizItem.explanation || 'תשובה נכונה! כל הכבוד!';
+            } else {
+                fb.className = 'p-4 rounded-xl border bg-rose-50 border-rose-200 text-rose-900 text-sm font-medium';
+                fb.textContent = 'תשובה לא מדויקת. השתמש בכפתור הרמז כדי לראות את דרך הפתרון ונסה שנית!';
+            }
+            fb.classList.remove('hidden');
+        }
+
+        // Forum Rendering & Functionality
+        function renderForum() {
+            const list = document.getElementById('forum-questions-list');
+            if (!list) return;
+            list.innerHTML = forumQuestions.map(q => `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex justify-between items-start gap-4">
+                        <div>
+                            <span class="text-xs bg-brand-50 text-brand-600 font-bold px-2.5 py-1 rounded-md mb-2 inline-block">${q.subject}</span>
+                            <h3 class="text-lg font-bold text-slate-900">${q.title}</h3>
+                            <p class="text-slate-600 text-sm mt-1">${q.details}</p>
+                        </div>
+                        <span class="text-xs text-slate-400 font-semibold whitespace-nowrap">נשאל ע"י ${q.author}</span>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-3 space-y-3">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase">הכוונות ודרכי פתרון מהקהילה (${q.answers.length}):</h4>
+                        ${q.answers.map(a => `
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-sm text-slate-700">
+                                <span class="font-bold text-slate-900 block text-xs mb-1">${a.author}:</span>
+                                ${a.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleModal(id, show) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (show) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        }
+
+        function handleNewQuestionSubmit(e) {
+            e.preventDefault();
+            const subj = document.getElementById('q-subject').value;
+            const title = document.getElementById('q-title').value;
+            const details = document.getElementById('q-details').value;
+
+            forumQuestions.unshift({
+                id: Date.now(),
+                author: 'תלמיד',
+                subject: subj,
+                title: title,
+                details: details,
+                answers: []
+            });
+
+            toggleModal('modal-new-question', false);
+            e.target.reset();
+            renderForum();
+        }
+
+        // Initializer
+        window.onload = function() {
+            navigateTo('home');
+            renderSiteComments();
+        };
+    </script>
+</body>
+</html>

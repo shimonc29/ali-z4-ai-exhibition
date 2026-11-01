@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameMaster - מדריכי משחקים ואסטרטגיה</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter / Rubik for Hebrew -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+        }
+        .accordion-content.open {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .gradient-hero {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header / Navigation -->
+    <header class="bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid font-bold text-white text-xl fa-gamepad"></i>
+                </div>
+                <span class="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-300">
+                    GameMaster
+                </span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-8 space-x-reverse font-medium text-slate-300">
+                <button onclick="navigateTo('home')" class="hover:text-indigo-400 transition-colors py-2">עמוד הבית</button>
+                <button onclick="navigateTo('guide-chess')" class="hover:text-indigo-400 transition-colors py-2">מדריך שחמט</button>
+                <button onclick="navigateTo('sitemap')" class="hover:text-indigo-400 transition-colors py-2">מפת אתר ומבנה</button>
+            </nav>
+
+            <!-- Search trigger on mobile / Actions -->
+            <div class="flex items-center gap-3">
+                <button onclick="navigateTo('home')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md shadow-indigo-600/20">
+                    גלריית מדריכים
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main id="app-container" class="flex-grow">
+        <!-- Dynamic views will render here via JS -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center space-x-2 space-x-reverse mb-4">
+                    <i class="fa-solid fa-dice-d20 text-indigo-400 text-2xl"></i>
+                    <span class="text-xl font-bold text-white">GameMaster</span>
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    מרכז המדריכים, החוקים והאסטרטגיות למשחקי קופסה, לוח, חשיבה ומחשב. כל מה שצריך כדי לשחק חכם ולנצח.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">ניווט מהיר</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" onclick="navigateTo('home'); return false;" class="hover:text-white transition">עמוד הבית</a></li>
+                    <li><a href="#" onclick="navigateTo('guide-chess'); return false;" class="hover:text-white transition">מדריך מלא: שחמט</a></li>
+                    <li><a href="#" onclick="navigateTo('sitemap'); return false;" class="hover:text-white transition">מפת האתר ומבנה ארכיטקטוני</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">קטגוריות ראשיות</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><span class="text-slate-400">משחקי אסטרטגיה</span></li>
+                    <li><span class="text-slate-400">משחקי קלפים</span></li>
+                    <li><span class="text-slate-400">משחקי לוח קלאסיים</span></li>
+                    <li><span class="text-slate-400">משחקי חשיבה ופנאי</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">אודות המערכת</h4>
+                <p class="text-sm text-slate-400 mb-4">
+                    נבנה כפלטפורמה מודרנית להנגשת חוקי משחק בצורה ברורה, קריאה ומובנית.
+                </p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900 mt-8 pt-6 text-center text-xs text-slate-500">
+            &copy; 2026 GameMaster. כל הזכויות שמורות.
+        </div>
+    </footer>
+
+    <!-- JavaScript Data and Application Logic -->
+    <script>
+        // Data Store for Games Catalog
+        const gamesData = [
+            {
+                id: 'chess',
+                title: 'שחמט (Chess)',
+                category: 'board',
+                categoryName: 'משחקי לוח ואסטרטגיה',
+                difficulty: 'medium',
+                difficultyName: 'בינוני',
+                players: '2 שחקנים',
+                time: '15-60 דק׳',
+                age: '6+',
+                image: 'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'משחק המלכים הקלאסי. ניהול קרב מתוחכם בין צבאות שבו המטרה היא להנחית מט על המלך היריב.',
+                rules: [
+                    { title: 'תנועת הרגלים והכלים', content: 'הרגלי זז משבצת אחת קדימה (או שתיים בתור הראשון). הפרש נע בצורת L וקופץ מעל כלים. הצריח נע בקווים ישרים, הרץ באלכסונים, והמלכה משלבת את תנועת הצריח והרץ.' },
+                    { title: 'הצרחה (Castling)', content: 'מהלך הגנתי מיוחד המאפשר למלך ולצריח לנוע בו-זמנית בתנאי שלא זזו קודם ואין כלים או איומים ביניהם.' },
+                    { title: 'סיום המשחק: שח ומט', content: 'ניצחון מושג כאשר המלך היריב מותקף (שח) ואין לו אף מהלך חוקי להימלט מן האיום (מט).' }
+                ],
+                tips: ['שלטו ב-4 המשבצות המרכזיות בלוח', 'פתחו את הפרשים והרצים מוקדם', 'צעדו להצרחה מוקדמת להגנת המלך'],
+                faq: [
+                    { q: 'מהו תיקו פת (Stalemate)?', a: 'מצב בו לשחקן שזה תורו אין מהלך חוקי, אך המלך שלו אינו תחת איום שח ישיר.' }
+                ]
+            },
+            {
+                id: 'catan',
+                title: 'מתיישבי קטאן (Catan)',
+                category: 'strategy',
+                categoryName: 'משחקי אסטרטגיה',
+                difficulty: 'medium',
+                difficultyName: 'בינוני',
+                players: '3-4 שחקנים',
+                time: '60-90 דק׳',
+                age: '10+',
+                image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'אספו משאבים, סחרו עם שחקנים אחרים ובנו יישובים ודרכים באי המובטח קטאן כדי לצבור 10 נקודות ניצחון.',
+                rules: [
+                    { title: 'תחילת התור והטלת קוביות', content: 'כל תור מתחיל בהטלת 2 קוביות. כל משבצת עם המספר שנפל מניבה משאבים לשחקנים שבנו לצידה.' },
+                    { title: 'מסחר ובנייה', content: 'ניתן לסחור במשאבים (עץ, לבנים, חיטה, צמר, ברזל) עם שחקנים אחרים או עם הקופה, ולאחר מכן לבנות דרכים, יישובים וערים.' },
+                    { title: 'השודד (המספר 7)', content: 'בהטלת 7, אף אחד לא מקבל משאבים. שחקנים עם מעל 7 קלפים מחזירים חצי מהם, והשחקן שסובב מעביר את השודד למשבצת חדשה.' }
+                ],
+                tips: ['דאגו לגישה מגוונת למשאבים שונים', 'בנו על מספרים עם הסתברות גבוהה (6 ו-8)', 'נצלו את המסחר עם שחקנים מובסים'],
+                faq: [
+                    { q: 'איך משיגים 10 נקודות?', a: 'כל יישוב שווה 1 נקודה, עיר שווה 2, הדרך הארוכה ביותר שווה 2, הצבא הגדול שווה 2, וקלפי פיתוח מעניקים נקודות נוספות.' }
+                ]
+            },
+            {
+                id: 'backgammon',
+                title: 'שש-בש (Backgammon)',
+                category: 'board',
+                categoryName: 'משחקי לוח',
+                difficulty: 'easy',
+                difficultyName: 'קל',
+                players: '2 שחקנים',
+                time: '15-30 דק׳',
+                age: '7+',
+                image: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'משחק הלוח העתיק והפופולרי. קדמו את האבנים שלכם לפי הטלת הקוביות והיו הראשונים להוציא את כולן מהלוח.',
+                rules: [
+                    { title: 'תנועה ואבנים', content: 'כל שחקן מזיז את אבניו בכיוון הנגדי לפי תוצאות הטלת הקוביות. כפיל (דאבל) מאפשר לבצע 4 מהלכים.' },
+                    { title: 'לכידת אבן בודדת (אכלת!)', content: 'אם אבן נוחתת על משבצת בה נמצאת אבן בודדת של היריב, האבן היריבה נלכדת ועוברת לבאר במרכז הלוח.' },
+                    { title: 'פינוי אבנים (הוצאה)', content: 'ברגע שכל 15 האבנים שלכם הגיעו לבית הפנימי, ניתן להתחיל להוציא אותן מחוץ ללוח.' }
+                ],
+                tips: ['הימנעו מהשארת אבנים בודדות (חשופות)', 'נסו לחסום חורים מרכזיים בלוח', 'נצלו דאבלים לקידום אבנים מאחור'],
+                faq: [
+                    { q: 'מה קורה אם נלכדה לי אבן?', a: 'חובה להכניס אותה חזרה ללוח מהבית של היריב לפני שתוכל לבצע כל מהלך אחר.' }
+                ]
+            },
+            {
+                id: 'rummikub',
+                title: 'רמיקוב (Rummikub)',
+                category: 'family',
+                categoryName: 'משחקי משפחה',
+                difficulty: 'easy',
+                difficultyName: 'קל',
+                players: '2-4 שחקנים',
+                time: '20-40 דק׳',
+                age: '7+',
+                image: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'הורדת סדרות וקבוצות מספרים. המשחק הישראלי המפורסם בעולם שבו חושבים מהר ומפטרים מכל האריחים.',
+                rules: [
+                    { title: 'פתיחה ראשונית', content: 'כדי לרדת לראשונה אל השולחן, יש להניח סדרות בשווי כולל של לפחות 30 נקודות.' },
+                    { title: 'קבוצות וסדרות', content: 'סדרה מורכבת מרצף מספרים באותו צבע (למשל 4-5-6 אדום). קבוצה מורכבת מאותם מספרים בצבעים שונים (למשל 8 כחול, 8 שחור, 8 צהוב).' },
+                    { title: 'פירוק והרכבה מחדש', content: 'ניתן לפרק ולחבר מחדש את הסדרות שעל השולחן כדי לשלב את האריחים שבידכם, בתנאי שבסיום התור כל הסדרות תקניות.' }
+                ],
+                tips: ['שמרו אריחים וגו׳קרים לרגע הנכון', 'סרקו את השולחן לפני תחילת התור לזיהוי מהלכים', 'שימו לב למספרים חסרים אצל היריבים'],
+                faq: [
+                    { q: 'מה קורה אם הג׳וקר נשאר ביד בסיום המשחק?', a: 'ערכו נקבע כ-30 נקודות שליליות בסיכום הניקוד!' }
+                ]
+            },
+            {
+                id: 'poker',
+                title: 'טקסס הולדם פוקר',
+                category: 'cards',
+                categoryName: 'משחקי קלפים',
+                difficulty: 'hard',
+                difficultyName: 'מתקדם',
+                players: '2-10 שחקנים',
+                time: '30-120 דק׳',
+                age: '18+',
+                image: 'https://images.unsplash.com/photo-1511193311914-0346f16efe90?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'משחק קלפים מפורסם המשלב הימורים, פסיכולוגיה, בלופים וחישוב הסתברויות מתמטי.',
+                rules: [
+                    { title: 'חלוקת קלפים והימורים', content: 'כל שחקן מקבל 2 קלפים סמויים. בהמשך נחשפים 5 קלפי קהילה גלויים על השולחן ב-3 שלבים (פליפ, טרן, ריבר).' },
+                    { title: 'דירוג הידיים', content: 'היד החזקה נבנית מהשילוב הטוב ביותר של 5 קלפים (מזוג, שלישיה, סטרייט, פלאש, פול האוס ועד רויאל פלאש).' }
+                ],
+                tips: ['אל תשחקו כל יד - דעו לפרוש מוקדם', 'שימו לב למיקום שלכם בשולחן (Position)', 'קראו את תגובות היריבים ודפוסי ההימור שלהם'],
+                faq: [
+                    { q: 'מה קורה במצב של שוויון בדירוג?', a: 'הקופה מתחלקת שווה בשווה בין השחקנים בעלי היד הזהה.' }
+                ]
+            },
+            {
+                id: 'ticket-to-ride',
+                title: 'טיקט טו רייד (Ticket to Ride)',
+                category: 'family',
+                categoryName: 'משחקי משפחה',
+                difficulty: 'easy',
+                difficultyName: 'קל',
+                players: '2-5 שחקנים',
+                time: '45-60 דק׳',
+                age: '8+',
+                image: 'https://images.unsplash.com/photo-1563941433-b6a0946f75de?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'הרפתקת רכבות לאורכה ולרוחבה של היבשת. אספו קלפי רכבת וחברו ערים מרכזיות כדי להשלים מסלולים.',
+                rules: [
+                    { title: 'מהלך התור', content: 'בתורכם לבחור בפעולה אחת: איסוף קלפי רכבת, תפיסת מסלול על הלוח, או משיכת כרטיסי יעד חדשים.' },
+                    { title: 'תפיסת מסלולים', content: 'משלמים בקלפי רכבת בצבע ובכמות התואמת למסלול שעל הלוח ומציחים את קרונות הפלסטיק שלכם.' }
+                ],
+                tips: ['שמרו על כרטיסי היעד שלכם בסוד', 'חסמו מסלולים קריטיים ליריבים', 'חברו מסלולים רציפים למניעת בזבוז קרונות'],
+                faq: [
+                    { q: 'מה קורה אם לא משלימים כרטיס יעד?', a: 'הנקודות הרשומות על הכרטיס יורדות מהניקוד הסופי שלכם!' }
+                ]
+            },
+            {
+                id: '7wonders',
+                title: '7 פלאים (7 Wonders)',
+                category: 'strategy',
+                categoryName: 'משחקי אסטרטגיה',
+                difficulty: 'medium',
+                difficultyName: 'בינוני',
+                players: '3-7 שחקנים',
+                time: '30-45 דק׳',
+                age: '10+',
+                image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'הובילו אחת מ-7 הערים הגדולות של העולם העתיק. פתחו מסחר, צבא, מדע ובנו פלא עולם מרהיב.',
+                rules: [
+                    { title: 'מנגנון בחירת הקלפים (Drafting)', content: 'כל שחקן בוחר קלף אחד מתוך ידו ומעביר את שאר הקלפים לשחקן שמימינו/משמאלו.' },
+                    { title: '3 העידנים', content: 'המשחק משוחק לאורך 3 עידנים, כאשר בכל עידן מתפתחות טכנולוגיות, תשתיות וצבא חזק יותר.' }
+                ],
+                tips: ['עקבו אחר משאבי השכנים שלכם', 'אל תתעלמו מהתפתחות מדעית או צבאית', 'תכננו את שלבי בניית פלא העולם'],
+                faq: [
+                    { q: 'איך קונים משאב שאין לי?', a: 'ניתן לקנות משאב בסיסי מהשכן הישיר מימין או משמאל עבור 2 מטבעות.' }
+                ]
+            },
+            {
+                id: 'carcassonne',
+                title: 'קרקסון (Carcassonne)',
+                category: 'board',
+                categoryName: 'משחקי לוח',
+                difficulty: 'medium',
+                difficultyName: 'בינוני',
+                players: '2-5 שחקנים',
+                time: '35-45 דק׳',
+                age: '7+',
+                image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=800&q=80',
+                shortDesc: 'בנו את נוף צרפת המדיאבלית אריח אחר אריח. הקמו ערים, דרכים, מנזרים ושדות והציבו את עובדיכם בחכמה.',
+                rules: [
+                    { title: 'הנחת אריח', content: 'בכל תור שולפים אריח ומניחים אותו כך שיתחבר בצורה הגיונית לאריחים הקיימים (דרך לדרך, עיר לעיר).' },
+                    { title: 'הצבת דמויות (Meeple)', content: 'ניתן להציב דמות על האריח שהונח בתור זה בלבד כאביר בערים, שודד בדרכים, נזיר במנזר או איכר בשדות.' }
+                ],
+                tips: ['החזירו דמויות ליד ע״י השלמת ערים ודרכים מהירות', 'הציבו איכרים בשדות גדולים לקראת סוף המשחק'],
+                faq: [
+                    { q: 'מתי מנזר נחשב מושלם?', a: 'כאשר הוא מוקף מכל 9 הצדדים באריחים (1 נקודה לכל אריח, סה״כ 9).' }
+                ]
+            }
+        ];
+
+        // Current Filter State
+        let currentFilters = {
+            search: '',
+            category: 'all',
+            difficulty: 'all'
+        };
+
+        // Navigation state
+        function navigateTo(viewId) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const container = document.getElementById('app-container');
+            
+            if (viewId === 'home') {
+                container.innerHTML = renderHomePage();
+                bindHomeEvents();
+            } else if (viewId === 'sitemap') {
+                container.innerHTML = renderSitemapPage();
+            } else if (viewId.startsWith('guide-')) {
+                const gameId = viewId.replace('guide-', '');
+                const game = gamesData.find(g => g.id === gameId);
+                if (game) {
+                    container.innerHTML = renderGenericGuidePage(game);
+                    bindAccordionEvents();
+                } else {
+                    navigateTo('home');
+                }
+            }
+        }
+
+        // Render Homepage View
+        function renderHomePage() {
+            const filteredGames = filterGames();
+
+            return `
+                <!-- Hero Section -->
+                <section class="gradient-hero py-16 md:py-24 px-4 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.15),transparent_50%)]"></div>
+                    <div class="max-w-4xl mx-auto relative z-10">
+                        <span class="inline-block bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+                            מאגר המדריכים המקיף בישראל
+                        </span>
+                        <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
+                            ללמוד. לתכנן. <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">לנצח.</span>
+                        </h1>
+                        <p class="text-slate-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light">
+                            מדריכים מקצועיים, חוקים מפורטים ואסטרטגיות מתקדמות למשחקי לוח, קלפים ואסטרטגיה.
+                        </p>
+                        
+                        <!-- Main Quick Search Bar -->
+                        <div class="max-w-2xl mx-auto relative shadow-2xl">
+                            <div class="relative flex items-center">
+                                <input type="text" id="hero-search" value="${currentFilters.search}" placeholder="חפש מדריך לפי שם משחק (למשל: שחמט, קטאן, רמיקוב)..." 
+                                    class="w-full bg-slate-900/90 border-2 border-indigo-500/40 text-white pl-4 pr-12 py-4 rounded-2xl focus:outline-none focus:border-indigo-400 text-lg placeholder-slate-400 backdrop-blur-sm transition">
+                                <i class="fa-solid fa-magnifying-glass absolute right-4 text-indigo-400 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filter Controls Section -->
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+                    <div class="bg-slate-800 border border-slate-700/80 rounded-2xl p-4 md:p-6 shadow-xl backdrop-blur-md">
+                        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                            
+                            <!-- Categories Tabs -->
+                            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                                <button onclick="setCategoryFilter('all')" class="filter-cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition ${currentFilters.category === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-700/60 text-slate-300 hover:bg-slate-700'}">
+                                    הכל
+                                </button>
+                                <button onclick="setCategoryFilter('board')" class="filter-cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition ${currentFilters.category === 'board' ? 'bg-indigo-600 text-white' : 'bg-slate-700/60 text-slate-300 hover:bg-slate-700'}">
+                                    <i class="fa-solid fa-chess-board text-xs ml-1"></i> משחקי לוח
+                                </button>
+                                <button onclick="setCategoryFilter('strategy')" class="filter-cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition ${currentFilters.category === 'strategy' ? 'bg-indigo-600 text-white' : 'bg-slate-700/60 text-slate-300 hover:bg-slate-700'}">
+                                    <i class="fa-solid fa-brain text-xs ml-1"></i> אסטרטגיה
+                                </button>
+                                <button onclick="setCategoryFilter('cards')" class="filter-cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition ${currentFilters.category === 'cards' ? 'bg-indigo-600 text-white' : 'bg-slate-700/60 text-slate-300 hover:bg-slate-700'}">
+                                    <i class="fa-solid fa-spade text-xs ml-1"></i> קלפים
+                                </button>
+                                <button onclick="setCategoryFilter('family')" class="filter-cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition ${currentFilters.category === 'family' ? 'bg-indigo-600 text-white' : 'bg-slate-700/60 text-slate-300 hover:bg-slate-700'}">
+                                    <i class="fa-solid fa-users text-xs ml-1"></i> משפחה
+                                </button>
+                            </div>
+
+                            <!-- Difficulty Filter Dropdown -->
+                            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                                <label for="diff-filter" class="text-sm font-medium text-slate-400 whitespace-nowrap">דרגת קושי:</label>
+                                <select id="diff-filter" onchange="setDifficultyFilter(this.value)" class="bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-indigo-500 w-full md:w-auto">
+                                    <option value="all" ${currentFilters.difficulty === 'all' ? 'selected' : ''}>כל הדרגות</option>
+                                    <option value="easy" ${currentFilters.difficulty === 'easy' ? 'selected' : ''}>קל</option>
+                                    <option value="medium" ${currentFilters.difficulty === 'medium' ? 'selected' : ''}>בינוני</option>
+                                    <option value="hard" ${currentFilters.difficulty === 'hard' ? 'selected' : ''}>מתקדם</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cards Grid Section -->
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">מדריכים זמינים</h2>
+                            <p class="text-slate-400 text-sm mt-1">מציג ${filteredGames.length} מדריכים מתאימים</p>
+                        </div>
+                    </div>
+
+                    ${filteredGames.length === 0 ? `
+                        <div class="bg-slate-800/40 rounded-3xl p-12 text-center border border-slate-800">
+                            <i class="fa-solid fa-ghost text-5xl text-slate-600 mb-4"></i>
+                            <h3 class="text-xl font-bold text-slate-300 mb-2">לא נמצאו מדריכים תואמים</h3>
+                            <p class="text-slate-500 text-sm">נסה לשנות את מילות החיפוש או לבטל את המסננים.</p>
+                            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-medium transition">אפס מסננים</button>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${filteredGames.map(game => `
+                                <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition duration-300 flex flex-col group shadow-lg">
+                                    <!-- Card Image Banner -->
+                                    <div class="relative h-48 overflow-hidden bg-slate-950">
+                                        <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 group-hover:opacity-100" onerror="this.src='https://placehold.co/800x400/1e1b4b/ffffff?text=Game'">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                        <div class="absolute top-3 right-3 flex gap-2">
+                                            <span class="bg-slate-900/80 backdrop-blur-md border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg font-medium">
+                                                ${game.categoryName}
+                                            </span>
+                                        </div>
+                                        <div class="absolute top-3 left-3">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold backdrop-blur-md ${
+                                                game.difficulty === 'easy' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                                                game.difficulty === 'medium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                                'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                            }">
+                                                ${game.difficultyName}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="p-6 flex-grow flex flex-col justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-400 transition">
+                                                ${game.title}
+                                            </h3>
+                                            <p class="text-slate-400 text-sm line-clamp-3 mb-6 leading-relaxed">
+                                                ${game.shortDesc}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <!-- Stats Badge Bar -->
+                                            <div class="grid grid-cols-3 gap-2 py-3 border-t border-b border-slate-700/60 mb-6 text-xs text-slate-300 text-center">
+                                                <div>
+                                                    <span class="block text-slate-500 mb-0.5"><i class="fa-solid fa-users"></i></span>
+                                                    ${game.players}
+                                                </div>
+                                                <div>
+                                                    <span class="block text-slate-500 mb-0.5"><i class="fa-solid fa-clock"></i></span>
+                                                    ${game.time}
+                                                </div>
+                                                <div>
+                                                    <span class="block text-slate-500 mb-0.5"><i class="fa-solid fa-child"></i></span>
+                                                    ${game.age}
+                                                </div>
+                                            </div>
+
+                                            <button onclick="navigateTo('guide-${game.id}')" class="w-full bg-slate-700 hover:bg-indigo-600 text-white font-semibold py-2.5 px-4 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                                                <span>קרא מדריך מלא</span>
+                                                <i class="fa-solid fa-arrow-left text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </section>
+            `;
+        }
+
+        // Render Dynamic Guide Page for any game in database
+        function renderGenericGuidePage(game) {
+            return `
+                <!-- Breadcrumb -->
+                <div class="bg-slate-950 border-b border-slate-800 py-3">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-400 flex items-center gap-2">
+                        <button onclick="navigateTo('home')" class="hover:text-indigo-400">עמוד הבית</button>
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        <span>מדריכי משחקים</span>
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        <span class="text-indigo-400 font-medium">${game.title}</span>
+                    </div>
+                </div>
+
+                <!-- Guide Hero Banner -->
+                <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-b border-slate-800 py-12 px-4">
+                    <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-8 items-center">
+                        <div class="w-full md:w-1/3 h-64 rounded-2xl overflow-hidden shadow-2xl border border-slate-700 relative">
+                            <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/800x400/1e1b4b/ffffff?text=Game'">
+                            <div class="absolute inset-0 bg-slate-900/20"></div>
+                        </div>
+                        <div class="w-full md:w-2/3">
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs px-3 py-1 rounded-full font-medium">${game.categoryName}</span>
+                                <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs px-3 py-1 rounded-full font-medium">רמת קושי: ${game.difficultyName}</span>
+                            </div>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4">${game.title} - מדריך מלא</h1>
+                            <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                                ${game.shortDesc}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    
+                    <!-- Quick Overview Bar -->
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-6 mb-12 shadow-xl">
+                        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-amber-400"></i> סקירה מהירה
+                        </h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-center">
+                                <span class="block text-xs text-slate-400 mb-1">מספר שחקנים</span>
+                                <span class="text-lg font-bold text-indigo-300">${game.players}</span>
+                            </div>
+                            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-center">
+                                <span class="block text-xs text-slate-400 mb-1">גילאי יעד</span>
+                                <span class="text-lg font-bold text-indigo-300">${game.age}</span>
+                            </div>
+                            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-center">
+                                <span class="block text-xs text-slate-400 mb-1">זמן משחק ממוצע</span>
+                                <span class="text-lg font-bold text-indigo-300">${game.time}</span>
+                            </div>
+                            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-center">
+                                <span class="block text-xs text-slate-400 mb-1">רמת סיבוכיות</span>
+                                <span class="text-lg font-bold text-indigo-300">${game.difficultyName}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: חוקים ושלבי המשחק (Interactive Accordions) -->
+                    <section class="mb-12">
+                        <h2 class="text-2xl font-bold text-white mb-2 border-r-4 border-indigo-500 pr-3">
+                            איך משחקים (חוקים ומהלכים)
+                        </h2>
+                        <p class="text-slate-400 text-sm mb-6">לחץ על כל נושא להרחבה:</p>
+
+                        <div class="space-y-3">
+                            ${(game.rules || []).map(rule => `
+                                <div class="border border-slate-700 rounded-xl bg-slate-800 overflow-hidden">
+                                    <button class="accordion-header w-full px-6 py-4 text-right font-semibold text-white flex items-center justify-between hover:bg-slate-750 transition">
+                                        <span class="flex items-center gap-3">
+                                            <i class="fa-solid fa-bookmark text-indigo-400 text-lg"></i>
+                                            ${rule.title}
+                                        </span>
+                                        <i class="fa-solid fa-chevron-down text-slate-400 text-sm transition-transform duration-300"></i>
+                                    </button>
+                                    <div class="accordion-content px-6 bg-slate-900/60 text-slate-300 text-sm leading-relaxed border-t border-slate-700/50">
+                                        <div class="py-4">
+                                            <p>${rule.content}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </section>
+
+                    <!-- Section: אסטרטגיה וטיפים -->
+                    ${game.tips ? `
+                        <section class="mb-12">
+                            <h2 class="text-2xl font-bold text-white mb-6 border-r-4 border-indigo-500 pr-3 flex items-center gap-2">
+                                <i class="fa-solid fa-lightbulb text-amber-400"></i> אסטרטגיות וטיפים לניצחון
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                ${game.tips.map((tip, idx) => `
+                                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold mb-4 text-lg">${idx + 1}</div>
+                                        <p class="text-slate-300 text-sm leading-relaxed font-medium">
+                                            ${tip}
+                                        </p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </section>
+                    ` : ''}
+
+                    <!-- Section: שאלות נפוצות FAQ -->
+                    ${game.faq ? `
+                        <section class="mb-12">
+                            <h2 class="text-2xl font-bold text-white mb-6 border-r-4 border-indigo-500 pr-3 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-question text-indigo-400"></i> שאלות נפוצות (FAQ)
+                            </h2>
+                            <div class="space-y-4">
+                                ${game.faq.map(item => `
+                                    <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-5">
+                                        <h3 class="font-bold text-white mb-2 text-base">${item.q}</h3>
+                                        <p class="text-slate-300 text-sm leading-relaxed">${item.a}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </section>
+                    ` : ''}
+
+                    <div class="text-center pt-6">
+                        <button onclick="navigateTo('home')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-xl font-semibold transition shadow-lg shadow-indigo-600/30 inline-flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-right text-sm"></i>
+                            <span>חזרה לכל המדריכים</span>
+                        </button>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        // Render Sitemap Page View
+        function renderSitemapPage() {
+            return `
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="text-center mb-12">
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4">מפת אתר וארכיטקטורה</h1>
+                        <p class="text-slate-400 max-w-2xl mx-auto">
+                            מבנה הנתונים והעמודים של פלטפורמת GameMaster.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
+                        <div class="space-y-8">
+                            
+                            <!-- Node 1 -->
+                            <div class="border-r-2 border-indigo-500 pr-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">1</span>
+                                    <h2 class="text-xl font-bold text-white">עמוד הבית (Homepage)</h2>
+                                </div>
+                                <ul class="mt-3 mr-6 space-y-2 text-slate-300 text-sm list-disc">
+                                    <li>באנר ראשי + מנוע חיפוש מהיר.</li>
+                                    <li>סרגל סינון דינמי לפי קטגוריות ודרגת קושי.</li>
+                                    <li>רשת כרטיסיות מדריכים פופולריים וחדשים.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Node 2 -->
+                            <div class="border-r-2 border-indigo-500 pr-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">2</span>
+                                    <h2 class="text-xl font-bold text-white">תבנית דף מדריך דינמי (Game Guide Template)</h2>
+                                </div>
+                                <ul class="mt-3 mr-6 space-y-2 text-slate-300 text-sm list-disc">
+                                    <li>סקירה מהירה: שחקנים, זמן, גיל, מטרת המשחק.</li>
+                                    <li>חוקים ומהלכים: רכיבי אקורדיון מתקפלים למניעת עומס טקסטואלי.</li>
+                                    <li>טיפים ואסטרטגיות ניצחון.</li>
+                                    <li>שאלות נפוצות (FAQ).</li>
+                                </ul>
+                            </div>
+
+                            <!-- Node 3 -->
+                            <div class="border-r-2 border-indigo-500 pr-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">3</span>
+                                    <h2 class="text-xl font-bold text-white">מנגנון סינון וחיפוש (Filtering Engine)</h2>
+                                </div>
+                                <ul class="mt-3 mr-6 space-y-2 text-slate-300 text-sm list-disc">
+                                    <li>סינון לפי קטגוריה: לוח, אסטרטגיה, קלפים, משפחה.</li>
+                                    <li>סינון לפי קושי: קל, בינוני, מתקדם.</li>
+                                    <li>שאילתת חיפוש חי בזמן אמת.</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper filter logic
+        function filterGames() {
+            return gamesData.filter(game => {
+                const matchesSearch = game.title.toLowerCase().includes(currentFilters.search.toLowerCase()) || 
+                                     game.shortDesc.toLowerCase().includes(currentFilters.search.toLowerCase());
+                const matchesCategory = currentFilters.category === 'all' || game.category === currentFilters.category;
+                const matchesDifficulty = currentFilters.difficulty === 'all' || game.difficulty === currentFilters.difficulty;
+                return matchesSearch && matchesCategory && matchesDifficulty;
+            });
+        }
+
+        // Filter Handlers
+        function setCategoryFilter(category) {
+            currentFilters.category = category;
+            navigateTo('home');
+        }
+
+        function setDifficultyFilter(difficulty) {
+            currentFilters.difficulty = difficulty;
+            navigateTo('home');
+        }
+
+        function resetFilters() {
+            currentFilters = { search: '', category: 'all', difficulty: 'all' };
+            navigateTo('home');
+        }
+
+        // Bind events for homepage
+        function bindHomeEvents() {
+            const searchInput = document.getElementById('hero-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    currentFilters.search = e.target.value;
+                    const gridSection = document.querySelector('section:nth-of-type(3)');
+                    if (gridSection) {
+                        const filtered = filterGames();
+                        gridSection.outerHTML = renderHomePageGridOnly(filtered);
+                    }
+                });
+            }
+        }
+
+        // Helper to update grid on search input without flickering whole page
+        function renderHomePageGridOnly(filteredGames) {
+            return `
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">מדריכים זמינים</h2>
+                            <p class="text-slate-400 text-sm mt-1">מציג ${filteredGames.length} מדריכים מתאימים</p>
+                        </div>
+                    </div>
+
+                    ${filteredGames.length === 0 ? `
+                        <div class="bg-slate-800/40 rounded-3xl p-12 text-center border border-slate-800">
+                            <i class="fa-solid fa-ghost text-5xl text-slate-600 mb-4"></i>
+                            <h3 class="text-xl font-bold text-slate-300 mb-2">לא נמצאו מדריכים תואמים</h3>
+                            <p class="text-slate-500 text-sm">נסה לשנות את מילות החיפוש או לבטל את המסננים.</p>
+                            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-medium transition">אפס מסננים</button>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${filteredGames.map(game => `
+                                <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition duration-300 flex flex-col group shadow-lg">
+                                    <div class="relative h-48 overflow-hidden bg-slate-950">
+                                        <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 group-hover:opacity-100" onerror="this.src='https://placehold.co/800x400/1e1b4b/ffffff?text=Game'">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                        <div class="absolute top-3 right-3 flex gap-2">
+                                            <span class="bg-slate-900/80 backdrop-blur-md border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg font-medium">
+                                                ${game.categoryName}
+                                            </span>
+                                        </div>
+                                        <div class="absolute top-3 left-3">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold backdrop-blur-md ${
+                                                game.difficulty === 'easy' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                                                game.difficulty === 'medium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                                'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                            }">
+                                                ${game.difficultyName}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="p-6 flex-grow flex flex-col justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-400 transition">
+                                                ${game.title}
+                                            </h3>
+                                            <p class="text-slate-400 text-sm line-clamp-3 mb-6 leading-relaxed">
+                                                ${game.shortDesc}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div class="grid grid-cols-3 gap-2 py-3 border-t border-b border-slate-700/60 mb-6 text-xs text-slate-300 text-center">
+                                                <div>
+                                                    <span class="block text-slate-500 mb-0.5"><i class="fa-solid fa-users"></i></span>
+                                                    ${game.players}
+                                                </div>
+                                                <div>
+                                                    <span class="block text-slate-500 mb-0.5"><i class="fa-solid fa-clock"></i></span>
+                                                    ${game.time}
+                                                </div>
+                                                <div>
+                                                    <span class="block text-slate-500 mb-0.5"><i class="fa-solid fa-child"></i></span>
+                                                    ${game.age}
+                                                </div>
+                                            </div>
+                                            <button onclick="navigateTo('guide-${game.id}')" class="w-full bg-slate-700 hover:bg-indigo-600 text-white font-semibold py-2.5 px-4 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                                                <span>קרא מדריך מלא</span>
+                                                <i class="fa-solid fa-arrow-left text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </section>
+            `;
+        }
+
+        // Accordion functionality for Guide Pages
+        function bindAccordionEvents() {
+            const headers = document.querySelectorAll('.accordion-header');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('.fa-chevron-down');
+                    
+                    const isOpen = content.classList.contains('open');
+                    
+                    // Close all accordions
+                    document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+                    document.querySelectorAll('.fa-chevron-down').forEach(i => i.style.transform = 'rotate(0deg)');
+
+                    // Toggle current
+                    if (!isOpen) {
+                        content.classList.add('open');
+                        if (icon) icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+        }
+
+        // Initial application load
+        window.onload = function() {
+            navigateTo('home');
+        };
+    </script>
+</body>
+</html>

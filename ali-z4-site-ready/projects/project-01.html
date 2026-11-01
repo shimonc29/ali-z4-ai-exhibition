@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עולם בעלי החיים - אתר למידה אינטראקטיבי</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Rubik -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Navbar Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30">
+                    <i class="fa-solid fa-paw text-xl"></i>
+                </div>
+                <span class="text-xl font-bold bg-gradient-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent">עולם בעלי החיים</span>
+            </div>
+            <nav class="hidden md:flex items-center gap-6 font-medium text-sm text-gray-600">
+                <a href="#categories" class="hover:text-emerald-600 transition">ממחלקות</a>
+                <a href="#digital-books" class="hover:text-emerald-600 transition">ספרים דיגיטליים</a>
+                <a href="#quiz-section" class="hover:text-emerald-600 transition">חידון טריוויה</a>
+                <a href="#reviews-section" class="hover:text-emerald-600 transition">תגובות גולשים</a>
+                <a href="#share-section" class="hover:text-emerald-600 transition flex items-center gap-1 text-emerald-700 font-semibold"><i class="fa-solid fa-share-nodes"></i> שיתוף האתר</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative bg-slate-900 text-white py-12 px-4 border-b border-slate-800">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8">
+            <!-- Text Content -->
+            <div class="flex-1 text-right">
+                <span class="bg-emerald-600/80 text-emerald-100 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-emerald-400/30 mb-4 inline-block shadow-lg">למידה חווייתית ואינטראקטיבית</span>
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4 leading-tight">גלו את הקסם של עולם הטבע</h1>
+                <p class="text-slate-300 text-base sm:text-lg mb-6 font-normal">מסע מרתק בין יונקים, עופות, שוכני מעמקים וחסרי חוליות. קראו ספרים דיגיטליים מלאים ובחנו את הידע שלכם!</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#quiz-section" class="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold px-6 py-3 rounded-xl shadow-lg transition duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad"></i> התחל בחידון (30 שאלות)
+                    </a>
+                    <a href="#digital-books" class="bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 rounded-xl backdrop-blur-md border border-white/20 transition duration-200 flex items-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-book-open"></i> ספרייה דיגיטלית
+                    </a>
+                </div>
+            </div>
+            <!-- Uploaded Image Display -->
+            <div class="flex-1 w-full max-w-lg">
+                <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-700/80 group">
+                    <img src="Gemini_Generated_Image_1thnn81thnn81thn (1)_2.jfif" alt="יער ובעלי חיים" class="w-full h-auto object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+                    <span class="absolute bottom-3 right-3 text-xs text-slate-200 bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">🌳 בעלי החיים בסביבתם הטבעית</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories & Species Section -->
+    <section id="categories" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">ממלכת בעלי החיים</h2>
+                <p class="text-sm text-gray-500 mt-1">בחרו קטגוריה לצפייה בבעלי החיים וזנים מפורטים</p>
+            </div>
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap gap-2" id="category-buttons">
+                <button onclick="filterCategory('all', event)" class="cat-btn active bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">הכל</button>
+                <button onclick="filterCategory('featured', event)" class="cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">⭐ מומלצים</button>
+                <button onclick="filterCategory('liked', event)" class="cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5"><i class="fa-solid fa-heart text-red-500"></i> לייקים (<span id="likes-count">0</span>)</button>
+                <button onclick="filterCategory('mammals', event)" class="cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">יונקים</button>
+                <button onclick="filterCategory('birds', event)" class="cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">עופות</button>
+                <button onclick="filterCategory('marine', event)" class="cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">ימיים</button>
+                <button onclick="filterCategory('invertebrates', event)" class="cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">חסרי חוליות</button>
+            </div>
+        </div>
+
+        <!-- Animal Cards Grid -->
+        <div id="animals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Cards rendered via JavaScript -->
+        </div>
+    </section>
+
+    <!-- Quick Share Section -->
+    <section id="share-section" class="bg-gradient-to-r from-emerald-800 to-teal-800 text-white py-10 px-4 border-y border-emerald-900">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="bg-emerald-700/80 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 mb-3 inline-block">שתפו את הידע</span>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">אהבתם את האתר? שתפו עם חברים ומשפחה!</h2>
+            <p class="text-emerald-100 text-sm max-w-xl mx-auto mb-6">בלחיצה אחת תוכלו לשתף את הספרים הדיגיטליים וחידון הבעלי חיים ברשתות החברתיות ובאפליקציות ההודעות.</p>
+            
+            <div class="flex flex-wrap justify-center items-center gap-3">
+                <!-- WhatsApp Share Button -->
+                <button onclick="shareToWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md hover:scale-105 transform">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp
+                </button>
+                
+                <!-- Telegram Share Button -->
+                <button onclick="shareToTelegram()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md hover:scale-105 transform">
+                    <i class="fa-brands fa-telegram text-lg"></i> Telegram
+                </button>
+
+                <!-- Facebook Share Button -->
+                <button onclick="shareToFacebook()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md hover:scale-105 transform">
+                    <i class="fa-brands fa-facebook-f text-lg"></i> Facebook
+                </button>
+
+                <!-- Twitter / X Share Button -->
+                <button onclick="shareToTwitter()" class="bg-slate-900 hover:bg-black text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md hover:scale-105 transform">
+                    <i class="fa-brands fa-x-twitter text-lg"></i> Twitter (X)
+                </button>
+
+                <!-- Email Share Button -->
+                <button onclick="shareViaEmail()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md hover:scale-105 transform">
+                    <i class="fa-solid fa-envelope text-lg"></i> אימייל
+                </button>
+
+                <!-- Copy Link Button -->
+                <button onclick="copySiteLink()" class="bg-white/20 hover:bg-white/30 text-white font-bold px-5 py-2.5 rounded-xl backdrop-blur-sm border border-white/20 transition flex items-center gap-2 shadow-md hover:scale-105 transform">
+                    <i class="fa-solid fa-link text-lg"></i> העתק קישור
+                </button>
+            </div>
+            
+            <div id="copy-toast" class="mt-4 text-xs font-semibold bg-emerald-900/80 border border-emerald-400 text-emerald-200 py-2 px-4 rounded-xl inline-block hidden">
+                ✓ הקישור הועתק בהצלחה ללוח!
+            </div>
+        </div>
+    </section>
+
+    <!-- Digital Books Section -->
+    <section id="digital-books" class="bg-slate-100 py-12 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <span class="text-emerald-600 font-semibold text-xs tracking-wider uppercase">ספרייה לימודית</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-1">ספרים דיגיטליים (30 פרקים מפורטים)</h2>
+                <p class="text-gray-600 text-sm mt-2">ספרים עשירים בתמונות, עובדות מרתקות ומחקרים על עולם הטבע</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Mammals Book -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-hippo"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">עולם היונקים המופלא</h3>
+                        <p class="text-xs text-gray-500 mb-4 leading-relaxed">אורחות חיים, הסתגלות לתנאי קיצון ומנגנוני הישרדות מרתקים. 30 פרקים מלאים.</p>
+                    </div>
+                    <button onclick="openBookModal('mammals')" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book"></i> קרא ספר זה
+                    </button>
+                </div>
+
+                <!-- Birds Book -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        <div class="w-12 h-12 bg-sky-100 text-sky-700 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-feather"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">שמיים ונוצות: העופות</h3>
+                        <p class="text-xs text-gray-500 mb-4 leading-relaxed">אמנות התעופה, מסלולי נוודות וחוקי הציד באוויר. 30 פרקים מלווים באיורים.</p>
+                    </div>
+                    <button onclick="openBookModal('birds')" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book"></i> קרא ספר זה
+                    </button>
+                </div>
+
+                <!-- Marine Book -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-fish font-bold"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">מעמקי האוקיינוס</h3>
+                        <p class="text-xs text-gray-500 mb-4 leading-relaxed">סודות המצולות, יצורים מאירים במעמקים ושוניות האלמוגים. 30 פרקים מקיפים.</p>
+                    </div>
+                    <button onclick="openBookModal('marine')" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book"></i> קרא ספר זה
+                    </button>
+                </div>
+
+                <!-- Invertebrates Book -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-bug"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">עולם חסרי החוליות</h3>
+                        <p class="text-xs text-gray-500 mb-4 leading-relaxed">חרקים, פרוקי רגליים ורכיכות. הרוב המוחלט של בעלי החיים בכדור הארץ. 30 פרקים.</p>
+                    </div>
+                    <button onclick="openBookModal('invertebrates')" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book"></i> קרא ספר זה
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trivia Quiz Section -->
+    <section id="quiz-section" class="py-16 bg-white">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="text-center mb-8">
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full uppercase">אתגר הידע</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">חידון טריוויה - 30 שאלות!</h2>
+                <p class="text-gray-600 text-sm mt-1">ענו על השאלות וגלו מה הציון הסופי שלכם בטבע</p>
+            </div>
+            
+            <div id="quiz-container" class="bg-emerald-50/60 rounded-3xl p-6 sm:p-10 border border-emerald-100 shadow-md">
+                <p id="quiz-question" class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center leading-snug"></p>
+                <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
+                <div id="quiz-feedback" class="text-center font-bold text-base mb-4 hidden py-2 rounded-xl"></div>
+                
+                <div class="flex justify-between items-center pt-4 border-t border-emerald-200/60">
+                    <span id="quiz-progress" class="text-xs font-medium text-gray-500"></span>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition shadow-sm">לשאלה הבאה ←</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews / Comments Section -->
+    <section id="reviews-section" class="py-16 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-10">
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full uppercase">קהילת הלומדים</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">תגובות וחוויות גולשים</h2>
+                <p class="text-gray-600 text-sm mt-1">שתפו אותנו בחוויות מהספרים, הטרקטורים והחידון!</p>
+            </div>
+
+            <!-- Add Comment Form -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
+                <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-emerald-600"></i> הוספת תגובה חדשה
+                </h3>
+                <form id="comment-form" onsubmit="addComment(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">שם מלא</label>
+                            <input type="text" id="comment-name" required placeholder="הכנס את שמך" class="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">דירוג</label>
+                            <select id="comment-rating" class="w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                                <option value="3">⭐⭐⭐ (3/5)</option>
+                                <option value="2">⭐⭐ (2/5)</option>
+                                <option value="1">⭐ (1/5)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">התגובה שלך</label>
+                        <textarea id="comment-text" required rows="3" placeholder="מה חשבת על האתר והחידון?" class="w-full bg-slate-50 border border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-emerald-500"></textarea>
+                    </div>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> פרסם תגובה
+                    </button>
+                </form>
+            </div>
+
+            <!-- Comments List -->
+            <div id="comments-list" class="space-y-4">
+                <!-- Comments rendered dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-gray-400 py-8 border-t border-slate-800 text-center text-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 עולם בעלי החיים - אתר אינטראקטיבי ללמידה וחוויה בטבע.</p>
+        </div>
+    </footer>
+
+    <!-- Species Modal -->
+    <div id="species-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-gray-100">
+            <div class="p-5 bg-emerald-700 text-white flex justify-between items-center">
+                <h3 id="species-modal-title" class="text-xl font-bold"></h3>
+                <button onclick="closeSpeciesModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">✕</button>
+            </div>
+            <div id="species-modal-content" class="p-6 overflow-y-auto custom-scrollbar grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Species rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Book Reading Modal -->
+    <div id="book-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-4xl w-full h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-gray-100">
+            <!-- Modal Header -->
+            <div class="p-4 sm:p-5 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800 shrink-0">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-book-open text-emerald-400 text-xl"></i>
+                    <div>
+                        <h3 id="book-modal-title" class="font-bold text-lg leading-tight"></h3>
+                        <p class="text-xs text-slate-400">ספר דיגיטלי מורחב - 30 פרקים</p>
+                    </div>
+                </div>
+                <button onclick="closeBookModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-red-500 text-slate-300 hover:text-white flex items-center justify-center text-base transition">✕</button>
+            </div>
+            <!-- Book Content Scrollable -->
+            <div id="book-modal-content" class="p-6 sm:p-8 overflow-y-auto custom-scrollbar space-y-8 bg-slate-50 flex-1">
+                <!-- Chapters rendered dynamically -->
+            </div>
+            <!-- Modal Footer -->
+            <div class="p-4 bg-white border-t border-slate-200 flex justify-between items-center shrink-0">
+                <span class="text-xs text-gray-500">קריאה מהנה! מומלץ לעבור בין הפרקים</span>
+                <button onclick="closeBookModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-medium transition">סגור ספר</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        // Set to store liked animal IDs
+        const likedAnimalIds = new Set();
+
+        // Main Animals Data
+        const animalsData = [
+            {
+                id: 'mammals',
+                title: 'יונקים',
+                featuredName: 'אריה אפריקני',
+                isFeatured: true,
+                image: 'https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=800&q=80',
+                desc: 'בעלי דם חם, מגדלים את צאצאיהם ומזינים אותם בחלב. מותאמים למגוון בית גידול בעולם.',
+                species: [
+                    { name: 'אריה אפריקני', image: 'https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=600&q=80', desc: 'טורף-על החי בלהקות בסוואנות של אפריקה.' },
+                    { name: 'פיל אפריקני', image: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=600&q=80', desc: 'יונק היבשה הגדול ביותר בעל חדק מפותח וזיכרון מדהים.' },
+                    { name: 'ברדלס (צ\'יטה)', image: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=600&q=80', desc: 'החיה המהירה ביותר ביבשה, מגיעה ל-100 קמ"ש בשניות מעטות.' },
+                    { name: 'דוב קוטב', image: 'https://images.unsplash.com/photo-1589656966895-2f33e7653819?auto=format&fit=crop&w=600&q=80', desc: 'טורף העל של האזור הארקטי, מותאם היטב לתנאי קור קיצוניים.' }
+                ]
+            },
+            {
+                id: 'birds',
+                title: 'עופות',
+                featuredName: 'עיט מוזהב',
+                isFeatured: true,
+                image: 'https://images.unsplash.com/photo-1611095567219-8fa7d4d8bf48?auto=format&fit=crop&w=800&q=80',
+                desc: 'בעלי נוצות, מקור וללא שיניים. רובם בעלי יכולת תעופה מרשימה וחושים חדים.',
+                species: [
+                    { name: 'עיט מוזהב', image: 'https://images.unsplash.com/photo-1611095567219-8fa7d4d8bf48?auto=format&fit=crop&w=600&q=80', desc: 'עוף דורס עוצמתי בעל ראייה מפותחת ויכולת צלילה מהירה.' },
+                    { name: 'תוכי קאקדו', image: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=600&q=80', desc: 'ציפור חכמה וחברותית במיוחד הידועה ביכולת החיקוי שלה.' },
+                    { name: 'פלמינגו מצוי', image: 'https://images.unsplash.com/photo-1516683018641-547af6c26820?auto=format&fit=crop&w=600&q=80', desc: 'עוף מים יפהפה המקבל את צבעו הוורוד מתזונת האצות והסרטנים.' },
+                    { name: 'פינגווין קיסרי', image: 'https://images.unsplash.com/photo-1598439210625-5067c578f3f6?auto=format&fit=crop&w=600&q=80', desc: 'עוף שאינו עף אך שחיין מצטיין השורד בטמפרטורות המקפיאות של אנטארקטיקה.' }
+                ]
+            },
+            {
+                id: 'marine',
+                title: 'ימיים',
+                featuredName: 'דולפינן מצוי',
+                isFeatured: true,
+                image: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?auto=format&fit=crop&w=800&q=80',
+                desc: 'שוכני מעמקים וימים, בעלי הסתגלות מופלאה לחיים במים - זימים או ריאות מותאמות.',
+                species: [
+                    { name: 'דולפינן מצוי', image: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?auto=format&fit=crop&w=600&q=80', desc: 'יונק ימי אינטליגנטי במיוחד המשתמש בסונאר ניווט שמיעתי.' },
+                    { name: 'כריש לבן', image: 'https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=600&q=80', desc: 'דג סחוס טורף בעל חושי ריח וזיהוי תנועה מעולים.' },
+                    { name: 'צב ים ירוק', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80', desc: 'זוחל ימי עתיק היוצא ליבשה אך ורק לצורך הטלת ביצים בחוף.' },
+                    { name: 'לווייתן גדול-סנפיר', image: 'https://images.unsplash.com/photo-1568430462629-a8741467c34a?auto=format&fit=crop&w=600&q=80', desc: 'ענק ימי המוכר בזכות השירה המורכבת של הזכרים בעונת הרבייה.' }
+                ]
+            },
+            {
+                id: 'invertebrates',
+                title: 'חסרי חוליות',
+                featuredName: 'תמנון מצוי',
+                isFeatured: true,
+                image: 'https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&w=800&q=80',
+                desc: 'בעלי חיים ללא עמוד שדרה. מהווים למעלה מ-95% מכלל מיני בעלי החיים בכדור הארץ.',
+                species: [
+                    { name: 'תמנון מצוי', image: 'https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&w=600&q=80', desc: 'רכיכה חכמה בעלת 8 זרועות, 3 לבבות ויכולת הסוואה מיידית.' },
+                    { name: 'פרפר מנרכית', image: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=600&q=80', desc: 'חרק יפהפה המבצע נדידה של אלפי קילומטרים מדי שנה.' },
+                    { name: 'עקרב צהוב', image: 'https://images.unsplash.com/photo-1591025207163-942350e47db2?auto=format&fit=crop&w=600&q=80', desc: 'פרוק רגליים מדברי בעל צבתות ועוקץ בעל ארס חזק.' },
+                    { name: 'סרטן הסלעים', image: 'https://images.unsplash.com/photo-1559827291-72ee739d0d9a?auto=format&fit=crop&w=600&q=80', desc: 'סרטן בעל שריון קשה המותאם לחיים בסביבת חוף סלעית וגלים.' }
+                ]
+            }
+        ];
+
+        // Render main grid cards
+        function renderAnimals(filter = 'all') {
+            const grid = document.getElementById('animals-grid');
+            grid.innerHTML = '';
+
+            let filteredData = animalsData;
+            if (filter === 'featured') {
+                filteredData = animalsData.filter(a => a.isFeatured);
+            } else if (filter === 'liked') {
+                filteredData = animalsData.filter(a => likedAnimalIds.has(a.id));
+            } else if (filter !== 'all') {
+                filteredData = animalsData.filter(a => a.id === filter);
+            }
+
+            if (filteredData.length === 0 && filter === 'liked') {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-xl mx-auto mb-3">
+                            <i class="fa-regular fa-heart"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">עדיין לא סימנת לייק אף בעל חיים</h3>
+                        <p class="text-xs text-gray-500 mt-1">לחץ על אייקון הלב בכרטיסיות בעלי החיים כדי להוסיף אותם לרשימת האהובים שלך!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredData.forEach(item => {
+                const isLiked = likedAnimalIds.has(item.id);
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition duration-300 flex flex-col relative group";
+
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden cursor-pointer" onclick="openSpeciesModal('${item.id}')">
+                        <img src="${item.image}" alt="${item.featuredName}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/059669/ffffff?text=תמונה'">
+                        <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-medium">${item.title}</span>
+                        ${item.isFeatured ? '<span class="absolute top-3 left-3 bg-amber-500/90 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold shadow-sm">⭐ מומלץ</span>' : ''}
+                    </div>
+                    
+                    <!-- Like Button -->
+                    <button onclick="toggleLike('${item.id}', event)" class="absolute bottom-36 left-3 z-10 w-9 h-9 rounded-full ${isLiked ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-400 hover:text-red-500'} backdrop-blur-md flex items-center justify-center shadow-md transition transform active:scale-90">
+                        <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-base"></i>
+                    </button>
+
+                    <div class="p-5 flex-1 flex flex-col justify-between cursor-pointer" onclick="openSpeciesModal('${item.id}')">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">${item.featuredName}</h3>
+                            <p class="text-xs text-gray-500 leading-relaxed mb-4">${item.desc}</p>
+                        </div>
+                        <div class="text-emerald-600 font-medium text-xs flex items-center justify-between border-t pt-3">
+                            <span>צפה בזנים נוספים (${item.species.length})</span>
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        let currentFilter = 'all';
+
+        function toggleLike(id, event) {
+            if (event) event.stopPropagation();
+            if (likedAnimalIds.has(id)) {
+                likedAnimalIds.delete(id);
+            } else {
+                likedAnimalIds.add(id);
+            }
+            document.getElementById('likes-count').innerText = likedAnimalIds.size;
+            renderAnimals(currentFilter);
+        }
+
+        function filterCategory(cat, e) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5";
+            });
+            if (e && e.currentTarget) {
+                e.currentTarget.className = "cat-btn active bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-1.5";
+            }
+            renderAnimals(cat);
+        }
+
+        // Species Modal Logic
+        function openSpeciesModal(catId) {
+            const category = animalsData.find(c => c.id === catId);
+            if (!category) return;
+
+            document.getElementById('species-modal-title').innerText = `זנים במחלקת ${category.title}`;
+            const container = document.getElementById('species-modal-content');
+            container.innerHTML = '';
+
+            category.species.forEach(sp => {
+                const box = document.createElement('div');
+                box.className = "bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col items-center text-center";
+                box.innerHTML = `
+                    <img src="${sp.image}" alt="${sp.name}" class="w-full h-36 object-cover rounded-xl mb-3" onerror="this.src='https://placehold.co/400x300/059669/ffffff?text=תמונה'">
+                    <h4 class="font-bold text-gray-900 mb-1">${sp.name}</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">${sp.desc}</p>
+                `;
+                container.appendChild(box);
+            });
+
+            document.getElementById('species-modal').classList.remove('hidden');
+        }
+
+        function closeSpeciesModal() {
+            document.getElementById('species-modal').classList.add('hidden');
+        }
+
+        // Book Content Generator (30 Chapters per category)
+        function getBookContent(bookId) {
+            const bookTitles = {
+                mammals: "עולם היונקים המופלא",
+                birds: "שמיים ונוצות: העופות",
+                marine: "מעמקי האוקיינוס",
+                invertebrates: "עולם חסרי החוליות"
+            };
+
+            const bookImages = {
+                mammals: [
+                    "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=800&q=80"
+                ],
+                birds: [
+                    "https://images.unsplash.com/photo-1611095567219-8fa7d4d8bf48?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=800&q=80"
+                ],
+                marine: [
+                    "https://images.unsplash.com/photo-1570481662006-a3a1374699e8?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80"
+                ],
+                invertebrates: [
+                    "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=800&q=80"
+                ]
+            };
+
+            const topics = [
+                "מבוא והגדרות יסוד", "מבנה השלד והאנטומיה", "מערכות נשימה והמוחו", "מנגנוני הסוואה והגנה",
+                "תקשורת ושפה בעולם החי", "מבנה החברה והלהקה", "מנגנוני הציד והתזונה", "תזונה צמחונית והסתגלות",
+                "עונות השנה ונדידה", "שינת חורף ותרדמה", "טיפול בצאצאים והורות", "חושים נסתרים ואינטליגנציה",
+                "הסתגלות לתנאי מדבר", "חיים באזורים קפואים", "השפעת האדם והסביבה", "טורפי על ומארג המזון",
+                "שינויים אבולוציוניים", "איברים מיוחדים ותפקודם", "חיים בלילה - בעלי חיים ליליים", "שמירה על טריטוריה",
+                "שיטות חיזור ובניית קנים", "מחזורי חיים וגדילה", "מערכות יחסים וסימביוזה", "בעלי חיים באיי בידוד",
+                "שימוש בכלים ומיומנויות", "הגנה מפני מחלות ומזיקים", "הישרדות במעמקים ובתנאי לחץ", "הקשר המערכתי בטבע",
+                "מינים בסכנת הכחדה", "סיכום ומבט לעתיד"
+            ];
+
+            return {
+                title: bookTitles[bookId] || "ספר לימודי",
+                images: bookImages[bookId],
+                chapters: topics.map((chapterTitle, idx) => ({
+                    number: idx + 1,
+                    title: chapterTitle,
+                    content: `בפרק זה (${idx + 1}) נלמד לעומק על ${chapterTitle} בהקשר של ${bookTitles[bookId]}. החוקרים מגלים כי מנגנונים אלו חיוניים להבנת שיווי המשקל האקולוגי. תהליכים פיזיולוגיים והתנהגותיים אלו מעצבים את יכולת ההישרדות של המינים לאורך דורות רבים.`,
+                    fact: `עובדה מרתקת לפרק ${idx + 1}: מחקרים מראים כי התנהגות זו תורמת באופן ישיר ליציבות הסביבתית המקומית ולשימור המגוון הביולוגי.`
+                }))
+            };
+        }
+
+        function openBookModal(bookId) {
+            const bookData = getBookContent(bookId);
+            document.getElementById('book-modal-title').innerText = bookData.title;
+            
+            const container = document.getElementById('book-modal-content');
+            container.innerHTML = '';
+
+            bookData.chapters.forEach((ch, idx) => {
+                const chapterEl = document.createElement('div');
+                chapterEl.className = "bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3";
+                
+                let imgHtml = '';
+                if (idx === 0) {
+                    imgHtml = `<img src="${bookData.images[0]}" class="w-full h-56 object-cover rounded-xl mb-4" onerror="this.style.display='none'">`;
+                } else if (idx === 14) {
+                    imgHtml = `<img src="${bookData.images[1]}" class="w-full h-56 object-cover rounded-xl mb-4" onerror="this.style.display='none'">`;
+                }
+
+                chapterEl.innerHTML = `
+                    <div class="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+                        <span class="w-7 h-7 bg-emerald-100 text-emerald-800 rounded-lg flex items-center justify-center text-xs font-extrabold">${ch.number}</span>
+                        <h4>${ch.title}</h4>
+                    </div>
+                    ${imgHtml}
+                    <p class="text-gray-700 text-sm leading-relaxed">${ch.content}</p>
+                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-900 flex items-start gap-2">
+                        <span class="text-base">💡</span>
+                        <span><strong>הידעת?</strong> ${ch.fact}</span>
+                    </div>
+                `;
+                container.appendChild(chapterEl);
+            });
+
+            document.getElementById('book-modal').classList.remove('hidden');
+        }
+
+        function closeBookModal() {
+            document.getElementById('book-modal').classList.add('hidden');
+        }
+
+        // Close Modals on ESC Key or Backdrop Click
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeBookModal();
+                closeSpeciesModal();
+            }
+        });
+
+        document.getElementById('book-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('book-modal')) {
+                closeBookModal();
+            }
+        });
+
+        document.getElementById('species-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('species-modal')) {
+                closeSpeciesModal();
+            }
+        });
+
+        // Quiz Logic - 30 Questions
+        const quizQuestions = [
+            { question: "איזה בעל חיים הוא הגדול ביותר בעולם?", options: ["פיל אפריקני", "לווייתן כחול", "כריש לווייתן", "ג'רפה"], correct: 1 },
+            { question: "מה מבין הבאים אינו יונק?", options: ["דולפין", "עטלף", "נשר", "לווייתן"], correct: 2 },
+            { question: "מהו בעל החיים המהיר ביותר ביבשה?", options: ["אריה", "ברדלס (צ'יטה)", "צבי", "זאב"], correct: 1 },
+            { question: "כמה לבבות יש לתמנון?", options: ["אחד", "שניים", "שלושה", "ארבעה"], correct: 2 },
+            { question: "איזה עוף מסוגל לעוף לאחור?", options: ["קוליברי", "סנונית", "נחליאלי", "דוכיפת"], correct: 0 },
+            { question: "מה מהבאים אינו שייך למחלקת חסרי החוליות?", options: ["תמנון", "עקרב", "צפרדע", "דבורה"], correct: 2 },
+            { question: "איזה יונק הוא היחיד שמסוגל לעוף באופן פעיל?", options: ["סנאי מעופף", "עטלף", "למור מעופף", "גלשן"], correct: 1 },
+            { question: "כמה חוליות צוואר יש לג'רפה?", options: ["7", "12", "24", "15"], correct: 0 },
+            { question: "איזה צבע הוא דמו של התמנון?", options: ["אדום", "כחול", "ירוק", "שקוף"], correct: 1 },
+            { question: "מהו העוף הגדול ביותר כיום בעולם?", options: ["נשר", "פליקן", "יען", "אלבטרוס"], correct: 2 },
+            { question: "כיצד מתקשרים דולפינים ביניהם?", options: ["תנועות זנב בלבד", "שריקות ומערכת הד", "שינוי צבע העור", "ריח"], correct: 1 },
+            { question: "מה מיוחד בקרן הקרנף?", options: ["עשויה עצם דחוסה", "עשויה קרטין (כמו ציפורניים)", "עשויה שנהב", "עשויה סחוס בלבד"], correct: 1 },
+            { question: "איזה בעל חיים מפריש חומר אדום המגן על עורו מהשמש?", options: ["היפופוטם", "פיל", "קרנף", "תנשמת"], correct: 0 },
+            { question: "איזה עוף הוא היחיד שאינו בונה קן ומטיל את ביציו בקן זר?", options: ["סנונית", "קוקייה", "דוכיפת", "זמיר"], correct: 1 },
+            { question: "ממה מורכב מרבית גופה של המדוזה?", options: ["סחוס", "שומן", "מים (כ-95%)", "חלבון נוקשה"], correct: 2 },
+            { question: "מה מהבאים נכון לגבי הברדלס (צ'יטה)?", options: ["הוא שואג כמו אריה", "ציפורניו אינן נשלפות בחזרה", "הוא חי במים", "הוא פעיל בלילה בלבד"], correct: 1 },
+            { question: "איזו סגולה ייחודית יש לכוכב הים?", options: ["יכולת לעוף", "התחדשות איברים (רגנרציה)", "שינוי צבע שחור ולבן", "שינת חורף של שנה"], correct: 1 },
+            { question: "איזה בעל חיים נחשב למהיר ביותר בצלילה באוויר?", options: ["בז נודד", "עיט מוזהב", "סיס", "נשר"], correct: 0 },
+            { question: "ממה עשויה שלד החצי-קשיח של החרקים (כגון חיפושית)?", options: ["עצם", "כיטין", "סידן טהור", "אמייל"], correct: 1 },
+            { question: "איזה יונק מטיל ביצים?", options: ["קנגורו", "ברווזן (פלטיפוס)", "ארמדילו", "עצלן"], correct: 1 },
+            { question: "מהי הדיאטה העיקרית של הפנדה הענקית?", options: ["דגים", "ענפי במבוק", "פירות יער", "חרקים"], correct: 1 },
+            { question: "איזה חרק מסוגל לשאת משא הכבד פי 50 ממשקל גופו?", options: ["חיפושית", "נמלה", "דבורה", "פרפר"], correct: 1 },
+            { question: "כמה עיניים יש בדרך כלל לעכביש?", options: ["2", "4", "8", "12"], correct: 2 },
+            { question: "איזה בעל חיים ימי ידוע בכך שהוא ישן כשיציע מוח אחד ער ועין אחת פקוחה?", options: ["כריש", "דולפין", "תמנון", "סרטן"], correct: 1 },
+            { question: "איזה צבע נוצות יש לפלמינגו בלידתו?", options: ["וורוד חזק", "אפור-לבן", "צהוב", "שחור"], correct: 1 },
+            { question: "איזה בעל חיים נחשב לאיטי ביותר ביבשה?", options: ["עצלן", "שבלול", "צב יבשה", "זיקית"], correct: 0 },
+            { question: "איזה זכר בעולם החי נושא את ההריון ומוליד את הצאצאים?", options: ["סוסון ים", "פינגווין", "אורקה", "שפירית"], correct: 0 },
+            { question: "מהי תוחלת החיים של דבורת פועלת בקיץ?", options: ["כ-6 שבועות", "כ-5 שנים", "יום אחד בלבד", "כ-3 שנים"], correct: 0 },
+            { question: "מה מבין הבאים אינו דג?", options: ["כריש", "טונה", "דולפין", "סלמון"], correct: 2 },
+            { question: "איזה חרק עובר גלגול מלא (ביצה, זחל, גולם, בוגר)?", options: ["פרפר", "חגב", "ציקדה", "צרצר"], correct: 0 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            if (currentQuestion >= quizQuestions.length) {
+                showFinalScore();
+                return;
+            }
+
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('quiz-question').innerText = `${currentQuestion + 1}. ${q.question}`;
+            document.getElementById('quiz-progress').innerText = `שאלה ${currentQuestion + 1} מתוך ${quizQuestions.length}`;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn bg-white border border-gray-200 text-gray-700 py-3.5 px-5 rounded-2xl text-right hover:bg-emerald-50 hover:border-emerald-300 font-medium transition text-sm w-full shadow-sm flex justify-between items-center";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = quizQuestions[currentQuestion];
+            const feedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('.quiz-opt-btn');
+
+            buttons.forEach(b => b.disabled = true);
+
+            if (selectedIndex === q.correct) {
+                feedback.innerText = "נכון מאוד! כל הכבוד! 🎉";
+                feedback.className = "text-center font-bold text-base mb-4 py-2 rounded-xl bg-emerald-100 text-emerald-800";
+                score++;
+            } else {
+                feedback.innerText = `טעות... התשובה הנכונה היא: ${q.options[q.correct]}`;
+                feedback.className = "text-center font-bold text-base mb-4 py-2 rounded-xl bg-red-100 text-red-800";
+            }
+
+            feedback.classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function showFinalScore() {
+            const percentage = Math.round((score / quizQuestions.length) * 100);
+            let message = "";
+            let colorClass = "";
+
+            if (percentage >= 90) {
+                message = "מדהים! אתה מומחה אמיתי לעולם בעלי החיים! 🏆";
+                colorClass = "text-emerald-600";
+            } else if (percentage >= 70) {
+                message = "כל הכבוד! יש לך ידע נרחב ומפתיע! 🌟";
+                colorClass = "text-emerald-700";
+            } else if (percentage >= 50) {
+                message = "תוצאה יפה! שווה לקרוא עוד בספרים הדיגיטליים באתר ולהשתפר! 📚";
+                colorClass = "text-amber-600";
+            } else {
+                message = "לא נורא! מומלץ לעיין בספרים הדיגיטליים ולנסות שוב! 💪";
+                colorClass = "text-gray-600";
+            }
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="text-center py-6">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">החידון הושלם!</h3>
+                    <p class="text-gray-600 mb-4">ענית נכון על <span class="font-bold text-emerald-700">${score}</span> מתוך <span class="font-bold">${quizQuestions.length}</span> שאלות.</p>
+                    <div class="text-5xl font-extrabold ${colorClass} mb-4">${percentage}%</div>
+                    <p class="text-base font-medium text-gray-700 mb-6">${message}</p>
+                    <button onclick="resetQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-2xl font-bold transition shadow-md">התחל חידון מחדש 🔄</button>
+                </div>
+            `;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <p id="quiz-question" class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center leading-snug"></p>
+                <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
+                <div id="quiz-feedback" class="text-center font-bold text-base mb-4 hidden py-2 rounded-xl"></div>
+                
+                <div class="flex justify-between items-center pt-4 border-t border-emerald-200/60">
+                    <span id="quiz-progress" class="text-xs font-medium text-gray-500"></span>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition shadow-sm">לשאלה הבאה ←</button>
+                </div>
+            `;
+            loadQuestion();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            renderAnimals('all');
+            loadQuestion();
+            renderComments();
+        };
+
+        // Comments System Logic
+        const initialComments = [
+            { name: "דניאל", rating: 5, text: "אתר מדהים! החידון של 30 השאלות מאתגר ומלמד מאוד.", date: "לפני יומיים" },
+            { name: "נועם", rating: 5, text: "הספרים הדיגיטליים עשירים ומלאים בפרטים מרתקים. אהבתי במיוחד את החלק על חסרי החוליות!", date: "אתמול" },
+            { name: "איתי", rating: 4, text: "עיצוב נקי ונוח. ממש כיף ללמוד על בעלי החיים כאן.", date: "היום" }
+        ];
+
+        function renderComments() {
+            const list = document.getElementById('comments-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            initialComments.forEach(c => {
+                const stars = '⭐'.repeat(c.rating);
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-2";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-emerald-100 text-emerald-700 font-bold rounded-full flex items-center justify-center text-xs">
+                                ${c.name.charAt(0)}
+                            </div>
+                            <span class="font-bold text-sm text-gray-800">${c.name}</span>
+                            <span class="text-xs text-amber-500">${stars}</span>
+                        </div>
+                        <span class="text-xs text-gray-400">${c.date}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">${c.text}</p>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function addComment(event) {
+            event.preventDefault();
+            const name = document.getElementById('comment-name').value;
+            const rating = parseInt(document.getElementById('comment-rating').value);
+            const text = document.getElementById('comment-text').value;
+
+            initialComments.unshift({
+                name: name,
+                rating: rating,
+                text: text,
+                date: "עכשיו"
+            });
+
+            document.getElementById('comment-form').reset();
+            renderComments();
+        }
+
+        // Social Sharing Functions
+        const shareText = encodeURIComponent("בואו לגלות את עולם בעלי החיים! ספרים דיגיטליים וחידון טריוויה 30 שאלות אינטראקטיבי:");
+        const shareUrl = encodeURIComponent(window.location.href);
+
+        function shareToWhatsApp() {
+            window.open(`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`, '_blank');
+        }
+
+        function shareToTelegram() {
+            window.open(`https://t.me/share/url?url=${shareUrl}&text=${shareText}`, '_blank');
+        }
+
+        function shareToFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, '_blank');
+        }
+
+        function shareToTwitter() {
+            window.open(`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`, '_blank');
+        }
+
+        function shareViaEmail() {
+            window.open(`mailto:?subject=${encodeURIComponent("אתר עולם בעלי החיים")}&body=${shareText}%20${shareUrl}`, '_blank');
+        }
+
+        function copySiteLink() {
+            const tempInput = document.createElement('input');
+            tempInput.value = window.location.href;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const toast = document.getElementById('copy-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

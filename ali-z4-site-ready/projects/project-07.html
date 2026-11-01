@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עולם הפוקימונים | האנציקלופדיה המקיפה</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pokeYellow: '#FFDE00',
+                        pokeRed: '#CC0000',
+                        pokeBlue: '#3B4CCA',
+                        pokeDarkRed: '#8B0000',
+                        pokeDarkBlue: '#2A3A9E'
+                    },
+                    fontFamily: {
+                        sans: ['Rubik', 'Segoe UI', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+        .pokeball-bg {
+            background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), linear-gradient(135deg, #CC0000 0%, #3B4CCA 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .custom-shadow {
+            box-shadow: 0 10px 30px -5px rgba(59, 76, 202, 0.15);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3B4CCA;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #CC0000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-pokeYellow selection:text-pokeBlue">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-md border-b-4 border-pokeYellow transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="w-12 h-12 rounded-full border-4 border-pokeBlue bg-pokeRed flex items-center justify-center relative overflow-hidden shadow-lg group">
+                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white border-t-4 border-gray-900"></div>
+                        <div class="absolute w-4 h-4 bg-white border-2 border-gray-900 rounded-full z-10 group-hover:scale-125 transition-transform"></div>
+                    </div>
+                    <span class="text-2xl font-extrabold text-pokeBlue tracking-wide">עולם<span class="text-pokeRed"> הפוקימון</span></span>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex space-x-8 space-x-reverse font-bold text-gray-700">
+                    <a href="#about" class="hover:text-pokeRed transition-colors py-2 border-b-2 border-transparent hover:border-pokeRed">אודות</a>
+                    <a href="#app-info" class="hover:text-pokeRed transition-colors py-2 border-b-2 border-transparent hover:border-pokeRed">על האפליקציה</a>
+                    <a href="#generations" class="hover:text-pokeRed transition-colors py-2 border-b-2 border-transparent hover:border-pokeRed">דורות ומשחקים</a>
+                    <a href="#pokedex" class="hover:text-pokeRed transition-colors py-2 border-b-2 border-transparent hover:border-pokeRed">פוקדקס אינטראקטיבי</a>
+                    <a href="#media" class="hover:text-pokeRed transition-colors py-2 border-b-2 border-transparent hover:border-pokeRed">מדיה וזכיונות</a>
+                    <a href="#records" class="hover:text-pokeRed transition-colors py-2 border-b-2 border-transparent hover:border-pokeRed">שיאים ועובדות</a>
+                </nav>
+
+                <!-- Audio Controls & Mobile Menu Button -->
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <button id="music-btn" onclick="toggleMusic()" class="bg-pokeYellow text-gray-900 font-bold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 space-x-reverse hover:bg-yellow-300 transition shadow">
+                        <i id="music-icon" class="fa-solid fa-music text-pokeRed"></i>
+                        <span id="music-text">הפעל מנגינה</span>
+                    </button>
+
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-btn" class="text-gray-700 hover:text-pokeRed focus:outline-none p-2" aria-label="תפריט">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3">
+            <a href="#about" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">אודות</a>
+            <a href="#app-info" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">על האפליקציה</a>
+            <a href="#generations" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">דורות ומשחקים</a>
+            <a href="#pokedex" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">פוקדקס אינטראקטיבי</a>
+            <a href="#media" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">מדיה וזכיונות</a>
+            <a href="#records" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">שיאים ועובדות</a>
+            <a href="#rate-and-share" class="block font-bold text-gray-700 hover:text-pokeRed p-2 rounded-lg hover:bg-gray-50">דירוג ושיתוף</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pokeball-bg text-white py-24 lg:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-right space-y-6">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse bg-pokeYellow text-gray-900 px-4 py-1.5 rounded-full font-bold text-sm shadow-md">
+                        <i class="fa-solid fa-bolt text-pokeRed"></i>
+                        <span>האנציקלופדיה הדיגיטלית המקיפה</span>
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+                        עולם הפוקימונים:<br>
+                        <span class="text-pokeYellow drop-shadow-md">מהגיימבוי ועד היום</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-gray-100 max-w-2xl font-light">
+                        צאו למסע מרתק בזיכיון הבידור המצליח ביותר בהיסטוריה. מגלו את כל הדורות, האגדות, סדרות האנימה והמשחקים שכבשו מיליוני לבבות ברחבי העולם!
+                    </p>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#pokedex" class="bg-pokeYellow text-gray-900 font-extrabold px-8 py-4 rounded-xl shadow-lg hover:bg-yellow-300 transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-2 space-x-reverse">
+                            <i class="fa-solid fa-search"></i>
+                            <span>חפש בפוקדקס</span>
+                        </a>
+                        <a href="#generations" class="bg-white/20 backdrop-blur text-white font-bold px-8 py-4 rounded-xl border border-white/30 hover:bg-white/30 transform hover:-translate-y-1 transition-all duration-200">
+                            סקור דורות
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Interactive Cards Graphic -->
+                <div class="flex justify-center relative">
+                    <div class="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center p-8 relative animate-pulse">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu" class="w-full h-full object-contain filter drop-shadow-2xl hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 bg-white text-gray-900 p-4 rounded-2xl shadow-xl hidden sm:flex items-center space-x-3 space-x-reverse border border-gray-100">
+                        <div class="w-10 h-10 bg-pokeRed text-white rounded-full flex items-center justify-center font-bold">
+                            #0025
+                        </div>
+                        <div>
+                            <p class="font-extrabold text-sm">פיקאצ'ו (Pikachu)</p>
+                            <span class="text-xs text-yellow-600 font-bold bg-yellow-100 px-2 py-0.5 rounded">חשמל</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 1: About & Core Concept -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-extrabold text-pokeBlue sm:text-4xl">מהם פוקימונים? (Pocket Monsters)</h2>
+                <div class="w-24 h-1.5 bg-pokeRed mx-auto my-4 rounded-full"></div>
+                <p class="text-gray-600 text-lg">קונספט המשחק שנולד ביפן הפך לתופעה תרבותית עולמית. הנה כל מה שצריך לדעת על יסודות העולם.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Concept Card 1 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 custom-shadow hover:shadow-2xl transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-red-100 text-pokeRed rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-gray-900 mb-3">מטרת המאמנים</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        מאמנים (Trainers) יוצאים למסע בעולם במטרה ללכוד יצורים, לאמן אותם, ולהתחרות במכונים (Gyms) כדי לזכות בתגים ולהפוך לאלופי הליגה (Pokémon Master).
+                    </p>
+                </div>
+
+                <!-- Concept Card 2 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 custom-shadow hover:shadow-2xl transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-blue-100 text-pokeBlue rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-circle-dot"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-gray-900 mb-3">פוקדורים ולכידה</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        פוקימונים חיים בטבע. באמצעות כדורים מיוחדים המכונים "Pokéballs", המאמנים יכולים לתפוס פוקימונים בר, לאחסן אותם ולזמן אותם בעת צורך לקרב או סיוע.
+                    </p>
+                </div>
+
+                <!-- Concept Card 3 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 custom-shadow hover:shadow-2xl transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-yellow-100 text-yellow-700 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-gray-900 mb-3">השלמת ה-Pokédex</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        הפוקדקס הוא אנציקלופדיה דיגיטלית שנועדה לתעד את כל זני הפוקימונים בעולם. המשימה המרכזית של כל מאמן היא: "לתפוס את כולם!" (Gotta Catch 'Em All).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Explanation Section -->
+    <section id="app-info" class="py-16 bg-gray-900 text-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse bg-pokeRed text-white px-3 py-1 rounded-full text-xs font-bold">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <span>אפליקציית עולם הפוקימון</span>
+                    </div>
+                    <h2 class="text-3xl font-extrabold sm:text-4xl text-pokeYellow">
+                        מה כוללת האפליקציה ואיך משתמשים בה?
+                    </h2>
+                    <p class="text-gray-300 text-base leading-relaxed">
+                        האפליקציה נבנתה כמרכז מידע אינטראקטיבי למאמני פוקימון וחובבי הזיכיון. האפליקציה מאפשרת לכם לחקור נתונים, לבחון את הידע שלכם ולחוות את מנגינות המשחק המוכרות:
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-200">
+                        <li class="flex items-start space-x-3 space-x-reverse">
+                            <i class="fa-solid fa-check text-pokeYellow mt-1"></i>
+                            <span><b>חיפוש וסינון בפוקדקס:</b> איתור פוקימונים לפי שם בעברית או באנגלית וסינון לפי סוגי אלמנטים (אש, מים, חשמל וכו').</span>
+                        </li>
+                        <li class="flex items-start space-x-3 space-x-reverse">
+                            <i class="fa-solid fa-check text-pokeYellow mt-1"></i>
+                            <span><b>נגן מנגינת 8-ביט נוסטלגית:</b> לחצו על כפתור "הפעל מנגינה" בתפריט העליון כדי להאזין לנעימה בהשראת משחקי הגיימבוי של פוקימון!</span>
+                        </li>
+                        <li class="flex items-start space-x-3 space-x-reverse">
+                            <i class="fa-solid fa-check text-pokeYellow mt-1"></i>
+                            <span><b>חידון טריוויה דינמי:</b> בחינת הידע שלכם על היסטוריית הפוקימונים והמשחקים עם משוב מיידי.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800/80 p-8 rounded-3xl border border-gray-700 shadow-2xl flex flex-col justify-center items-center text-center">
+                    <div class="w-20 h-20 bg-pokeBlue rounded-full flex items-center justify-center text-3xl mb-4 border-4 border-pokeYellow shadow-lg">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">מוכנים להתחיל במסע?</h3>
+                    <p class="text-gray-400 text-sm mb-6 max-w-sm">
+                        השתמשו בתפריט העליון כדי לנווט בין חלקי האפליקציה השונים ולגלות את עובדות המפתח!
+                    </p>
+                    <a href="#pokedex" class="bg-pokeYellow text-gray-900 font-extrabold px-6 py-3 rounded-xl hover:bg-yellow-300 transition text-sm">
+                        עבור לפוקדקס עכשיו
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 2: Generations & Game Evolution -->
+    <section id="generations" class="py-20 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-extrabold text-pokeBlue sm:text-4xl">התפתחות המשחקים והדורות</h2>
+                <div class="w-24 h-1.5 bg-pokeYellow mx-auto my-4 rounded-full"></div>
+                <p class="text-gray-600 text-lg">מעל 25 שנה של פיתוח בקונסולות נינטנדו השונות: מ-151 הפוקימונים המקוריים ועד לדורות החדישים ביותר.</p>
+            </div>
+
+            <!-- Generations Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Gen 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 hover:-translate-y-2 transition-all duration-300">
+                    <div class="bg-pokeRed text-white p-6 relative overflow-hidden">
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">1996</span>
+                        <h3 class="text-2xl font-black mt-2">דור 1: Kanto</h3>
+                        <p class="text-white/80 text-sm">Game Boy Original</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-gray-600 text-sm">הדור שהתחיל את הכל: Red & Blue. הציג את 151 הפוקימונים הראשונים, כולל פיקאצ'ו, צ'אריזארד, ומיוטו.</p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="px-2.5 py-1 bg-red-50 text-red-600 rounded-lg text-xs font-bold">151 פוקימונים</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">גיימבוי</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gen 2 & 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 hover:-translate-y-2 transition-all duration-300">
+                    <div class="bg-pokeBlue text-white p-6 relative overflow-hidden">
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">1999 - 2002</span>
+                        <h3 class="text-2xl font-black mt-2">דור 2 ו-3: Johto & Hoenn</h3>
+                        <p class="text-white/80 text-sm">Game Boy Color & Advance</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-gray-600 text-sm">הכנסת צבע מלא, סוגי פוקימון חדשים (אופל ומתכת), יום ולילה, וקרבות זוגיים בגרסאות Gold, Silver, Ruby & Sapphire.</p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold">+235 פוקימונים חדשים</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">סוגי מתכת/אופל</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gen 4 & 5 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 hover:-translate-y-2 transition-all duration-300">
+                    <div class="bg-purple-700 text-white p-6 relative overflow-hidden">
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">2006 - 2010</span>
+                        <h3 class="text-2xl font-black mt-2">דור 4 ו-5: Sinnoh & Unova</h3>
+                        <p class="text-white/80 text-sm">Nintendo DS</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-gray-600 text-sm">מעבר לקרבות ברשת Wi-Fi, גרפיקה חצי-תלת-ממדית, ועלילות מעמיקות יותר במשחקים Diamond, Pearl, Black & White.</p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="px-2.5 py-1 bg-purple-50 text-purple-600 rounded-lg text-xs font-bold">רשת אונליין</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">מסך כפול</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gen 6 & 7 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 hover:-translate-y-2 transition-all duration-300">
+                    <div class="bg-emerald-600 text-white p-6 relative overflow-hidden">
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">2013 - 2016</span>
+                        <h3 class="text-2xl font-black mt-2">דור 6 ו-7: Kalos & Alola</h3>
+                        <p class="text-white/80 text-sm">Nintendo 3DS</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-gray-600 text-sm">תלת-ממד מלא, מכניקת Mega Evolution, סוג פיה חדש, ומתקפות Z-Moves מיוחדות במשחקי X/Y ו-Sun/Moon.</p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-bold">מגה-התפתחות</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">סוג פיה</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gen 8 & 9 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 hover:-translate-y-2 transition-all duration-300 md:col-span-2 lg:col-span-2">
+                    <div class="bg-gradient-to-r from-red-600 to-violet-600 text-white p-6 relative overflow-hidden">
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">2019 - כיום</span>
+                        <h3 class="text-2xl font-black mt-2">דור 8 ו-9: Galar & Paldea</h3>
+                        <p class="text-white/80 text-sm">Nintendo Switch</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-gray-600 text-sm">עולמות פתוחים מלאים (Open World), ענקיות Dynamax, ומנגנון ה-Terastalization. המשחקים Sword/Shield ו-Scarlet/Violet הביאו את החוויה לשיאים טכנולוגיים חדשים.</p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="px-2.5 py-1 bg-red-50 text-red-600 rounded-lg text-xs font-bold">עולם פתוח מלא</span>
+                            <span class="px-2.5 py-1 bg-purple-50 text-purple-600 rounded-lg text-xs font-bold">מכניקת Terastal</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">נינטנדו סוויץ'</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Battle Mechanics Explanation -->
+            <div class="mt-16 bg-white rounded-2xl p-8 border border-gray-200 custom-shadow">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="w-full md:w-1/3 text-center">
+                        <div class="w-24 h-24 bg-pokeYellow/20 text-pokeBlue rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-gray-900">מכניקת לחימה ותקופות</h3>
+                    </div>
+                    <div class="w-full md:w-2/3 space-y-4">
+                        <h4 class="text-lg font-bold text-pokeBlue">מערכת תורות ואלמנטים (Type Effectiveness)</h4>
+                        <p class="text-gray-600 leading-relaxed text-sm">
+                            קרבות פוקימון מבוססים על קרב בתורות. לכל פוקימון ולכל מתקפה יש סוג (אש, מים, עשב, חשמל, דרקון ועוד). המערכת פועלת במודל של "אבן-נייר-ומספריים" מורכב:
+                        </p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs font-bold">
+                            <div class="bg-red-100 text-red-700 p-2.5 rounded-xl">אש > עשב</div>
+                            <div class="bg-blue-100 text-blue-700 p-2.5 rounded-xl">מים > אש</div>
+                            <div class="bg-green-100 text-green-700 p-2.5 rounded-xl">עשב > מים</div>
+                            <div class="bg-yellow-100 text-yellow-800 p-2.5 rounded-xl">חשמל > מים</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Pokédex Section -->
+    <section id="pokedex" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-extrabold text-pokeBlue sm:text-4xl">פוקדקס אינטראקטיבי</h2>
+                <div class="w-24 h-1.5 bg-pokeRed mx-auto my-4 rounded-full"></div>
+                <p class="text-gray-600 text-lg">חפשו פוקימונים, סננו לפי אלמנטים וצפו בנתונים שלהם בזמן אמת!</p>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="mb-10 bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <!-- Search input -->
+                    <div class="relative w-full sm:w-80">
+                        <input type="text" id="poke-search" placeholder="חפש פוקימון (עברית / אנגלית)..." class="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pokeBlue transition">
+                        <i class="fa-solid fa-search absolute left-3 top-3.5 text-gray-400"></i>
+                    </div>
+
+                    <!-- Type buttons -->
+                    <div class="flex flex-wrap gap-2 justify-center" id="type-filters">
+                        <button onclick="filterPoke('all')" class="type-btn active bg-gray-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">הכל</button>
+                        <button onclick="filterPoke('fire')" class="type-btn bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">אש</button>
+                        <button onclick="filterPoke('water')" class="type-btn bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">מים</button>
+                        <button onclick="filterPoke('grass')" class="type-btn bg-green-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">עשב</button>
+                        <button onclick="filterPoke('electric')" class="type-btn bg-yellow-400 text-gray-900 px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">חשמל</button>
+                        <button onclick="filterPoke('psychic')" class="type-btn bg-pink-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">על-חושי</button>
+                        <button onclick="filterPoke('normal')" class="type-btn bg-slate-400 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">רגיל</button>
+                        <button onclick="filterPoke('dark')" class="type-btn bg-stone-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">אופל</button>
+                        <button onclick="filterPoke('dragon')" class="type-btn bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition hover:opacity-90">דרקון</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pokédex Dynamic Grid -->
+            <div id="pokedex-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Javascript will inject cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 3: Media & Franchises -->
+    <section id="media" class="py-20 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-extrabold text-pokeBlue sm:text-4xl">מדיה, אנימה וזכיונות</h2>
+                <div class="w-24 h-1.5 bg-pokeYellow mx-auto my-4 rounded-full"></div>
+                <p class="text-gray-600 text-lg">המותג התרחב מעבר למשחקי הווידאו והפך לתופעת טלוויזיה, משחק קלפים ואפליקציות מובייל פורצות דרך.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Anime -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col">
+                    <div class="h-48 bg-gradient-to-r from-red-500 to-amber-500 flex items-center justify-center text-white relative">
+                        <i class="fa-solid fa-tv text-6xl opacity-40"></i>
+                        <span class="absolute bottom-4 right-4 bg-black/40 backdrop-blur px-3 py-1 rounded-full text-xs font-bold">סדרות וסרטים</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">סדרת האנימה</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                מעל 25 שנה שלחו את הצופים למסע עם <b>אש קאצ'אם</b> ופיקאצ'ו. בשנת 2023 החל עידן חדש עם הסדרה <b>Pokémon Horizons</b> המציגה גיבורים חדשים: ליקו ורוי.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 text-xs font-bold text-pokeRed">
+                            <i class="fa-solid fa-play ml-1"></i> מעל 1,200 פרקים
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TCG Card Game -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col">
+                    <div class="h-48 bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white relative">
+                        <i class="fa-solid fa-layer-group text-6xl opacity-40"></i>
+                        <span class="absolute bottom-4 right-4 bg-black/40 backdrop-blur px-3 py-1 rounded-full text-xs font-bold">משחק קלפים (TCG)</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">משחק הקלפים האספני</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                תעשיית אספנות וטורנירים בינלאומיים של מיליארדי דולרים. קלפים נדירים (כמו Charizard מהמהדורה הראשונה) נמכרים במאות אלפי דולרים במכירות פומביות.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 text-xs font-bold text-pokeBlue">
+                            <i class="fa-solid fa-trophy ml-1"></i> אליפויות עולם שנתיות
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pokemon GO -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col">
+                    <div class="h-48 bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white relative">
+                        <i class="fa-solid fa-mobile-screen-button text-6xl opacity-40"></i>
+                        <span class="absolute bottom-4 right-4 bg-black/40 backdrop-blur px-3 py-1 rounded-full text-xs font-bold">Pokémon GO (Niantic)</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">מציאות רבודה (AR)</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                בקיץ 2016 השיקה Niantic את Pokémon GO, שהוציא מיליוני אנשים לרחובות כדי לתפוס פוקימונים בעולם האמיתי באמצעות טכנולוגיית GPS ו-AR.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 text-xs font-bold text-emerald-600">
+                            <i class="fa-solid fa-download ml-1"></i> מעל מיליארד הורדות
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 4: Key Records & Trivia Section -->
+    <section id="records" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-extrabold text-pokeBlue sm:text-4xl">עובדות מפתח ושיאים עולמיים</h2>
+                <div class="w-24 h-1.5 bg-pokeRed mx-auto my-4 rounded-full"></div>
+                <p class="text-gray-600 text-lg">מספרים מדהימים מאחורי זיכיון הבידור המרוויח ביותר בכל הזמנים.</p>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="bg-pokeRed text-white p-6 rounded-2xl text-center shadow-lg">
+                    <div class="text-4xl sm:text-5xl font-black mb-1">$100B+</div>
+                    <div class="text-xs sm:text-sm font-semibold opacity-90">הכנסות כוללות (בידור)</div>
+                </div>
+                <div class="bg-pokeBlue text-white p-6 rounded-2xl text-center shadow-lg">
+                    <div class="text-4xl sm:text-5xl font-black mb-1">1,000+</div>
+                    <div class="text-xs sm:text-sm font-semibold opacity-90">זני פוקימונים שונים</div>
+                </div>
+                <div class="bg-pokeYellow text-gray-900 p-6 rounded-2xl text-center shadow-lg">
+                    <div class="text-4xl sm:text-5xl font-black mb-1">480M+</div>
+                    <div class="text-xs sm:text-sm font-semibold opacity-90">משחקי וידאו שנמכרו</div>
+                </div>
+                <div class="bg-gray-800 text-white p-6 rounded-2xl text-center shadow-lg">
+                    <div class="text-4xl sm:text-5xl font-black mb-1">52B+</div>
+                    <div class="text-xs sm:text-sm font-semibold opacity-90">קלפי TCG שהודפסו</div>
+                </div>
+            </div>
+
+            <!-- Quiz Component -->
+            <div class="bg-gradient-to-br from-pokeBlue to-indigo-900 text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+                <div class="max-w-2xl relative z-10">
+                    <span class="bg-pokeYellow text-gray-900 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">חידון טריוויה מהיר</span>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold mb-4">בחונו את הידע שלכם בפוקימון!</h3>
+                    <p id="quiz-question" class="text-lg text-gray-200 mb-6">טוען שאלה...</p>
+                    
+                    <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <!-- Quiz options dynamically generated -->
+                    </div>
+
+                    <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm font-bold mb-4"></div>
+                    <button id="next-quiz-btn" onclick="loadNextQuestion()" class="hidden bg-pokeYellow text-gray-900 font-bold px-6 py-2.5 rounded-xl hover:bg-yellow-300 transition">לשאלה הבאה <i class="fa-solid fa-arrow-left mr-2"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rating & Social Sharing Section -->
+    <section id="rate-and-share" class="py-16 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                
+                <!-- Rating Widget -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-200 custom-shadow text-center">
+                    <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-gray-900 mb-2">דרגו את האתר שלנו</h3>
+                    <p class="text-gray-600 text-sm mb-6">איך הייתה חווית הגלישה שלכם באנציקלופדיית הפוקימונים?</p>
+                    
+                    <!-- Star Buttons -->
+                    <div class="flex justify-center items-center space-x-2 space-x-reverse mb-4" id="star-container">
+                        <button onclick="rateSite(1)" class="star-btn text-gray-300 text-3xl hover:text-pokeYellow transition"><i class="fa-solid fa-star"></i></button>
+                        <button onclick="rateSite(2)" class="star-btn text-gray-300 text-3xl hover:text-pokeYellow transition"><i class="fa-solid fa-star"></i></button>
+                        <button onclick="rateSite(3)" class="star-btn text-gray-300 text-3xl hover:text-pokeYellow transition"><i class="fa-solid fa-star"></i></button>
+                        <button onclick="rateSite(4)" class="star-btn text-gray-300 text-3xl hover:text-pokeYellow transition"><i class="fa-solid fa-star"></i></button>
+                        <button onclick="rateSite(5)" class="star-btn text-gray-300 text-3xl hover:text-pokeYellow transition"><i class="fa-solid fa-star"></i></button>
+                    </div>
+
+                    <p id="rating-status" class="text-xs font-bold text-gray-500 h-6">לחצו על הכוכבים כדי לדרג</p>
+                </div>
+
+                <!-- Share Widget -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-200 custom-shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 text-pokeBlue rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-gray-900 mb-2">שתפו עם חברים</h3>
+                    <p class="text-gray-600 text-sm mb-6">אהבתם את האתר? שתפו אותו ברשתות החברתיות או העתיקו קישור!</p>
+                    
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button onclick="shareWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-5 py-3 rounded-xl transition flex items-center space-x-2 space-x-reverse text-sm shadow-md">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            <span>WhatsApp</span>
+                        </button>
+                        
+                        <button onclick="shareFacebook()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-xl transition flex items-center space-x-2 space-x-reverse text-sm shadow-md">
+                            <i class="fa-brands fa-facebook text-lg"></i>
+                            <span>Facebook</span>
+                        </button>
+
+                        <button onclick="copySiteLink()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold px-5 py-3 rounded-xl transition flex items-center space-x-2 space-x-reverse text-sm shadow-md">
+                            <i class="fa-solid fa-link text-lg"></i>
+                            <span>העתק קישור</span>
+                        </button>
+                    </div>
+
+                    <div id="share-notification" class="hidden mt-4 p-2 bg-green-100 text-green-800 text-xs font-bold rounded-lg transition">
+                        הקישור הועתק בהצלחה ללוח!
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white border-t-4 border-pokeRed pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="md:col-span-2 space-y-4">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="w-8 h-8 rounded-full border-2 border-white bg-pokeRed flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white border-t-2 border-gray-900"></div>
+                        </div>
+                        <span class="text-xl font-extrabold text-white">עולם הפוקימון</span>
+                    </div>
+                    <p class="text-gray-400 text-sm max-w-sm">
+                        אתר מידע מקיף שנבנה למטרות לימוד והעשרה על זיכיון Pokémon. כל הזכויות שמורות ל-Nintendo, Creatures Inc, ו-GAME FREAK Inc.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold text-pokeYellow mb-4">קישורים מהירים</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#about" class="hover:text-white transition">אודות הקונספט</a></li>
+                        <li><a href="#generations" class="hover:text-white transition">דורות המשחק</a></li>
+                        <li><a href="#pokedex" class="hover:text-white transition">ספריית הפוקדקס</a></li>
+                        <li><a href="#media" class="hover:text-white transition">אנימה וקלפים</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold text-pokeYellow mb-4">עקבו ברשתות</h4>
+                    <div class="flex space-x-4 space-x-reverse text-xl text-gray-400">
+                        <a href="#" class="hover:text-pokeYellow transition" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" class="hover:text-pokeYellow transition" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="hover:text-pokeYellow transition" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-pokeYellow transition" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
+                <p>© 2026 עולם הפוקימונים | נבנה עבור מפתחים וחובבי פוקימון בישראל.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Web Audio 8-Bit Pokémon Melody Synthesizer ---
+        let audioCtx = null;
+        let isPlaying = false;
+        let noteTimeout = null;
+
+        // Classic retro melodic note sequence
+        const melody = [
+            { note: 261.63, duration: 200 }, // C4
+            { note: 329.63, duration: 200 }, // E4
+            { note: 392.00, duration: 200 }, // G4
+            { note: 523.25, duration: 300 }, // C5
+            { note: 392.00, duration: 200 }, // G4
+            { note: 523.25, duration: 400 }, // C5
+            { note: 440.00, duration: 200 }, // A4
+            { note: 349.23, duration: 200 }, // F4
+            { note: 392.00, duration: 200 }, // G4
+            { note: 329.63, duration: 300 }, // E4
+            { note: 293.66, duration: 200 }, // D4
+            { note: 261.63, duration: 400 }  // C4
+        ];
+        let noteIndex = 0;
+
+        function playNextNote() {
+            if (!isPlaying) return;
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const current = melody[noteIndex];
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square'; // Retro 8-bit sound
+                osc.frequency.setValueAtTime(current.note, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (current.duration / 1000));
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + (current.duration / 1000));
+            } catch(e) {
+                console.log(e);
+            }
+
+            noteIndex = (noteIndex + 1) % melody.length;
+            noteTimeout = setTimeout(playNextNote, 320);
+        }
+
+        function toggleMusic() {
+            const btnText = document.getElementById('music-text');
+            const btnIcon = document.getElementById('music-icon');
+
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+
+            if (isPlaying) {
+                isPlaying = false;
+                clearTimeout(noteTimeout);
+                btnText.innerText = 'הפעל מנגינה';
+                btnIcon.className = 'fa-solid fa-music text-pokeRed';
+            } else {
+                isPlaying = true;
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                btnText.innerText = 'עצור מנגינה';
+                btnIcon.className = 'fa-solid fa-pause text-pokeRed';
+                noteIndex = 0;
+                playNextNote();
+            }
+        }
+
+        // Sample Pokédex Dataset with reliable fallback image URLs
+        const pokedexData = [
+            { id: 1, name: 'בולבזור', enName: 'Bulbasaur', type: 'grass', typeHeb: 'עשב', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png', attack: 49, hp: 45 },
+            { id: 4, name: 'צ\'ארמנדר', enName: 'Charmander', type: 'fire', typeHeb: 'אש', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png', attack: 52, hp: 39 },
+            { id: 7, name: 'סקוורטל', enName: 'Squirtle', type: 'water', typeHeb: 'מים', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png', attack: 48, hp: 44 },
+            { id: 25, name: 'פיקאצ\'ו', enName: 'Pikachu', type: 'electric', typeHeb: 'חשמל', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', attack: 55, hp: 35 },
+            { id: 6, name: 'צ\'אריזארד', enName: 'Charizard', type: 'fire', typeHeb: 'אש', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png', attack: 84, hp: 78 },
+            { id: 9, name: 'בלסטויז', enName: 'Blastoise', type: 'water', typeHeb: 'מים', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/9.png', attack: 83, hp: 79 },
+            { id: 150, name: 'מיוטו', enName: 'Mewtwo', type: 'psychic', typeHeb: 'על-חושי', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png', attack: 110, hp: 106 },
+            { id: 133, name: 'איבי', enName: 'Eevee', type: 'normal', typeHeb: 'רגיל', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png', attack: 55, hp: 55 },
+            { id: 94, name: 'גנגאר', enName: 'Gengar', type: 'psychic', typeHeb: 'רוח', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png', attack: 65, hp: 60 },
+            { id: 143, name: 'סנורלקס', enName: 'Snorlax', type: 'normal', typeHeb: 'רגיל', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png', attack: 110, hp: 160 },
+            { id: 135, name: 'ג\'ולטיאון', enName: 'Jolteon', type: 'electric', typeHeb: 'חשמל', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/135.png', attack: 65, hp: 65 },
+            { id: 196, name: 'אספיאון', enName: 'Espeon', type: 'psychic', typeHeb: 'על-חושי', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/196.png', attack: 65, hp: 65 },
+            { id: 149, name: 'דרגונייט', enName: 'Dragonite', type: 'dragon', typeHeb: 'דרקון', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png', attack: 134, hp: 91 },
+            { id: 197, name: 'אומבריאון', enName: 'Umbreon', type: 'dark', typeHeb: 'אופל', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/197.png', attack: 65, hp: 95 },
+            { id: 384, name: 'רייקואזה', enName: 'Rayquaza', type: 'dragon', typeHeb: 'דרקון', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png', attack: 150, hp: 105 },
+            { id: 229, name: 'האונדום', enName: 'Houndoom', type: 'dark', typeHeb: 'אופל', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/229.png', attack: 90, hp: 75 }
+        ];
+
+        // Type Color Helper
+        function getTypeBadgeColor(type) {
+            switch(type) {
+                case 'fire': return 'bg-red-500 text-white';
+                case 'water': return 'bg-blue-500 text-white';
+                case 'grass': return 'bg-green-500 text-white';
+                case 'electric': return 'bg-yellow-400 text-gray-900';
+                case 'psychic': return 'bg-pink-500 text-white';
+                case 'normal': return 'bg-slate-400 text-white';
+                case 'dark': return 'bg-stone-800 text-white';
+                case 'dragon': return 'bg-indigo-700 text-white';
+                default: return 'bg-gray-400 text-white';
+            }
+        }
+
+        // Render Pokédex Cards with fallback handling
+        function renderPokedex(items) {
+            const grid = document.getElementById('pokedex-grid');
+            grid.innerHTML = '';
+
+            if(items.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-bold">לא נמצאו פוקימונים התואמים לחיפוש.</div>`;
+                return;
+            }
+
+            items.forEach(poke => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl border border-gray-100 p-5 custom-shadow hover:shadow-xl transition-all duration-300 flex flex-col items-center group';
+                
+                const fallbackUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`;
+
+                card.innerHTML = `
+                    <div class="w-full flex justify-between items-center text-xs font-bold text-gray-400 mb-2">
+                        <span>#${poke.id.toString().padStart(4, '0')}</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-extrabold ${getTypeBadgeColor(poke.type)}">${poke.typeHeb}</span>
+                    </div>
+                    <div class="w-32 h-32 my-2 relative flex items-center justify-center">
+                        <img src="${poke.img}" 
+                             alt="${poke.name}" 
+                             onerror="this.onerror=null; this.src='${fallbackUrl}';"
+                             class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" 
+                             loading="lazy">
+                    </div>
+                    <h4 class="text-lg font-extrabold text-gray-800 text-center mt-2">${poke.name}</h4>
+                    <span class="text-xs text-gray-400 font-medium mb-4">${poke.enName}</span>
+                    
+                    <div class="w-full bg-gray-50 rounded-xl p-3 space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500 font-semibold">התקפה:</span>
+                            <div class="w-2/3 bg-gray-200 h-2 rounded-full overflow-hidden">
+                                <div class="bg-pokeRed h-full rounded-full" style="width: ${(poke.attack / 150) * 100}%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500 font-semibold">חיים (HP):</span>
+                            <div class="w-2/3 bg-gray-200 h-2 rounded-full overflow-hidden">
+                                <div class="bg-green-500 h-full rounded-full" style="width: ${(poke.hp / 150) * 100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter Logic
+        let currentType = 'all';
+        function filterPoke(type) {
+            currentType = type;
+            // Toggle active buttons
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-pokeBlue', 'scale-105');
+            });
+            event.target.classList.add('ring-2', 'ring-pokeBlue', 'scale-105');
+
+            applyFilters();
+        }
+
+        // Search Input Filter
+        document.getElementById('poke-search').addEventListener('input', applyFilters);
+
+        function applyFilters() {
+            const query = document.getElementById('poke-search').value.toLowerCase().trim();
+            const filtered = pokedexData.filter(poke => {
+                const matchesType = (currentType === 'all' || poke.type === currentType);
+                const matchesSearch = poke.name.includes(query) || poke.enName.toLowerCase().includes(query);
+                return matchesType && matchesSearch;
+            });
+            renderPokedex(filtered);
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Quiz Logic
+        const quizData = [
+            {
+                q: "באיזו שנה יצא המשחק הראשון של פוקימון ביפן?",
+                options: ["1996", "1998", "2000", "1994"],
+                correct: 0
+            },
+            {
+                q: "איזה פוקימון הוא פוקימון ההתחלתי מסוג אש בדור 1?",
+                options: ["סקוורטל", "צ'ארמנדר", "בולבזור", "פיקאצ'ו"],
+                correct: 1
+            },
+            {
+                q: "מה שמו של המחשב/האנציקלופדיה הניידת של המאמנים?",
+                options: ["פוקה-פון", "פוקדקס", "נינטנדו בוקс", "פוקה-מאסטר"],
+                correct: 1
+            }
+        ];
+
+        let currentQIndex = 0;
+
+        function loadQuizQuestion() {
+            const q = quizData[currentQIndex];
+            document.getElementById('quiz-question').innerText = q.q;
+            const optionsDiv = document.getElementById('quiz-options');
+            const feedbackDiv = document.getElementById('quiz-feedback');
+            const nextBtn = document.getElementById('next-quiz-btn');
+            
+            optionsDiv.innerHTML = '';
+            feedbackDiv.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full bg-white/10 hover:bg-white/20 border border-white/20 p-3.5 rounded-xl text-right font-bold transition text-sm';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx) {
+            const q = quizData[currentQIndex];
+            const feedbackDiv = document.getElementById('quiz-feedback');
+            const nextBtn = document.getElementById('next-quiz-btn');
+
+            if(selectedIdx === q.correct) {
+                feedbackDiv.className = 'p-4 rounded-xl text-sm font-bold mb-4 bg-emerald-500/20 border border-emerald-400 text-emerald-200';
+                feedbackDiv.innerText = '✓ תשובה נכונה! כל הכבוד!';
+            } else {
+                feedbackDiv.className = 'p-4 rounded-xl text-sm font-bold mb-4 bg-red-500/20 border border-red-400 text-red-200';
+                feedbackDiv.innerText = `✗ תשובה שגויה. התשובה הנכונה היא: ${q.options[q.correct]}`;
+            }
+
+            feedbackDiv.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+        }
+
+        function loadNextQuestion() {
+            currentQIndex = (currentQIndex + 1) % quizData.length;
+            loadQuizQuestion();
+        }
+
+        // Rating System Logic
+        let userRating = 0;
+        function rateSite(stars) {
+            userRating = stars;
+            const starBtns = document.querySelectorAll('#star-container .star-btn');
+            
+            starBtns.forEach((btn, idx) => {
+                if (idx < stars) {
+                    btn.classList.add('text-pokeYellow');
+                    btn.classList.remove('text-gray-300');
+                } else {
+                    btn.classList.add('text-gray-300');
+                    btn.classList.remove('text-pokeYellow');
+                }
+            });
+
+            const status = document.getElementById('rating-status');
+            status.innerText = `תודה! דירגת את האתר ב-${stars} מתוך 5 כוכבים!`;
+            status.className = 'text-xs font-bold text-emerald-600 h-6';
+        }
+
+        // Social Share Handlers
+        function shareWhatsApp() {
+            const text = encodeURIComponent('בואו לגלות את עולם הפוקימונים באנציקלופדיה המקיפה!');
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://api.whatsapp.com/send?text=${text}%20${url}`, '_blank');
+        }
+
+        function shareFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function copySiteLink() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const notif = document.getElementById('share-notification');
+            notif.classList.remove('hidden');
+            setTimeout(() => {
+                notif.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Initial Load
+        window.onload = function() {
+            renderPokedex(pokedexData);
+            loadQuizQuestion();
+        }
+    </script>
+</body>
+</html>

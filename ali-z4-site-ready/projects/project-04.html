@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הקופה שלי - מנהל תקציב וקהילת חסכנים</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+        }
+        .star-rating i {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Modal Welcoming / User Registration -->
+    <div id="welcome-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center space-y-6">
+            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="piggy-bank" class="w-10 h-10"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">ברוכים הבאים ל-הקופה שלי!</h2>
+                <p class="text-slate-500 text-sm mt-2">רשום את שמך כדי להתחיל לנהל את התקציב ולהופיע בלוח החסכנים המובילים.</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <input type="text" id="username-input" placeholder="מה השם שלך?" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center font-medium">
+                </div>
+                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition">
+                    התחל לנהל תקציב
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="bg-white/20 p-2 rounded-lg">
+                    <i data-lucide="wallet" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight">הקופה שלי</h1>
+                    <p class="text-xs text-indigo-200">שלום, <span id="display-user-name" class="font-semibold text-white">אורח</span>!</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="share-site-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 transition shadow-sm">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">שתף בוואטסאפ</span>
+                </button>
+                <button id="change-user-btn" class="bg-indigo-700/60 hover:bg-indigo-700 text-xs px-3 py-2 rounded-xl border border-indigo-400/30 transition">
+                    החלף שם
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-grow space-y-8">
+
+        <!-- Top Overview Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">נשאר בקופה (יתרה)</p>
+                    <h3 id="total-balance" class="text-2xl md:text-3xl font-bold text-slate-800 mt-1">₪0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i data-lucide="coins" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">סך הכל הרווחתי</p>
+                    <h3 id="total-income" class="text-2xl md:text-3xl font-bold text-emerald-600 mt-1">₪0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">סך הכל בזבזתי/הפסדתי</p>
+                    <h3 id="total-expense" class="text-2xl md:text-3xl font-bold text-rose-600 mt-1">₪0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+                    <i data-lucide="trending-down" class="w-6 h-6"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Budgeting & Analytics Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Transaction Form -->
+            <div class="lg:col-span-1 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 h-fit">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-600"></i>
+                    הוספת פעולה חדשה
+                </h2>
+
+                <form id="transaction-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">סוג הפעולה</label>
+                        <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+                            <button type="button" id="type-income-btn" class="py-2 text-sm font-semibold rounded-lg text-indigo-700 bg-white shadow-sm transition">
+                                הכנסה / רווח 🔵
+                            </button>
+                            <button type="button" id="type-expense-btn" class="py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                                הוצאה / הפסד 🔴
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-slate-700 mb-1">סכום (בש"ח)</label>
+                        <div class="relative">
+                            <input type="number" id="amount" min="0.1" step="any" placeholder="0.00" required
+                                class="w-full pl-3 pr-10 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-left dir-ltr">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 font-bold">₪</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-slate-700 mb-1">על מה? (תיאור)</label>
+                        <input type="text" id="description" placeholder="למשל: בייביסיטר, קניתי ממתק..." required
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="date" class="block text-sm font-medium text-slate-700 mb-1">תאריך</label>
+                        <input type="date" id="date" required
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-sm hover:shadow transition">
+                        שמור פעולה
+                    </button>
+                </form>
+            </div>
+
+            <!-- Charts Column -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Pie Chart -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i>
+                        חלוקת הכנסות מול הוצאות באחוזים
+                    </h2>
+                    <div class="relative flex justify-center items-center h-64">
+                        <canvas id="expensePieChart"></canvas>
+                        <div id="no-chart-data" class="hidden absolute text-slate-400 text-center">
+                            <i data-lucide="file-question" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+                            <p class="text-sm">טרם הוכנסו נתונים להצגת העוגה</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Section (דירוג חסכנים) -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i>
+                            לוח מובילים - דירוג חסכנים
+                        </span>
+                        <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 font-semibold px-2.5 py-1 rounded-full">תחרות ידידותית</span>
+                    </h2>
+                    <div class="space-y-3" id="leaderboard-list">
+                        <!-- Dynamically Generated Leaderboard -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History Table -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="history" class="w-5 h-5 text-indigo-600"></i>
+                    היסטוריית תנועות
+                </h2>
+                <div class="flex items-center gap-2">
+                    <button id="export-excel-btn" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-medium px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+                        ייצוא לאקסל
+                    </button>
+                    <button id="clear-all-btn" class="text-xs text-rose-600 hover:text-rose-800 font-medium px-3 py-2 rounded-xl hover:bg-rose-50 transition">
+                        איפוס נתונים
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase">
+                            <th class="py-3 px-4">תאריך</th>
+                            <th class="py-3 px-4">על מה (תיאור)</th>
+                            <th class="py-3 px-4">סוג</th>
+                            <th class="py-3 px-4">סכום</th>
+                            <th class="py-3 px-4 text-center">פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-list" class="divide-y divide-slate-100 text-sm">
+                        <!-- Transaction Rows -->
+                    </tbody>
+                </table>
+                <div id="no-transactions" class="text-center py-8 text-slate-400">
+                    <p class="text-sm">עדיין לא רשמת תנועות. תוכל להוסיף תנועה ראשונה בטופס למעלה!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Articles & Content Section (כתבות ומאמרים על חיסכון) -->
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="book-open" class="w-6 h-6 text-indigo-600"></i>
+                מאמרים ומדריכים מפורטים לניהול כסף וחיסכון
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                
+                <!-- Article 1: LONG ARTICLE -->
+                <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                                <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-100 text-indigo-800 rounded-full">⏱️ 5 דקות קריאה</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">למה כדאי להתחיל לחסוך בגיל צעיר ואיך עושים את זה?</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            כאשר אתם מנהלים את הכסף שלכם ומציבים יעדים ברורים, אתם זוכים ברשת ביטחון פיננסית חזקה ובעצמאות אישית.
+                        </p>
+                        <!-- Expanded Content -->
+                        <div id="article-1-full" class="hidden mt-4 text-slate-700 text-sm leading-relaxed border-t border-slate-100 pt-4 space-y-3">
+                            <p class="font-semibold text-indigo-900">הכוח של הרגלים קטנים בזמן:</p>
+                            <p>חיסכון יומי קטן של 10 שקלים בלבד הופך ל-365 שקלים בחודש ול-3,650 שקלים בשנה! כשמתחילים מוקדם, לומדים להבדיל בין רצונות לצרכים, ומפתחים הרגלים שמלווים אותך לכל החיים.</p>
+                            <p class="font-semibold text-indigo-900">איך בונים משמעת עצמית?</p>
+                            <p>בכל פעם שאתה מקבל כסף – בין אם מעבודה, בייביסיטר או מתנה – שים חלק ממנו בצד באופן מיידי. כשאתה רואה את היתרה ב"קופה שלי" גדלה, המוטיבציה להמשיך לחסוך רק עולה!</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="text-indigo-600 font-semibold">מדריך חיסכון מקיף</span>
+                        <button onclick="toggleArticle('article-1-full', this)" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+                            <span>קרא עוד</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Article 2: LONG ARTICLE -->
+                <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                                <i data-lucide="award" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full">⏱️ 5 דקות קריאה</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">המדריך המלא: איך להפוך לחסכן מקצועי ולבנות יתרה חזקה בקופה</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            רוב האנשים חושבים שחיסכון פירושו לוותר על הדברים שאוהבים. האמת היא שחיסכון נכון הוא פשוט ניהול חכם של עדיפויות.
+                        </p>
+                        <!-- Expanded Content (Long Article) -->
+                        <div id="article-2-full" class="hidden mt-4 text-slate-700 text-sm leading-relaxed border-t border-slate-100 pt-4 space-y-3">
+                            <h4 class="font-bold text-slate-900">1. תשלום לעצמך תמיד בראש ובראשונה</h4>
+                            <p>ברגע שאתה מרוויח כסף, אל תחכה לסוף החודש כדי לראות מה נשאר. העבר מיד 20% לפחות לקופה או לחיסכון בצד.</p>
+                            <h4 class="font-bold text-slate-900">2. חוק ה-24 שעות והערכת ערך העבודה</h4>
+                            <p>ראית משהו שבא לך לקנות? חשב כמה שעות עבודה נדרשו לך כדי להרוויח את הסכום הזה ושאל את עצמך אם זה שווה את המאמץ.</p>
+                            <h4 class="font-bold text-slate-900">3. רישום כל הוצאה בקופה שלי</h4>
+                            <p>הוצאות קטנות מצטברות בסוף חודש לסכומים גדולים. מעקב יומי שומר על היתרה שלך חיובית!</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="text-emerald-600 font-semibold">אסטרטגיה פיננסית</span>
+                        <button onclick="toggleArticle('article-2-full', this)" class="text-emerald-600 hover:text-emerald-800 font-bold flex items-center gap-1">
+                            <span>קרא עוד</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Article 3: LONG ARTICLE -->
+                <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+                                <i data-lucide="target" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">⏱️ 4 דקות קריאה</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">איך להציב יעדים פיננסיים ולהשיג אותם בקלות</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            הצבת יעדים היא המפתח להצלחה בניהול התקציב. כשיש לכם מטרה ברורה, קל יותר להימנע מהוצאות מיותרות.
+                        </p>
+                        <!-- Expanded Content -->
+                        <div id="article-3-full" class="hidden mt-4 text-slate-700 text-sm leading-relaxed border-t border-slate-100 pt-4 space-y-3">
+                            <p class="font-semibold text-amber-900">הגדרת יעד SMART (ספציפי ומדיד):</p>
+                            <p>במקום לומר "אני רוצה לחסוך כסף", אמור "אני רוצה לחסוך 500 ש"ח תוך חודשיים לקניית אופניים".</p>
+                            <p class="font-semibold text-amber-900">פירוק היעד לצעדים קטנים:</p>
+                            <p>500 ש"ח ב-8 שבועות פירושם כ-62.5 ש"ח בשבוע בלבד. כשמפרקים את היעד, המשימה הופכת לקלה ופשוטה להשגה.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="text-amber-600 font-semibold">תכנון יעדים</span>
+                        <button onclick="toggleArticle('article-3-full', this)" class="text-amber-600 hover:text-emerald-800 font-bold flex items-center gap-1">
+                            <span>קרא עוד</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Article 4: LONG ARTICLE -->
+                <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-purple-100 text-purple-800 rounded-full">⏱️ 4 דקות קריאה</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">טעויות שכיחות בניהול כסף ואיך להימנע מהן</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            גם החסכנים הטובים ביותר עלולים ליפול במלכודות קטנות. הכרת הטעויות הנפוצות תסייע לכם לשמור על הקופה שלכם בטוחה.
+                        </p>
+                        <!-- Expanded Content -->
+                        <div id="article-4-full" class="hidden mt-4 text-slate-700 text-sm leading-relaxed border-t border-slate-100 pt-4 space-y-3">
+                            <p class="font-semibold text-purple-900">1. קניות דחף בלתי מתוכננות:</p>
+                            <p>רכישה ללא מחשבה מוקדמת מזיקה לחיסכון. מומלץ להמתין 24 שעות לפני רכישה רצינית.</p>
+                            <p class="font-semibold text-purple-900">2. חוסר ברישום הוצאות קטנות:</p>
+                            <p>גם קניות של 5 או 10 שקלים מצטברות לסכומים משמעותיים לאורך זמן. הקפד לרשום אותן בטבלה.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="text-purple-600 font-semibold">מניעת טעויות</span>
+                        <button onclick="toggleArticle('article-4-full', this)" class="text-purple-600 hover:text-purple-800 font-bold flex items-center gap-1">
+                            <span>קרא עוד</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Social Engagement & Rating Section -->
+        <section class="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-2xl p-6 md:p-8 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-2 text-center md:text-right">
+                <h3 class="text-xl font-bold">אהבתם את האתר? לחצו לייק!</h3>
+                <p class="text-indigo-200 text-sm">לחצו על הלב כדי לתמוך ולפרגן לקהילת החסכנים.</p>
+            </div>
+
+            <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 w-full md:w-auto justify-center">
+                <!-- Likes Button -->
+                <button id="like-btn" class="flex items-center justify-center gap-2 bg-white text-indigo-700 px-6 py-3 rounded-xl font-bold shadow-sm hover:bg-indigo-50 transition active:scale-95 w-full sm:w-auto">
+                    <i data-lucide="heart" id="like-icon" class="w-5 h-5 text-slate-400 fill-transparent"></i>
+                    <span>לייק (<span id="likes-count">124</span>)</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- User Comments Section (תגובות גולשים) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-6">
+            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="message-square" class="w-5 h-5 text-indigo-600"></i>
+                תגובות וחוות דעת של משתמשים
+            </h2>
+
+            <!-- New Comment Form -->
+            <form id="comment-form" class="flex gap-2">
+                <input type="text" id="comment-input" placeholder="רשום תגובה על האתר... (למשל: אחלה אתר, עזר לי מאוד!)" required
+                    class="flex-grow px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-1.5 shrink-0">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>פרסם</span>
+                </button>
+            </form>
+
+            <!-- Comments List -->
+            <div id="comments-list" class="space-y-3 divide-y divide-slate-100">
+                <!-- Dynamically Inserted Comments -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+            הקופה שלי &copy; 2026 - מערכת לניהול תקציב, חיסכון וקהילת חסכנים
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white text-sm px-4 py-3 rounded-xl shadow-xl transition opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+        <span id="toast-message">הודעה</span>
+    </div>
+
+    <!-- Modal for Manual Link Sharing -->
+    <div id="share-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 text-center space-y-4">
+            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
+                <i data-lucide="share-2" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800">שיתוף האתר</h3>
+            <p class="text-sm text-slate-500">העתק את הקישור למטה ושלח אותו לחברים:</p>
+            <div class="flex items-center gap-2">
+                <input type="text" id="share-url-input" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs text-slate-600 font-mono text-left dir-ltr">
+                <button id="copy-share-url-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shrink-0 transition">
+                    העתק
+                </button>
+            </div>
+            <button onclick="document.getElementById('share-modal').classList.add('hidden')" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition">
+                סגור
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // State Management
+        let currentUser = localStorage.getItem('budget_username') || '';
+        let transactions = JSON.parse(localStorage.getItem('budget_transactions')) || [];
+
+        let hasLiked = localStorage.getItem('budget_has_liked') === 'true';
+        let baseLikesCount = 0;
+        let likesCount = baseLikesCount + (hasLiked ? 1 : 0);
+
+        // User Comments List
+        let comments = JSON.parse(localStorage.getItem('budget_comments')) || [];
+
+        // Mock Community Leaderboard Data (Reset to empty array)
+        let mockLeaderboard = [];
+
+        let currentType = 'income';
+        let pieChart = null;
+
+        // DOM Elements
+        const welcomeModal = document.getElementById('welcome-modal');
+        const loginForm = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username-input');
+        const displayUserName = document.getElementById('display-user-name');
+        const changeUserBtn = document.getElementById('change-user-btn');
+
+        const form = document.getElementById('transaction-form');
+        const typeIncomeBtn = document.getElementById('type-income-btn');
+        const typeExpenseBtn = document.getElementById('type-expense-btn');
+        const amountInput = document.getElementById('amount');
+        const descInput = document.getElementById('description');
+        const dateInput = document.getElementById('date');
+
+        const likesCountSpan = document.getElementById('likes-count');
+        const likeBtn = document.getElementById('like-btn');
+        const likeIcon = document.getElementById('like-icon');
+        const shareSiteBtn = document.getElementById('share-site-btn');
+
+        const commentForm = document.getElementById('comment-form');
+        const commentInput = document.getElementById('comment-input');
+        const commentsList = document.getElementById('comments-list');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            dateInput.value = new Date().toISOString().split('T')[0];
+
+            if (!currentUser) {
+                welcomeModal.classList.remove('hidden');
+            } else {
+                welcomeModal.classList.add('hidden');
+                displayUserName.textContent = currentUser;
+            }
+
+            updateLikeUI();
+            renderComments();
+            lucide.createIcons();
+            initPieChart();
+            updateUI();
+        });
+
+        // Toggle Type Income/Expense
+        typeIncomeBtn.addEventListener('click', () => {
+            currentType = 'income';
+            typeIncomeBtn.className = 'py-2 text-sm font-semibold rounded-lg text-indigo-700 bg-white shadow-sm transition';
+            typeExpenseBtn.className = 'py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-800 transition';
+        });
+
+        typeExpenseBtn.addEventListener('click', () => {
+            currentType = 'expense';
+            typeExpenseBtn.className = 'py-2 text-sm font-semibold rounded-lg text-rose-700 bg-white shadow-sm transition';
+            typeIncomeBtn.className = 'py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-800 transition';
+        });
+
+        // Login / Change Name Handling
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = usernameInput.value.trim();
+            if (name) {
+                currentUser = name;
+                localStorage.setItem('budget_username', name);
+                displayUserName.textContent = name;
+                welcomeModal.classList.add('hidden');
+                updateUI();
+                showToast(`ברוך הבא, ${name}!`);
+            }
+        });
+
+        changeUserBtn.addEventListener('click', () => {
+            welcomeModal.classList.remove('hidden');
+        });
+
+        // Like Toggle Handling (Empty Heart <-> Red Heart)
+        likeBtn.addEventListener('click', () => {
+            hasLiked = !hasLiked;
+            likesCount = baseLikesCount + (hasLiked ? 1 : 0);
+            localStorage.setItem('budget_has_liked', hasLiked ? 'true' : 'false');
+            updateLikeUI();
+            showToast(hasLiked ? 'הוספת לייק! ❤️' : 'הסרת לייק');
+        });
+
+        function updateLikeUI() {
+            likesCountSpan.textContent = likesCount;
+            if (hasLiked) {
+                likeIcon.classList.add('text-rose-500', 'fill-rose-500');
+                likeIcon.classList.remove('text-slate-400', 'fill-transparent');
+            } else {
+                likeIcon.classList.remove('text-rose-500', 'fill-rose-500');
+                likeIcon.classList.add('text-slate-400', 'fill-transparent');
+            }
+        }
+
+        // Comments System
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = commentInput.value.trim();
+            if (!text) return;
+
+            const newComment = {
+                id: Date.now().toString(),
+                name: currentUser || 'משתמש אנונימי',
+                text: text,
+                date: 'עכשיו'
+            };
+
+            comments.unshift(newComment);
+            localStorage.setItem('budget_comments', JSON.stringify(comments));
+            renderComments();
+            commentInput.value = '';
+            showToast('התגובה שלך פורסמה!');
+        });
+
+        function renderComments() {
+            commentsList.innerHTML = comments.map(c => `
+                <div class="pt-3 first:pt-0">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-bold text-slate-800 text-sm">${c.name}</span>
+                        <span class="text-xs text-slate-400">${c.date}</span>
+                    </div>
+                    <p class="text-slate-600 text-sm">${c.text}</p>
+                </div>
+            `).join('');
+        }
+
+        // Articles Toggle Function
+        function toggleArticle(articleId, btn) {
+            const content = document.getElementById(articleId);
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                label.textContent = 'הצג פחות';
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                label.textContent = 'קרא עוד';
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Add Transaction
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(amountInput.value);
+            const description = descInput.value.trim();
+            const date = dateInput.value;
+
+            if (!amount || amount <= 0 || !description) return;
+
+            transactions.unshift({
+                id: Date.now().toString(),
+                description,
+                amount,
+                type: currentType,
+                date
+            });
+
+            saveAndRefresh();
+            showToast('הפעולה נשמרה בהצלחה!');
+            amountInput.value = '';
+            descInput.value = '';
+        });
+
+        function saveAndRefresh() {
+            localStorage.setItem('budget_transactions', JSON.stringify(transactions));
+            updateUI();
+        }
+
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            saveAndRefresh();
+            showToast('הפעולה נמחקה');
+        }
+
+        document.getElementById('clear-all-btn').addEventListener('click', () => {
+            if (transactions.length === 0) return;
+            transactions = [];
+            saveAndRefresh();
+            showToast('כל הנתונים אופסו');
+        });
+
+        shareSiteBtn.addEventListener('click', () => {
+            const shareText = encodeURIComponent('היי! כדאי לך לבדוק את "הקופה שלי" - אפליקציה מעולה לניהול תקציב, חיסכון וצפייה בלוח מובילים:\n' + window.location.href);
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${shareText}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        document.getElementById('copy-share-url-btn').addEventListener('click', () => {
+            const shareInput = document.getElementById('share-url-input');
+            shareInput.select();
+            document.execCommand('copy');
+            showToast('הקישור הועתק!');
+            document.getElementById('share-modal').classList.add('hidden');
+        });
+
+        // Update UI & Calculations
+        function updateUI() {
+            const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            const balance = income - expense;
+
+            document.getElementById('total-balance').textContent = `₪${balance.toLocaleString()}`;
+            document.getElementById('total-income').textContent = `₪${income.toLocaleString()}`;
+            document.getElementById('total-expense').textContent = `₪${expense.toLocaleString()}`;
+
+            renderTransactionsList();
+            renderLeaderboard(balance);
+            updatePieChart(income, expense);
+        }
+
+        function renderTransactionsList() {
+            const list = document.getElementById('transaction-list');
+            const noTransactions = document.getElementById('no-transactions');
+
+            if (transactions.length === 0) {
+                list.innerHTML = '';
+                noTransactions.classList.remove('hidden');
+            } else {
+                noTransactions.classList.add('hidden');
+                list.innerHTML = transactions.map(t => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 text-slate-500 whitespace-nowrap">${formatDate(t.date)}</td>
+                        <td class="py-3 px-4 font-medium text-slate-800">${t.description}</td>
+                        <td class="py-3 px-4">
+                            ${t.type === 'income' 
+                                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">הכנסה / רווח</span>'
+                                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">הוצאה / הפסד</span>'
+                            }
+                        </td>
+                        <td class="py-3 px-4 font-semibold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${t.type === 'income' ? '+' : '-'}₪${t.amount.toLocaleString()}
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <button onclick="deleteTransaction('${t.id}')" class="text-slate-400 hover:text-rose-600 p-1 rounded transition">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // Leaderboard Calculation
+        function renderLeaderboard(userBalance) {
+            const leaderboardList = document.getElementById('leaderboard-list');
+            const activeUser = currentUser || 'אתה';
+
+            let allUsers = [...mockLeaderboard];
+            const existingIdx = allUsers.findIndex(u => u.name === activeUser);
+            if (existingIdx !== -1) {
+                allUsers[existingIdx].balance = userBalance;
+            } else if (currentUser || transactions.length > 0) {
+                allUsers.push({ name: activeUser, balance: userBalance, isUser: true });
+            }
+
+            allUsers.sort((a, b) => b.balance - a.balance);
+
+            if (allUsers.length === 0) {
+                leaderboardList.innerHTML = `
+                    <div class="text-center py-6 text-slate-400 text-sm">
+                        טרם נרשמו חסכנים בלוח המובילים. הוסף פעולה ראשונה כדי להופיע בראש הדירוג!
+                    </div>
+                `;
+                return;
+            }
+
+            leaderboardList.innerHTML = allUsers.map((item, index) => {
+                const rank = index + 1;
+                let badgeColor = "bg-slate-100 text-slate-600";
+                let rankIcon = `#${rank}`;
+
+                if (rank === 1) { badgeColor = "bg-amber-100 text-amber-800 font-bold border border-amber-300"; rankIcon = "🥇 מקום 1"; }
+                else if (rank === 2) { badgeColor = "bg-slate-200 text-slate-700 font-bold"; rankIcon = "🥈 מקום 2"; }
+                else if (rank === 3) { badgeColor = "bg-amber-700/10 text-amber-900 font-bold"; rankIcon = "🥉 מקום 3"; }
+
+                const isCurrentUser = item.name === activeUser || item.isUser;
+
+                return `
+                    <div class="flex items-center justify-between p-3 rounded-xl ${isCurrentUser ? 'bg-indigo-50 border border-indigo-200' : 'bg-slate-50'} transition">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs px-2.5 py-1 rounded-lg ${badgeColor}">${rankIcon}</span>
+                            <span class="font-medium text-slate-800 ${isCurrentUser ? 'font-bold text-indigo-900' : ''}">
+                                ${item.name} ${isCurrentUser ? '(אתה)' : ''}
+                            </span>
+                        </div>
+                        <span class="font-bold text-slate-700 dir-ltr">₪${item.balance.toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
+        }
+
+        function initPieChart() {
+            const ctxPie = document.getElementById('expensePieChart').getContext('2d');
+            pieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['הכנסה / רווח 🔵', 'הוצאה / הפסד 🔴'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#2563eb', '#dc2626'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: 'Rubik', size: 13 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = context.raw || 0;
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return ` ${context.label}: ₪${value.toLocaleString()} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePieChart(income, expense) {
+            const noChartData = document.getElementById('no-chart-data');
+            const canvasPie = document.getElementById('expensePieChart');
+
+            if (income === 0 && expense === 0) {
+                canvasPie.style.display = 'none';
+                noChartData.classList.remove('hidden');
+            } else {
+                canvasPie.style.display = 'block';
+                noChartData.classList.add('hidden');
+                pieChart.data.datasets[0].data = [income, expense];
+                pieChart.update();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

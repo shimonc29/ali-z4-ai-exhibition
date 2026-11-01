@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תכנון אדריכלי - וילה 3 קומות וחצר</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js CDN for 3D interactive view -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Rubik & Heebo -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Heebo', 'Rubik', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #38bdf8;
+            color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+        .floor-card:hover {
+            transform: translateY(-4px);
+            transition: all 0.3s ease;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="bg-gradient-to-tr from-sky-500 to-indigo-600 p-3 rounded-xl shadow-md">
+                        <i class="fa-solid to-building-user text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-300">
+                            STUDIO ARCHITECTURE
+                        </h1>
+                        <p class="text-xs text-slate-400">תכנון וילה יוקרתית | 3 קומות + חצר</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1 space-x-reverse bg-slate-800/60 p-1.5 rounded-xl border border-slate-700">
+                    <button onclick="switchTab('search')" id="tab-search" class="tab-btn active px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-sky-400"></i> חיפוש וסינון
+                    </button>
+                    <button onclick="switchTab('blueprint')" id="tab-blueprint" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group"></i> תוכנית אדריכלית
+                    </button>
+                    <button onclick="switchTab('gallery')" id="tab-gallery" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-images"></i> הדמיות מציאותיות
+                    </button>
+                    <button onclick="switchTab('3d-model')" id="tab-3d-model" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-cube"></i> הדמיה 3D
+                    </button>
+                    <button onclick="switchTab('calculator')" id="tab-calculator" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-calculator"></i> אומדן תקציב
+                    </button>
+                    <button onclick="switchTab('popular')" id="tab-popular" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-amber-400"></i> הבחירות המובילות
+                    </button>
+                    <button onclick="switchTab('specs')" id="tab-specs" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> מפרט טכני
+                    </button>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="flex items-center gap-2">
+                    <button onclick="shareOnWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 rounded-xl shadow-lg hover:shadow-emerald-500/25 transition duration-200 text-sm flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> שתף בוואטסאפ
+                    </button>
+                    <button onclick="openContactModal()" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg hover:shadow-sky-500/25 transition duration-200 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check"></i> תאום פגישת תכנון
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden flex justify-around border-t border-slate-800 bg-slate-900/90 backdrop-blur-md p-2">
+            <button onclick="switchTab('search')" class="text-xs p-2 text-slate-300 flex flex-col items-center">
+                <i class="fa-solid fa-magnifying-glass text-base mb-1 text-sky-400"></i>חיפוש
+            </button>
+            <button onclick="switchTab('blueprint')" class="text-xs p-2 text-slate-300 flex flex-col items-center">
+                <i class="fa-solid fa-layer-group text-base mb-1"></i>תוכניות
+            </button>
+            <button onclick="switchTab('gallery')" class="text-xs p-2 text-slate-300 flex flex-col items-center">
+                <i class="fa-solid fa-images text-base mb-1"></i>הדמיות
+            </button>
+            <button onclick="switchTab('3d-model')" class="text-xs p-2 text-slate-300 flex flex-col items-center">
+                <i class="fa-solid fa-cube text-base mb-1"></i>הדמיה 3D
+            </button>
+            <button onclick="switchTab('calculator')" class="text-xs p-2 text-slate-300 flex flex-col items-center">
+                <i class="fa-solid fa-calculator text-base mb-1"></i>תקציב
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 0: ADVANCED SEARCH & CUSTOMIZATION (חיפוש וסינון מותאם) -->
+        <section id="view-search" class="space-y-8">
+            <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-sky-500/10 rounded-full blur-3xl"></div>
+                
+                <div class="max-w-3xl mb-8 relative z-10">
+                    <span class="bg-sky-500/20 text-sky-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-sky-500/30 inline-block mb-3">
+                        <i class="fa-solid fa-sliders"></i> מסנן תכנון אדריכלי
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">תכנן והתאם את גודל הוילה לפי הצרכים שלך</h2>
+                    <p class="text-sm text-slate-300">בחר את מספר המפלסים, גודל החצר ושטחי הקומות כדי לקבל התאמה מדויקת של התוכנית האדריכלית.</p>
+                </div>
+
+                <!-- Customization Controls Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-900/80 backdrop-blur-md p-6 rounded-xl border border-slate-700/80 mb-8">
+                    <!-- Levels Filter -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-sky-400"></i> מספר מפלסים
+                        </label>
+                        <select id="filter-levels" onchange="updateSearchCustomization()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-sky-500">
+                            <option value="1">בית 1 קומה (קרקע)</option>
+                            <option value="2">בית 2 קומות</option>
+                            <option value="3" selected>וילה 3 קומות (מרתף, קרקע, א')</option>
+                        </select>
+                    </div>
+
+                    <!-- Yard Size Filter -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-tree text-emerald-400"></i> גודל חצר (מ"ר)</span>
+                            <span id="filter-yard-val" class="text-emerald-400">350 מ"ר</span>
+                        </div>
+                        <input type="range" id="filter-yard-range" min="100" max="800" value="350" step="25" oninput="updateSearchCustomization()" class="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    </div>
+
+                    <!-- Ground Floor Size Filter -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-couch text-indigo-400"></i> קומת קרקע (מ"ר)</span>
+                            <span id="filter-ground-val" class="text-indigo-400">180 מ"ר</span>
+                        </div>
+                        <input type="range" id="filter-ground-range" min="90" max="350" value="180" step="10" oninput="updateSearchCustomization()" class="w-full accent-indigo-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    </div>
+
+                    <!-- Upper Floor Size Filter -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-bed text-sky-400"></i> קומה א' / מרתף (מ"ר)</span>
+                            <span id="filter-upper-val" class="text-sky-400">160 מ"ר</span>
+                        </div>
+                        <input type="range" id="filter-upper-range" min="80" max="300" value="160" step="10" oninput="updateSearchCustomization()" class="w-full accent-sky-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Custom Search Results / Summary -->
+                <div class="bg-slate-900/90 border border-sky-500/30 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="space-y-2 text-right w-full md:w-auto">
+                        <h4 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-check-circle text-emerald-400"></i> התאמת תוכנית אדריכלית
+                        </h4>
+                        <p id="search-summary-text" class="text-xs text-slate-300">
+                            מציג מפרט מוצע של <span class="text-sky-400 font-bold">3 מפלסים</span> | שטח בנוי כולל: <span class="text-indigo-400 font-bold">480 מ"ר</span> | שטח חצר: <span class="text-emerald-400 font-bold">350 מ"ר</span>
+                        </p>
+                    </div>
+                    <button onclick="applyFilterAndGoToBlueprint()" class="w-full md:w-auto bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> צפה בתוכנית האדריכלית המעודכנת
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: BLUEPRINTS (תוכנית אדריכלית) -->
+        <section id="view-blueprint" class="hidden space-y-8">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-wrap gap-3 mb-6 border-b border-slate-700 pb-4">
+                    <button id="btn-floor-ground" onclick="showFloor('ground')" class="floor-btn bg-sky-600 text-white px-6 py-3 rounded-xl font-medium transition shadow-lg shadow-sky-600/30 flex items-center gap-2">
+                        <i class="fa-solid fa-couch"></i> קומת קרקע (180 מ"ר)
+                    </button>
+                    <button id="btn-floor-first" onclick="showFloor('first')" class="floor-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-xl border border-slate-700 font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-bed"></i> קומה א' (160 מ"ר)
+                    </button>
+                    <button id="btn-floor-basement" onclick="showFloor('basement')" class="floor-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-xl border border-slate-700 font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-dungeon"></i> קומת מרתף (140 מ"ר)
+                    </button>
+                    <button id="btn-floor-yard" onclick="showFloor('yard')" class="floor-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-xl border border-slate-700 font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-tree"></i> החצר והבריכה (350 מ"ר)
+                    </button>
+                </div>
+
+                <div id="floor-details-container">
+                    <!-- Dynamically populated via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: REALISTIC GALLERY (הדמיות מציאותיות) -->
+        <section id="view-gallery" class="hidden space-y-8">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700 pb-4 mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-images text-sky-400"></i> גלריית הדמיות מציאותיות
+                        </h3>
+                        <p class="text-xs text-slate-400">בחר חדר לצפייה ב-3 סגנונות עיצוב פנים וחוץ מרהיבים</p>
+                    </div>
+                    <select id="gallery-room-select" onchange="renderRoomGallery()" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-sky-300 font-medium focus:outline-none focus:border-sky-500">
+                        <option value="living">סלון מרכזי</option>
+                        <option value="kitchen">מטבח ופינת אוכל</option>
+                        <option value="yard">חצר ובריכת שחייה</option>
+                        <option value="master">סוויטת הורים</option>
+                        <option value="office">חדר עבודה/סטודיו</option>
+                        <option value="cinema">אולם קולנוע ביתי</option>
+                        <option value="playroom">חדר משחקים/ממ"ד</option>
+                    </select>
+                </div>
+
+                <div id="gallery-display-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Dynamically populated via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 3D MODEL (הדמיה בתלת ממד) -->
+        <section id="view-3d-model" class="hidden space-y-8">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-cube text-sky-400"></i> הדמיה תלת-ממדית אינטראקטיבית
+                        </h3>
+                        <p class="text-xs text-slate-400">גרור עם העכבר/מגע כדי לסובב את מודל 3 הקומות והחצר</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="rotate-btn" onclick="toggle3DRotation()" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 text-sky-300 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-pause"></i> השהה סיבוב
+                        </button>
+                        <button onclick="resetCamera()" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-left"></i> איפוס מבט
+                        </button>
+                    </div>
+                </div>
+                <div id="threejs-canvas-container" class="w-full h-[500px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-700/80 relative">
+                    <!-- Three.js Canvas injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: CALCULATOR (מחשבון תקציב) -->
+        <section id="view-calculator" class="hidden space-y-8">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+                <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> מחשבון אומדן תקציב בנייה משוער
+                </h3>
+                <p class="text-sm text-slate-300 mb-6">התאם את הפרמטרים לקבלת הערכה תקציבית מותאמת אישית לבניית הוילה.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Sliders & Inputs -->
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <label class="text-slate-300 font-medium">רמת גימור הבנייה</label>
+                                <span id="finish-label" class="text-sky-400 font-bold">יוקרתי (הייטק / מודרני)</span>
+                            </div>
+                            <select id="finish-level" onchange="calculateBudget()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
+                                <option value="7500">סטנדרט גבוה (7,500 ₪ / מ"ר)</option>
+                                <option value="9500" selected>יוקרתי ומודרני (9,500 ₪ / מ"ר)</option>
+                                <option value="12500">סופר פרימיום / custom (12,500 ₪ / מ"ר)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <label class="text-slate-300 font-medium">שטח בנוי קומות (מ"ר)</label>
+                                <span id="area-val" class="text-sky-400 font-bold">480 מ"ר</span>
+                            </div>
+                            <input type="range" id="input-area" min="300" max="700" value="480" step="10" oninput="calculateBudget()" class="w-full accent-sky-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <label class="text-slate-300 font-medium">שטח פיתוח חצר וגינון (מ"ר)</label>
+                                <span id="yard-val" class="text-sky-400 font-bold">350 מ"ר</span>
+                            </div>
+                            <input type="range" id="input-yard" min="150" max="600" value="350" step="10" oninput="calculateBudget()" class="w-full accent-sky-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-slate-700 space-y-3">
+                            <span class="text-sm font-medium text-slate-300 block mb-1">תוספות מיוחדות:</span>
+                            <label class="flex items-center gap-3 cursor-pointer text-sm text-slate-300">
+                                <input type="checkbox" id="pool-check" checked onchange="calculateBudget()" class="w-4 h-4 text-sky-500 rounded accent-sky-500">
+                                בריכת שחייה בנויה בחצר (+220,000 ₪)
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer text-sm text-slate-300">
+                                <input type="checkbox" id="smart-home-check" checked onchange="calculateBudget()" class="w-4 h-4 text-sky-500 rounded accent-sky-500">
+                                מערכת בית חכם מלאה ומיזוג VRF (+180,000 ₪)
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer text-sm text-slate-300">
+                                <input type="checkbox" id="elevator-check" checked onchange="calculateBudget()" class="w-4 h-4 text-sky-500 rounded accent-sky-500">
+                                מעלית פנימית ל-3 מפלסים (+140,000 ₪)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Budget Summary Display -->
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-slate-700 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                                <h4 class="text-lg font-bold text-slate-200">פילוח עלויות משוער</h4>
+                                <button onclick="exportBudgetToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 shadow">
+                                    <i class="fa-solid fa-file-excel text-sm"></i> ייצוא לאקסל
+                                </button>
+                            </div>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">שלד ובנייה (3 קומות):</span>
+                                    <span id="cost-structure" class="font-medium text-slate-200">0 ₪</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">פיתוח חצר ופיתוח שטח:</span>
+                                    <span id="cost-yard" class="font-medium text-slate-200">0 ₪</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">תוספות ומערכות:</span>
+                                    <span id="cost-extras" class="font-medium text-slate-200">0 ₪</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">אגרות, היתרים ותכנון:</span>
+                                    <span id="cost-permits" class="font-medium text-slate-200">0 ₪</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-800 text-center">
+                            <span class="text-xs text-slate-400 block mb-1">סה"כ אומדן פרויקט (משוער)</span>
+                            <span id="total-budget" class="text-3xl font-black text-emerald-400 block">0 ₪</span>
+                            <p class="text-[11px] text-slate-500 mt-2">*הערה: האומדן אינו כולל את מחיר הקרקע ומהווה הערכה ראשונית בלבד.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: POPULAR CHOICES (הבחירות הפופולריות ביותר) -->
+        <section id="view-popular" class="hidden space-y-8">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+                <div class="border-b border-slate-700 pb-4">
+                    <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> הבחירות הפופולריות ביותר על ידי המשתמשים
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">החללים, העיצובים והמפלסים שקיבלו את הדירוג והלייקים הגבוהים ביותר</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Top Choice 1 -->
+                    <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider"> מקום 1 # </div>
+                        <div>
+                            <div class="h-40 rounded-xl overflow-hidden mb-4 border border-slate-700">
+                                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80" alt="חצר ובריכה" class="w-full h-full object-cover">
+                            </div>
+                            <h4 class="font-bold text-white text-base mb-1">חצר ובריכת גלישה (איפאה & נירוסטה)</h4>
+                            <p class="text-xs text-slate-400 mb-3">עיצוב חצר 350 מ"ר עם דק איפאה, בריכת 10x4 ומטבח חוץ מוצל.</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                            <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                <span class="text-xs font-bold text-slate-300 ml-1">4.9 (184 דירוגים)</span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg">128 לייקים</span>
+                        </div>
+                    </div>
+
+                    <!-- Top Choice 2 -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 bg-slate-700 text-slate-200 text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider"> מקום 2 # </div>
+                        <div>
+                            <div class="h-40 rounded-xl overflow-hidden mb-4 border border-slate-700">
+                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="סלון מודרני" class="w-full h-full object-cover">
+                            </div>
+                            <h4 class="font-bold text-white text-base mb-1">סלון מודרני מינימליסטי</h4>
+                            <p class="text-xs text-slate-400 mb-3">חלל אירוח פתוח בגובה 3.40 מ' עם ויטרינות ענק הפונות אל הבריכה.</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                            <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                                <span class="text-xs font-bold text-slate-300 ml-1">4.8 (142 דירוגים)</span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg">89 לייקים</span>
+                        </div>
+                    </div>
+
+                    <!-- Top Choice 3 -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 bg-slate-700 text-slate-200 text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider"> מקום 3 # </div>
+                        <div>
+                            <div class="h-40 rounded-xl overflow-hidden mb-4 border border-slate-700">
+                                <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80" alt="קולנוע ביתי" class="w-full h-full object-cover">
+                            </div>
+                            <h4 class="font-bold text-white text-base mb-1">אולם קולנוע ביתי אקוסטי</h4>
+                            <p class="text-xs text-slate-400 mb-3">חלל פנאי במרתף כולל כורסאות עור מתכווננות ותקרת כוכבים.</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                            <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+                                <span class="text-xs font-bold text-slate-300 ml-1">4.7 (110 דירוגים)</span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg">95 לייקים</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: TECHNICAL SPECS (מפרט טכני) -->
+        <section id="view-specs" class="hidden space-y-6">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> מפרט טכני אדריכלי מלא
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-shield-halved text-sky-400"></i> שלד ואיטום</h4>
+                        <p class="text-xs text-slate-400">בנייה בבטון מזוין רציף, מערכות איטום מתקדמות במרפסות ובגג, בידוד תרמי אקטיבי בקירות חוץ.</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-border-all text-sky-400"></i> אלומיניום וזכוכית</h4>
+                        <p class="text-xs text-slate-400">פרופילים בלגיים/מודרניים דקים, זכוכית טריפלקס כפולה ומסננת קרינה קלייל.</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-sky-400"></i> חשמל ותקשורת</h4>
+                        <p class="text-xs text-slate-400">מערכת חשמל חכם בפרטוקול KNX, הכנות ללוחות סולאריים ועמדות טעינה לרכב חשמלי.</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-temperature-arrow-down text-sky-400"></i> מיזוג וחימום</h4>
+                        <p class="text-xs text-slate-400">מערכות מיזוג VRF אינוורטר שקטות במיוחד בשילוב חימום תת-רצפתי במים.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMMUNITY COMMENTS & LIKES SECTION (תגובות ולייקים) -->
+        <section class="mt-12 bg-slate-800/80 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl space-y-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700 pb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-sky-400"></i> חוות דעת, דירוגים ותגובות משתמשים
+                    </h3>
+                    <p class="text-xs text-slate-400">שתף את דעתך על התוכנית, דרג בכוכבים (1-5) או שאל שאלה את צוות האדריכלים</p>
+                </div>
+                <!-- Global Likes Button -->
+                <button onclick="toggleGlobalLike()" id="btn-global-like" class="bg-slate-900 border border-slate-700 hover:border-rose-500/50 text-slate-300 hover:text-rose-400 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-heart" id="global-like-icon"></i>
+                    <span>אהבתי את התוכנית</span>
+                    <span id="global-like-count" class="bg-rose-500/20 text-rose-300 text-xs px-2 py-0.5 rounded-md">142</span>
+                </button>
+            </div>
+
+            <!-- Comments & Ratings Form -->
+            <form onsubmit="postComment(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <input type="text" id="comment-author" placeholder="שמך המלא" required class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-sky-500">
+                    <select id="comment-room-ref" class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-sky-500">
+                        <option value="התוכנית הכללית">התייחסות: התוכנית הכללית</option>
+                        <option value="החצר והבריכה">התייחסות: החצר והבריכה</option>
+                        <option value="הסלון והמטבח">התייחסות: הסלון והמטבח</option>
+                        <option value="סוויטת ההורים">התייחסות: סוויטת ההורים</option>
+                        <option value="המרתף והקולנוע">התייחסות: המרתף והקולנוע</option>
+                    </select>
+                    <!-- Star Rating Selection -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 flex items-center justify-between px-4">
+                        <span class="text-xs text-slate-400 font-medium">דירוג:</span>
+                        <div id="rating-stars-input" class="flex items-center gap-1 text-amber-400 text-lg cursor-pointer">
+                            <i class="fa-solid fa-star star-btn" onclick="setRating(1)"></i>
+                            <i class="fa-solid fa-star star-btn" onclick="setRating(2)"></i>
+                            <i class="fa-solid fa-star star-btn" onclick="setRating(3)"></i>
+                            <i class="fa-solid fa-star star-btn" onclick="setRating(4)"></i>
+                            <i class="fa-solid fa-star star-btn" onclick="setRating(5)"></i>
+                        </div>
+                    </div>
+                </div>
+                <textarea id="comment-text" rows="3" placeholder="כתוב את חוות דעתך או שאלתך על התכנון..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-sky-500"></textarea>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-6 py-2.5 rounded-xl transition text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> פרסם תגובה ודירוג
+                    </button>
+                </div>
+            </form>
+
+            <!-- Comments Feed List -->
+            <div id="comments-list-container" class="space-y-4">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            <p>© 2026 Studio Architecture | כל הזכויות שמורות לתכנון וילה מודרנית 3 קומות וחצר</p>
+        </div>
+    </footer>
+
+    <!-- Contact Form Modal -->
+    <div id="contact-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeContactModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-xl font-bold text-slate-100 mb-1">תיאום פגישת יעוץ אדריכלית</h3>
+            <p class="text-xs text-slate-400 mb-4">השאר פרטים והאדריכל הראשי יחזור אליך בהקדם.</p>
+            
+            <form onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">שם מלא</label>
+                    <input type="text" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">מספר טלפון</label>
+                    <input type="tel" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">הערות / דרישות מיוחדות</label>
+                    <textarea rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-sky-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-bold py-3 rounded-xl transition text-sm">
+                    שלח לבדיקת אדריכל
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 left-5 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl transition duration-300 opacity-0 pointer-events-none z-50 text-sm flex items-center gap-2">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>הפנייה נשלחה בהצלחה! האדריכל יצור עמך קשר בהקדם.</span>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State management for Likes, Ratings & Search Filters
+        let globalLikes = 142;
+        let isGlobalLiked = false;
+        let currentRatingInput = 5;
+
+        const roomLikesState = {
+            living: { count: 89, liked: false, rating: 4.8 },
+            kitchen: { count: 64, liked: false, rating: 4.6 },
+            yard: { count: 128, liked: false, rating: 4.9 },
+            master: { count: 73, liked: false, rating: 4.7 },
+            office: { count: 41, liked: false, rating: 4.5 },
+            cinema: { count: 95, liked: false, rating: 4.7 },
+            playroom: { count: 52, liked: false, rating: 4.4 }
+        };
+
+        const initialComments = [
+            { author: "דניאל כהן", ref: "החצר והבריכה", text: "תכנון החצר פשוט מדהים! שילוב הבריכה עם דק האיפאה והצמחייה הים-תיכונית נותן תחושה של ריזורט יוקרתי.", date: "לפני יומיים", likes: 12, rating: 5 },
+            { author: "אלון מזרחי", ref: "הסלון והמטבח", text: "הויטרינות הכפולות בסלון שפונות לחצר מכניסות המון אור. האם ניתן להגדיל את האי במטבח במו\"ר נוסף?", date: "אתמול", likes: 5, rating: 4 },
+            { author: "מיכאל אבני", ref: "המרתף והקולנוע", text: "רעיון הקולנוע הביתי במרתף מעולה, בעיקר עם הבידוד האקוסטי. תכנון מעולה ל-3 קומות.", date: "היום", likes: 8, rating: 5 }
+        ];
+
+        // Star Rating Selection Control
+        function setRating(stars) {
+            currentRatingInput = stars;
+            const starElements = document.querySelectorAll('#rating-stars-input .star-btn');
+            starElements.forEach((star, index) => {
+                if (index < stars) {
+                    star.className = 'fa-solid fa-star star-btn text-amber-400';
+                } else {
+                    star.className = 'fa-regular fa-star star-btn text-slate-600';
+                }
+            });
+        }
+
+        function renderStarsHTML(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fa-solid fa-star text-amber-400 text-xs"></i>';
+                } else if (i - 0.5 <= rating) {
+                    stars += '<i class="fa-solid fa-star-half-stroke text-amber-400 text-xs"></i>';
+                } else {
+                    stars += '<i class="fa-regular fa-star text-slate-600 text-xs"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // Three.js Controls & Functions
+        function toggle3DRotation() {
+            isRotating = !isRotating;
+            const btn = document.getElementById('rotate-btn');
+            if (btn) {
+                btn.innerHTML = isRotating ? 
+                    '<i class="fa-solid fa-pause"></i> השהה סיבוב' : 
+                    '<i class="fa-solid fa-play"></i> הפעל סיבוב';
+            }
+        }
+
+        function resetCamera() {
+            if (villaGroup && camera) {
+                villaGroup.rotation.set(0, 0, 0);
+                camera.position.set(25, 20, 30);
+                camera.lookAt(0, 3, 0);
+            }
+        }
+
+        // Search Customization Handler
+        function updateSearchCustomization() {
+            const levelsEl = document.getElementById('filter-levels');
+            const yardRange = document.getElementById('filter-yard-range');
+            const groundRange = document.getElementById('filter-ground-range');
+            const upperRange = document.getElementById('filter-upper-range');
+
+            if (!levelsEl || !yardRange || !groundRange || !upperRange) return;
+
+            const levels = levelsEl.value;
+            const yardSize = yardRange.value;
+            const groundSize = groundRange.value;
+            const upperSize = upperRange.value;
+
+            document.getElementById('filter-yard-val').innerText = `${yardSize} מ"ר`;
+            document.getElementById('filter-ground-val').innerText = `${groundSize} מ"ר`;
+            document.getElementById('filter-upper-val').innerText = `${upperSize} מ"ר`;
+
+            const totalBuilt = parseInt(groundSize) + (parseInt(upperSize) * (parseInt(levels) - 1));
+
+            document.getElementById('search-summary-text').innerHTML = `
+                מציג מפרט מוצע של <span class="text-sky-400 font-bold">${levels} מפלסים</span> | שטח בנוי כולל: <span class="text-indigo-400 font-bold">${totalBuilt} מ"ר</span> | שטח חצר: <span class="text-emerald-400 font-bold">${yardSize} מ"ר</span>
+            `;
+
+            const areaInput = document.getElementById('input-area');
+            const yardInput = document.getElementById('input-yard');
+            if (areaInput && yardInput) {
+                areaInput.value = totalBuilt;
+                yardInput.value = yardSize;
+                calculateBudget();
+            }
+        }
+
+        function applyFilterAndGoToBlueprint() {
+            switchTab('blueprint');
+        }
+
+        // Global Like Toggle
+        function toggleGlobalLike() {
+            isGlobalLiked = !isGlobalLiked;
+            if (isGlobalLiked) {
+                globalLikes++;
+                document.getElementById('btn-global-like').classList.add('border-rose-500', 'text-rose-400');
+                document.getElementById('global-like-icon').classList.add('text-rose-500');
+            } else {
+                globalLikes--;
+                document.getElementById('btn-global-like').classList.remove('border-rose-500', 'text-rose-400');
+                document.getElementById('global-like-icon').classList.remove('text-rose-500');
+            }
+            document.getElementById('global-like-count').innerText = globalLikes;
+        }
+
+        // Room specific Like toggle
+        function toggleRoomLike(roomKey, event) {
+            if (event) event.stopPropagation();
+            const r = roomLikesState[roomKey];
+            if (!r) return;
+            r.liked = !r.liked;
+            r.count += r.liked ? 1 : -1;
+            renderRoomGallery();
+        }
+
+        // Comments System Logic
+        function renderComments() {
+            const container = document.getElementById('comments-list-container');
+            if (!container) return;
+
+            container.innerHTML = initialComments.map((c, index) => `
+                <div class="bg-slate-900 border border-slate-700/70 p-4 rounded-xl space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sky-400 text-sm">${c.author}</span>
+                            <span class="text-[11px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">${c.ref}</span>
+                            <div class="flex items-center gap-0.5 mr-2">
+                                ${renderStarsHTML(c.rating || 5)}
+                            </div>
+                        </div>
+                        <span class="text-xs text-slate-500">${c.date}</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">${c.text}</p>
+                    <div class="flex justify-end pt-1">
+                        <button onclick="likeComment(${index})" class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1.5 transition">
+                            <i class="fa-regular fa-heart"></i>
+                            <span>שימושי (${c.likes})</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function postComment(e) {
+            e.preventDefault();
+            const author = document.getElementById('comment-author').value;
+            const ref = document.getElementById('comment-room-ref').value;
+            const text = document.getElementById('comment-text').value;
+
+            initialComments.unshift({
+                author: author,
+                ref: ref,
+                text: text,
+                date: "עכשיו",
+                likes: 0,
+                rating: currentRatingInput
+            });
+
+            document.getElementById('comment-text').value = '';
+            renderComments();
+        }
+
+        // Render Interactive Realistic Gallery
+        function renderRoomGallery() {
+            const select = document.getElementById('gallery-room-select');
+            if (!select) return;
+
+            const roomKey = select.value;
+            const room = roomRenderings[roomKey] || roomRenderings['living'];
+            const container = document.getElementById('gallery-display-container');
+            const roomLike = roomLikesState[roomKey] || { count: 0, liked: false, rating: 4.8 };
+
+            let stylesHTML = room.styles.map(style => `
+                <div class="bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 shadow-xl flex flex-col">
+                    <div class="relative h-64 overflow-hidden group">
+                        <img src="${style.image}" alt="${style.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/1e293b/38bdf8?text=Visual+Rendering'">
+                        <div class="absolute top-3 right-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-sky-400 border border-slate-700">
+                            ${style.name}
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-100 text-base mb-2">${style.name}</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed mb-4">${style.desc}</p>
+                        </div>
+                        <button onclick="openContactModal()" class="w-full bg-slate-800 hover:bg-sky-600 text-slate-200 hover:text-white py-2 rounded-xl text-xs font-medium transition border border-slate-700 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-pen-ruler"></i> בקש תכנון בסגנון זה
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="lg:col-span-3 bg-slate-900/40 p-4 rounded-xl border border-slate-700/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2">
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                            ${room.title} <span class="text-xs text-slate-400 font-normal">(${room.floor} • ${room.size})</span>
+                        </h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs text-slate-400">דירוג ממוצע:</span>
+                            <div class="flex items-center gap-1">${renderStarsHTML(roomLike.rating)}</div>
+                            <span class="text-xs font-bold text-amber-400">${roomLike.rating}</span>
+                        </div>
+                    </div>
+                    <!-- Like for specific room -->
+                    <button onclick="toggleRoomLike('${roomKey}', event)" class="bg-slate-800 border ${roomLike.liked ? 'border-rose-500 text-rose-400' : 'border-slate-700 text-slate-300'} px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-heart ${roomLike.liked ? 'text-rose-500' : ''}"></i>
+                        <span>אהבתי חדר זה</span>
+                        <span class="bg-slate-700 px-2 py-0.5 rounded-md text-[11px]">${roomLike.count}</span>
+                    </button>
+                </div>
+                ${stylesHTML}
+            `;
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeTabBtn = document.getElementById(`tab-${tabId}`);
+            if (activeTabBtn) activeTabBtn.classList.add('active');
+
+            const views = ['search', 'blueprint', 'gallery', '3d-model', 'calculator', 'popular', 'specs'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const targetView = document.getElementById(`view-${tabId}`);
+            if (targetView) targetView.classList.remove('hidden');
+
+            if (tabId === 'gallery') {
+                renderRoomGallery();
+            }
+            if (tabId === '3d-model' && !isThreeJsInitialized) {
+                initThreeJS();
+            }
+        }
+
+        // Budget Calculator Logic
+        function calculateBudget() {
+            const finishSelect = document.getElementById('finish-level');
+            const areaInput = document.getElementById('input-area');
+            const yardInput = document.getElementById('input-yard');
+
+            if (!finishSelect || !areaInput || !yardInput) return;
+
+            const finishRate = parseInt(finishSelect.value);
+            const area = parseInt(areaInput.value);
+            const yardArea = parseInt(yardInput.value);
+
+            document.getElementById('area-val').innerText = `${area} מ"ר`;
+            document.getElementById('yard-val').innerText = `${yardArea} מ"ר`;
+
+            // Costs Calculations
+            const structureCost = area * finishRate;
+            const yardCost = yardArea * 1200; // 1,200 ILS per sq meter of landscaping
+            
+            let extrasCost = 0;
+            if (document.getElementById('pool-check').checked) extrasCost += 220000;
+            if (document.getElementById('smart-home-check').checked) extrasCost += 180000;
+            if (document.getElementById('elevator-check').checked) extrasCost += 140000;
+
+            const permitsCost = Math.round((structureCost + yardCost) * 0.08); // 8% for permits & design
+            const total = structureCost + yardCost + extrasCost + permitsCost;
+
+            // Formatter
+            const fmt = num => num.toLocaleString('he-IL') + ' ₪';
+
+            document.getElementById('cost-structure').innerText = fmt(structureCost);
+            document.getElementById('cost-yard').innerText = fmt(yardCost);
+            document.getElementById('cost-extras').innerText = fmt(extrasCost);
+            document.getElementById('cost-permits').innerText = fmt(permitsCost);
+            document.getElementById('total-budget').innerText = fmt(total);
+        }
+
+        // Export Budget Data to Excel (CSV format with UTF-8 BOM for Hebrew support)
+        function exportBudgetToExcel() {
+            const finishSelect = document.getElementById('finish-level');
+            const areaInput = document.getElementById('input-area');
+            const yardInput = document.getElementById('input-yard');
+
+            const finishText = finishSelect.options[finishSelect.selectedIndex].text;
+            const area = areaInput.value;
+            const yard = yardInput.value;
+
+            const costStructure = document.getElementById('cost-structure').innerText;
+            const costYard = document.getElementById('cost-yard').innerText;
+            const costExtras = document.getElementById('cost-extras').innerText;
+            const costPermits = document.getElementById('cost-permits').innerText;
+            const totalBudget = document.getElementById('total-budget').innerText;
+
+            const hasPool = document.getElementById('pool-check').checked ? "כן" : "לא";
+            const hasSmartHome = document.getElementById('smart-home-check').checked ? "כן" : "לא";
+            const hasElevator = document.getElementById('elevator-check').checked ? "כן" : "לא";
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM for correct Hebrew display in Excel
+            csvContent += "פרמטר,ערך\n";
+            csvContent += `רמת גימור,${finishText.replace(/,/g, '')}\n`;
+            csvContent += `שטח בנוי,${area} מ"ר\n`;
+            csvContent += `שטח חצר,${yard} מ"ר\n`;
+            csvContent += `בריכת שחייה,${hasPool}\n`;
+            csvContent += `בית חכם ומיזוג VRF,${hasSmartHome}\n`;
+            csvContent += `מעלית פנימית,${hasElevator}\n\n`;
+            csvContent += "סעיף תקציב,עלות משוערת\n";
+            csvContent += `שלד ובנייה,${costStructure.replace(/,/g, '')}\n`;
+            csvContent += `פיתוח חצר וגינון,${costYard.replace(/,/g, '')}\n`;
+            csvContent += `תוספות ומערכות,${costExtras.replace(/,/g, '')}\n`;
+            csvContent += `אגרות ותכנון אדריכלי,${costPermits.replace(/,/g, '')}\n`;
+            csvContent += `סה"כ אומדן פרויקט,${totalBudget.replace(/,/g, '')}\n`;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'אומדן_תקציב_בנייה_אדריכלי.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Three.js 3D Interactive Simulation Setup
+        function initThreeJS() {
+            const container = document.getElementById('threejs-canvas-container');
+            if (!container || isThreeJsInitialized) return;
+
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x090d16);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(25, 20, 30);
+            camera.lookAt(0, 3, 0);
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xfff5ea, 1.2);
+            dirLight.position.set(30, 40, 20);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            const bluePointLight = new THREE.PointLight(0x38bdf8, 2, 30);
+            bluePointLight.position.set(-10, 2, 10);
+            scene.add(bluePointLight);
+
+            // Group for house structure
+            villaGroup = new THREE.Group();
+            scene.add(villaGroup);
+
+            // Ground & Yard
+            const yardGeo = new THREE.BoxGeometry(30, 0.4, 30);
+            const yardMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+            const yardMesh = new THREE.Mesh(yardGeo, yardMat);
+            yardMesh.position.y = -0.2;
+            villaGroup.add(yardMesh);
+
+            // Grass area
+            const grassGeo = new THREE.BoxGeometry(28, 0.1, 14);
+            const grassMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.6 });
+            const grassMesh = new THREE.Mesh(grassGeo, grassMat);
+            grassMesh.position.set(0, 0.05, 7);
+            villaGroup.add(grassMesh);
+
+            // Pool
+            const poolGeo = new THREE.BoxGeometry(10, 0.2, 5);
+            const poolMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.1, metalness: 0.8 });
+            const poolMesh = new THREE.Mesh(poolGeo, poolMat);
+            poolMesh.position.set(5, 0.1, 7);
+            villaGroup.add(poolMesh);
+
+            // Basement (Level -1)
+            const baseGeo = new THREE.BoxGeometry(14, 3, 12);
+            const baseMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 });
+            const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+            baseMesh.position.set(-3, 1.5, -4);
+            villaGroup.add(baseMesh);
+
+            // Ground Floor (Level 0)
+            const groundGeo = new THREE.BoxGeometry(16, 3.5, 14);
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.3 });
+            const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+            groundMesh.position.set(-3, 4.75, -4);
+            villaGroup.add(groundMesh);
+
+            // Large Glass Windows (Ground Floor)
+            const glassGeo = new THREE.BoxGeometry(10, 2.5, 0.2);
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6, roughness: 0.1 });
+            const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+            glassMesh.position.set(-3, 4.75, 3.1);
+            villaGroup.add(glassMesh);
+
+            // Upper Floor (Level 1)
+            const upperGeo = new THREE.BoxGeometry(14, 3.2, 12);
+            const upperMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4 });
+            const upperMesh = new THREE.Mesh(upperGeo, upperMat);
+            upperMesh.position.set(-3, 8.1, -4);
+            villaGroup.add(upperMesh);
+
+            // Terrace / Balcony Glass
+            const balconyGeo = new THREE.BoxGeometry(14, 1, 0.1);
+            const balconyMesh = new THREE.Mesh(balconyGeo, glassMat);
+            balconyMesh.position.set(-3, 10.2, 2.05);
+            villaGroup.add(balconyMesh);
+
+            // Roof
+            const roofGeo = new THREE.BoxGeometry(16, 0.4, 14);
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x0f172a });
+            const roofMesh = new THREE.Mesh(roofGeo, roofMat);
+            roofMesh.position.set(-3, 9.9, -4);
+            villaGroup.add(roofMesh);
+
+            // Mouse controls for rotating
+            container.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            window.addEventListener('mouseup', () => { isMouseDown = false; });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                const deltaX = e.clientX - mouseX;
+                const deltaY = e.clientY - mouseY;
+                villaGroup.rotation.y += deltaX * 0.008;
+                villaGroup.rotation.x += deltaY * 0.008;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                if (!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            isThreeJsInitialized = true;
+            animate3D();
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            if (isRotating && villaGroup) {
+                villaGroup.rotation.y += 0.005;
+            }
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Modal and Form Handlers
+        function openContactModal() {
+            document.getElementById('contact-modal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.add('hidden');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            closeContactModal();
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 4000);
+        }
+
+        // Initialize default view on window load
+        window.onload = function() {
+            showFloor('ground');
+            calculateBudget();
+            renderComments();
+        };
+
+        // WhatsApp Share Functionality
+        function shareOnWhatsApp(roomTitle) {
+            let message = "";
+            if (roomTitle) {
+                message = encodeURIComponent(`שלום! אני משתף איתך את התכנון האדריכלי של ${roomTitle} מתוך אפליקציית תכנון הבית הדו-קומתי/3 מפלסים:`);
+            } else {
+                message = encodeURIComponent("שלום! צפה בתוכנית האדריכלית המלאה לתכנון וילה 3 קומות וחצר רחבה:");
+            }
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://api.whatsapp.com/send?text=${message}%20${url}`, '_blank');
+        }
+    </script>
+</body>
+</html>

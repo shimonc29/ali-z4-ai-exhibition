@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ממלכת החיות - משחקי טריוויה וניחושים</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Heebo -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            min-height: 100vh;
+        }
+        .game-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .game-card:hover {
+            transform: translateY(-8px);
+        }
+        .pulse-glow {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-100vh">
+
+    <!-- הודעת משוב מותאמת (חלופית ל-alert) -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl text-center transform scale-95 transition-transform duration-300" id="modal-content">
+            <div id="modal-icon" class="text-6xl mb-4">🎉</div>
+            <h3 id="modal-title" class="text-2xl font-bold text-slate-800 mb-2">כל הכבוד!</h3>
+            <p id="modal-message" class="text-slate-600 mb-6">ענית נכון על השאלה והרווחת נקודות בונוס!</p>
+            <button onclick="closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 cursor-pointer">
+                המשך לשלב הבא
+            </button>
+        </div>
+    </div>
+
+    <!-- כותרת ראשית -->
+    <header class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-40 border-b border-emerald-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="returnToHome()">
+                <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md floating">
+                    🦁
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">ממלכת החיות</h1>
+                    <p class="text-xs text-slate-500 font-medium">ארקייד משחקים וטריוויה</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-2xl flex items-center gap-2 shadow-inner">
+                    <span class="text-xl">🏆</span>
+                    <div>
+                        <span class="text-xs text-emerald-700 block font-medium">שיא אישי</span>
+                        <span id="header-best-score" class="font-bold text-emerald-900 text-sm">0</span>
+                    </div>
+                </div>
+                <button onclick="openLeaderboard()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-3 rounded-2xl transition flex items-center justify-center shadow-xs cursor-pointer" title="טבלת אלופים">
+                    <i class="fa-solid fa-medal text-lg text-amber-500"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- תוכן ראשי -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- דף הבית / בחירת משחק -->
+        <div id="view-home" class="space-y-8">
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <span class="bg-emerald-800/40 text-emerald-100 text-sm font-semibold px-4 py-1.5 rounded-full inline-block backdrop-blur-xs">ברוכים הבאים לגן החיות האינטראקטיבי! 🌿</span>
+                <h2 class="text-4xl sm:text-5xl font-black text-white tracking-tight">בחר את האתגר שלך והתחל לשחק</h2>
+                <p class="text-emerald-50 text-lg font-light">בחן את הידע שלך, נחש חיות נסתרות, אתגר את חבריך והפוך לאלוף הטבע!</p>
+            </div>
+
+            <!-- רשת המשחקים -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+                <!-- כרטיס משחק 1: טריוויה -->
+                <div onclick="startTriviaGame()" class="game-card bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition duration-300 shadow-sm">
+                            🧠
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3">טריוויה חיות</h3>
+                        <p class="text-slate-600 leading-relaxed mb-6">ענה על שאלות מאתגרות על בעלי חיים מרחבי העולם, צבר נקודות והיזהר מהשעון!</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 text-emerald-600 font-bold">
+                        <span>שחק עכשיו</span>
+                        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition duration-300"></i>
+                    </div>
+                </div>
+
+                <!-- כרטיס משחק 2: מי אני -->
+                <div onclick="startGuessGame()" class="game-card bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition duration-300 shadow-sm">
+                            🕵️‍♂️
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3">מי אני? - ניחוש חיות</h3>
+                        <p class="text-slate-600 leading-relaxed mb-6">קבל רמזים מתקדמים אחד אחרי השני ונסה לנחש באיזו חיה מדובר לפני שייגמרו הרמזים.</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 text-emerald-600 font-bold">
+                        <span>שחק עכשיו</span>
+                        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition duration-300"></i>
+                    </div>
+                </div>
+
+                <!-- כרטיס משחק 3: אתגר צללית ותמונה -->
+                <div onclick="startVisualGame()" class="game-card bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition duration-300 shadow-sm">
+                            📸
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3">אתגר זיהוי חזותי</h3>
+                        <p class="text-slate-600 leading-relaxed mb-6">הסתכל על תמונת תקריב (זום) או צללית של חיה וזהה אותה מתוך אפשרויות מבלבלות.</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 text-emerald-600 font-bold">
+                        <span>שחק עכשיו</span>
+                        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition duration-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- אזור המשחק הפעיל (מוסתר בהתחלה) -->
+        <div id="game-container" class="hidden max-w-3xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-10 border border-white/50">
+            
+            <!-- סרגל עליון במשחק -->
+            <div class="flex items-center justify-between pb-6 mb-6 border-b border-slate-100">
+                <button onclick="returnToHome()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-2xl font-medium transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-house"></i>
+                    <span>תפריט ראשי</span>
+                </button>
+                <div class="flex items-center gap-6">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block">ניקוד</span>
+                        <span id="current-score" class="text-xl font-black text-emerald-600">0</span>
+                    </div>
+                    <div class="text-center" id="timer-wrapper">
+                        <span class="text-xs text-slate-400 block">זמן</span>
+                        <span id="game-timer" class="text-xl font-black text-amber-500">15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- אזור התוכן הדינמי של המשחק -->
+            <div id="game-main-content">
+                <!-- יתמלא דרך JavaScript בהתאם למשחק הנבחר -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- מודל טבלת אלופים (Leaderboard) -->
+    <div id="leaderboard-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                    <span>🏆</span> טבלת האלופים
+                </h3>
+                <button onclick="closeLeaderboard()" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="leaderboard-list" class="space-y-3 mb-6 max-h-60 overflow-y-auto custom-scrollbar">
+                <!-- יתמלא דינמית -->
+            </div>
+            <button onclick="closeLeaderboard()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl transition cursor-pointer">
+                סגור
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-6 text-center text-emerald-100/80 text-sm">
+        <p>ממלכת החיות • נבנה באהבה לחובבי הטבע 🐾</p>
+    </footer>
+
+    <!-- לוגיקת המשחקים ב-JavaScript -->
+    <script>
+        // מבני נתונים ומאגרי מידע למשחקים
+        const triviaQuestions = [
+            {
+                question: "איזו חיה נחשבת למהירה ביותר ביבשה?",
+                options: ["אריה", "ברדלס (צ'יטה)", "סוס מרוץ", "אנטילופה"],
+                answer: 1,
+                fact: "הברדלס מסוגל להגיע למהירות מדהימה של עד 120 קמ\"ש בתוך שניות ספורות!"
+            },
+            {
+                question: "כמה לבבות יש לתמנון?",
+                options: ["1", "2", "3", "4"],
+                answer: 2,
+                fact: "לכל תמנון יש שלושה לבבות! שניים מהם שואבים דם לזימים ואחד שאר הגוף."
+            },
+            {
+                question: "איזה יונק הוא היחיד שמסוגל לעוף תעופה אמיתית?",
+                options: ["הסנאי המעופף", "העטלף", "הדבורה", "הפינגווין"],
+                answer: 1,
+                fact: "העטלפים הם היונק היחיד המותאם לתעופה מלאה ופעילה בטבע."
+            },
+            {
+                question: "מהו צבע העור האמיתי של דוב הקוטב?",
+                options: ["לבן צחור", "שחור", "ורוד", "חום כהה"],
+                answer: 1,
+                fact: "מתחת לפרווה הלבנה שלהם, העור של דוב הקוטב שחור לחלוטין כדי לספוג חום משמש!"
+            },
+            {
+                question: "איזו חיה ישנה בממוצע כ-20 שעות ביממה?",
+                options: ["אריה", "קואלה", "עצלן", "חתול בית"],
+                answer: 2,
+                fact: "העצלן הוא אכן עצלן אמיתי וישן רוב שעות היום והלילה על עצי היער."
+            }
+        ];
+
+        const guessAnimals = [
+            {
+                name: "פיל אפריקאי",
+                emoji: "🐘",
+                clues: [
+                    "אני בעל החיים היבשתי הגדול ביותר בעולם.",
+                    "יש לי זוג אוזניים ענקיות וחדק ארוך מאוד.",
+                    "אני זוכר מצוין ולעולם לא שוכח חברים או אויבים."
+                ]
+            },
+            {
+                name: "פינגווין קיסרי",
+                emoji: "🐧",
+                clues: [
+                    "אני עוף, אבל אין באפשרותי לעוף בשמים.",
+                    "אני חי באזורים הקרים ביותר בכדור הארץ – אנטארקטיקה.",
+                    "אני שחיין מעולה ולובש תמיד 'חליפה רשמית' שחור-לבן."
+                ]
+            },
+            {
+                name: "ג'ירפה",
+                emoji: "🦒",
+                clues: [
+                    "אני מתנשא לגובה רב מאוד מעל כולם.",
+                    "יש לי צוואר ארוך במיוחד שבעזרתו אני מגיעה לצמרות העצים.",
+                    "יש לי כתמים ייחודיים על הגוף ומשלב לשון סגולה וארוכה."
+                ]
+            },
+            {
+                name: "דולפינן מצוי",
+                emoji: "🐬",
+                clues: [
+                    "אני חי בים הפתוח אך אני יונק ימי שנושם אוויר.",
+                    "אני ידוע באינטליגנציה גבוהה ובחיוך תמידי על פניי.",
+                    "אני מתקשר באמצעות שריקות ונקודות קול מיוחדות (אקולוקיישן)."
+                ]
+            }
+        ];
+
+        const visualAnimals = [
+            {
+                name: "זברה",
+                emoji: "🦓",
+                description: "מפורסמת בדוגמת הפסים הייחודית שלה שאין שנייה לה בטבע.",
+                options: ["סוס", "זברה", "אוקאפי", "חמור שחור"]
+            },
+            {
+                name: "אריה",
+                emoji: "🦁",
+                description: "מלך החיות, מתפאר ברעמה מרשימה ובשאיגה שנשמעת למרחקים.",
+                options: ["נמר", "צבוע", "אריה", "דוב"]
+            },
+            {
+                name: "קנגורו",
+                emoji: "캥", // נשתמש באימוג'י נקי
+                customEmoji: "🦘",
+                description: "ידוע בכיס הבטן המיוחד שלו וביכולת הקפיצה האדירה שלו.",
+                options: ["ארנב ענק", "קנגורו", "וומבט", "קואלה"]
+            },
+            {
+                name: "ינשוף",
+                emoji: "🦉",
+                description: "דורס לילה בעל עיניים ענקיות ויכולת לסובב את הראש כמעט ב-360 מעלות.",
+                options: ["נשר", "עורב", "ינשוף", "בז"]
+            }
+        ];
+
+        // משתני מצב משחק
+        let currentScore = 0;
+        let bestScore = parseInt(localStorage.getItem('animal_arcade_best') || '0');
+        let activeGameType = null;
+        let gameTimerInterval = null;
+        let timeLeft = 15;
+
+        // משתני טריוויה
+        let currentTriviaIndex = 0;
+
+        // משתני מי אני
+        let currentGuessIndex = 0;
+        let currentClueStep = 0;
+
+        // משתני זיהוי חזותי
+        let currentVisualIndex = 0;
+
+        // עדכון ניקוד בראש הדף
+        document.getElementById('header-best-score').innerText = bestScore;
+
+        function updateScore(pointsToAdd) {
+            currentScore += pointsToAdd;
+            document.getElementById('current-score').innerText = currentScore;
+            if (currentScore > bestScore) {
+                bestScore = currentScore;
+                localStorage.setItem('animal_arcade_best', bestScore);
+                document.getElementById('header-best-score').innerText = bestScore;
+            }
+        }
+
+        function returnToHome() {
+            clearInterval(gameTimerInterval);
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('view-home').classList.remove('hidden');
+            activeGameType = null;
+        }
+
+        // הצגת מודל מותאם אישית (במקום alert)
+        const modal = document.getElementById('custom-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        let modalCallback = null;
+
+        function showCustomModal(title, message, icon = '🎉', callback = null) {
+            modalTitle.innerText = title;
+            modalMessage.innerText = message;
+            modalIcon.innerText = icon;
+            modalCallback = callback;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                if (typeof modalCallback === 'function') {
+                    let cb = modalCallback;
+                    modalCallback = null;
+                    cb();
+                }
+            }, 300);
+        }
+
+        // טבלת אלופים
+        function openLeaderboard() {
+            const listContainer = document.getElementById('leaderboard-list');
+            let scores = JSON.parse(localStorage.getItem('animal_arcade_scores') || '[]');
+            // נוסיף את השיא הנוכחי אם קיים
+            if (currentScore > 0 && !scores.includes(currentScore)) {
+                scores.push(currentScore);
+                scores.sort((a,b) => b - a);
+                scores = scores.slice(0, 5);
+                localStorage.setItem('animal_arcade_scores', JSON.stringify(scores));
+            }
+            if (scores.length === 0) {
+                scores = [bestScore];
+            }
+
+            listContainer.innerHTML = scores.map((s, idx) => `
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm">${idx + 1}</span>
+                        <span class="font-bold text-slate-700">שחקן ${idx + 1}</span>
+                    </div>
+                    <span class="font-black text-emerald-600 text-lg">${s} נקודות</span>
+                </div>
+            `).join('');
+
+            const lbModal = document.getElementById('leaderboard-modal');
+            lbModal.classList.remove('hidden');
+            setTimeout(() => lbModal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeLeaderboard() {
+            const lbModal = document.getElementById('leaderboard-modal');
+            lbModal.classList.add('opacity-0');
+            setTimeout(() => lbModal.classList.add('hidden'), 300);
+        }
+
+        // ==================== משחק 1: טריוויה חיות ====================
+        function startTriviaGame() {
+            activeGameType = 'trivia';
+            currentTriviaIndex = 0;
+            currentScore = 0;
+            document.getElementById('current-score').innerText = currentScore;
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            document.getElementById('timer-wrapper').style.display = 'block';
+            loadTriviaQuestion();
+        }
+
+        function loadTriviaQuestion() {
+            clearInterval(gameTimerInterval);
+            if (currentTriviaIndex >= triviaQuestions.length) {
+                endGameSession("כל הכבוד! סיימת את כל שאלות הטריוויה בהצלחה רבה!");
+                return;
+            }
+
+            timeLeft = 15;
+            document.getElementById('game-timer').innerText = timeLeft;
+            startTimer(loadTriviaQuestion);
+
+            const q = triviaQuestions[currentTriviaIndex];
+            const content = document.getElementById('game-main-content');
+            
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">שאלה ${currentTriviaIndex + 1} מתוך ${triviaQuestions.length}</span>
+                        <span class="text-xs text-slate-400">טריוויה חיות</span>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-800 leading-snug">${q.question}</h3>
+                    <div class="grid grid-cols-1 gap-3 pt-2">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="checkTriviaAnswer(${idx})" class="w-full text-right p-4 rounded-2xl border-2 border-slate-100 hover:border-emerald-500 hover:bg-emerald-50/50 font-medium text-slate-700 transition duration-200 flex items-center justify-between group cursor-pointer">
+                                <span class="text-lg">${opt}</span>
+                                <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-emerald-500 group-hover:text-white transition flex items-center justify-center text-sm font-bold text-slate-500">${['א','ב','ג','ד'][idx]}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkTriviaAnswer(selectedIndex) {
+            clearInterval(gameTimerInterval);
+            const q = triviaQuestions[currentTriviaIndex];
+            if (selectedIndex === q.answer) {
+                updateScore(20);
+                showCustomModal("תשובה נכונה! 🌟", q.fact, "🎉", () => {
+                    currentTriviaIndex++;
+                    loadTriviaQuestion();
+                });
+            } else {
+                showCustomModal("תשובה שגויה ❌", `התשובה הנכונה הייתה: "${q.options[q.answer]}". \n\n${q.fact}`, "💡", () => {
+                    currentTriviaIndex++;
+                    loadTriviaQuestion();
+                });
+            }
+        }
+
+        // ==================== משחק 2: מי אני? ====================
+        function startGuessGame() {
+            activeGameType = 'guess';
+            currentGuessIndex = 0;
+            currentClueStep = 0;
+            currentScore = 0;
+            document.getElementById('current-score').innerText = currentScore;
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            document.getElementById('timer-wrapper').style.display = 'none';
+            loadGuessStage();
+        }
+
+        function loadGuessStage() {
+            if (currentGuessIndex >= guessAnimals.length) {
+                endGameSession("מעולה! ניחשת את כל החיות במצב 'מי אני?'!");
+                return;
+            }
+            currentClueStep = 0;
+            renderGuessView();
+        }
+
+        function renderGuessView() {
+            const animal = guessAnimals[currentGuessIndex];
+            const content = document.getElementById('game-main-content');
+
+            let cluesHtml = '';
+            for (let i = 0; i <= currentClueStep; i++) {
+                cluesHtml += `
+                    <div class="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-100 flex items-start gap-3 animate-fade-in">
+                        <span class="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5 shrink-0">${i+1}</span>
+                        <p class="text-slate-700 font-medium">${animal.clues[i]}</p>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <span class="bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full">חיה ${currentGuessIndex + 1} מתוך ${guessAnimals.length}</span>
+                        <span class="text-xs text-slate-400">מי אני? ניחוש חיות</span>
+                    </div>
+                    <div class="text-center py-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <div class="text-6xl mb-2 floating">❓</div>
+                        <h4 class="text-lg font-bold text-slate-700">זהה את החיה לפי הרמזים:</h4>
+                    </div>
+                    <div class="space-y-3">
+                        ${cluesHtml}
+                    </div>
+                    
+                    <div class="pt-4">
+                        ${currentClueStep < animal.clues.length - 1 ? `
+                            <button onclick="nextClue()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <span>בקש רמז נוסף (-5 נק')</span>
+                            </button>
+                        ` : ''}
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">נחש את שם החיה:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="guess-input" placeholder="הקלד כאן את שם החיה..." class="flex-grow px-4 py-3 rounded-2xl border border-slate-200 focus:outline-hidden focus:border-emerald-500 bg-slate-50">
+                                <button onclick="submitGuess()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg transition cursor-pointer">נחש</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function nextClue() {
+            currentClueStep++;
+            renderGuessView();
+        }
+
+        function submitGuess() {
+            const val = document.getElementById('guess-input').value.trim();
+            const animal = guessAnimals[currentGuessIndex];
+            if (!val) return;
+
+            // בדיקה האם הניחוש מכיל את שם החיה
+            if (animal.name.includes(val) || val.includes(animal.name.split(' ')[0])) {
+                let pointsEarned = Math.max(10, 30 - (currentClueStep * 10));
+                updateScore(pointsEarned);
+                showCustomModal("בול בפגיעה! 🎯", `כל הכבוד! החיה אכן הייתה ${animal.emoji} ${animal.name}. הרווחת ${pointsEarned} נקודות!`, "🐾", () => {
+                    currentGuessIndex++;
+                    loadGuessStage();
+                });
+            } else {
+                showCustomModal("לא מדויק...", `הניחוש שלך לא נכון. נסה שוב או בקש רמז נוסף!`, "🤔");
+            }
+        }
+
+        // ==================== משחק 3: אתגר זיהוי חזותי ====================
+        function startVisualGame() {
+            activeGameType = 'visual';
+            currentVisualIndex = 0;
+            currentScore = 0;
+            document.getElementById('current-score').innerText = currentScore;
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            document.getElementById('timer-wrapper').style.display = 'block';
+            loadVisualStage();
+        }
+
+        function loadVisualStage() {
+            clearInterval(gameTimerInterval);
+            if (currentVisualIndex >= visualAnimals.length) {
+                endGameSession("כל הכבוד! סיימת בהצלחה את אתגר הזיהוי החזותי!");
+                return;
+            }
+
+            timeLeft = 12;
+            document.getElementById('game-timer').innerText = timeLeft;
+            startTimer(loadVisualStage);
+
+            const animal = visualAnimals[currentVisualIndex];
+            const content = document.getElementById('game-main-content');
+            const displayEmoji = animal.customEmoji || animal.emoji;
+
+            content.innerHTML = `
+                <div class="space-y-6 text-center">
+                    <div class="flex items-center justify-between">
+                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">אתגר ${currentVisualIndex + 1} מתוך ${visualAnimals.length}</span>
+                        <span class="text-xs text-slate-400">זיהוי חזותי</span>
+                    </div>
+
+                    <div class="py-8 bg-gradient-to-b from-emerald-50 to-teal-50 rounded-3xl border border-emerald-100 relative overflow-hidden shadow-inner">
+                        <div class="text-8xl floating mb-4">${displayEmoji}</div>
+                        <p class="text-slate-600 font-medium px-6 max-w-md mx-auto italic">"${animal.description}"</p>
+                    </div>
+
+                    <h4 class="text-xl font-extrabold text-slate-800">איזו חיה זו מתוארת כאן?</h4>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        ${animal.options.map(opt => `
+                            <button onclick="checkVisualAnswer('${opt}', '${animal.name}')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-emerald-500 hover:bg-emerald-50 font-bold text-lg text-slate-700 transition shadow-xs cursor-pointer">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkVisualAnswer(selectedOption, correctName) {
+            clearInterval(gameTimerInterval);
+            if (selectedOption === correctName) {
+                updateScore(25);
+                showCustomModal("זיהוי מושלם! 🌟", `צדקת לחלוטין! מדובר ב-${correctName}.`, "🏆", () => {
+                    currentVisualIndex++;
+                    loadVisualStage();
+                });
+            } else {
+                showCustomModal("טעות בזיהוי ❌", `החיה הנכונה היא ${correctName}. ראש למעלה, ממשיכים לשלב הבא!`, "💡", () => {
+                    currentVisualIndex++;
+                    loadVisualStage();
+                });
+            }
+        }
+
+        // טיימר משותף
+        function startTimer(onTimeOutCallback) {
+            gameTimerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('game-timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(gameTimerInterval);
+                    showCustomModal("הזמן נגמר! ⌛", "הזמן לשאלה זו אזל.", "⏰", () => {
+                        if (activeGameType === 'trivia') {
+                            currentTriviaIndex++;
+                            loadTriviaQuestion();
+                        } else if (activeGameType === 'visual') {
+                            currentVisualIndex++;
+                            loadVisualStage();
+                        }
+                    });
+                }
+            }, 1000);
+        }
+
+        function endGameSession(message) {
+            // שמירת הניקוד לטבלה מקומית
+            let scores = JSON.parse(localStorage.getItem('animal_arcade_scores') || '[]');
+            if (currentScore > 0 && !scores.includes(currentScore)) {
+                scores.push(currentScore);
+                scores.sort((a,b) => b - a);
+                localStorage.setItem('animal_arcade_scores', JSON.stringify(scores.slice(0, 5)));
+            }
+
+            showCustomModal("סיום המשחק! 🎉", `${message}\n\nהניקוד הסופי שלך: ${currentScore} נקודות!`, "🏅", () => {
+                returnToHome();
+            });
+        }
+    </script>
+</body>
+</html>

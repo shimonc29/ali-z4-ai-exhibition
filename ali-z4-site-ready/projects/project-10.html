@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לבזבז את הכסף של האיש העשיר בעולם - מהדורת חשבון ומדע</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Heebo -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .vip-credit-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #047857 85%, #10b981 100%);
+            border: 2px solid rgba(245, 158, 11, 0.5);
+            box-shadow: 0 15px 35px -10px rgba(16, 185, 129, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .vip-credit-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.6), 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .vip-credit-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 50%);
+            pointer-events: none;
+        }
+
+        body.light-mode {
+            background-color: #f8fafc;
+            color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body.dark-mode {
+            background-color: #090d16;
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(5, 150, 105, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .light-mode .glass-panel {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark-mode .glass-panel {
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .money-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .money-sticky {
+            background: rgba(255, 255, 255, 0.92);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .dark-mode .money-sticky {
+            background: rgba(11, 15, 25, 0.92);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .sim-chip {
+            background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
+            border: 1px solid #b45309;
+        }
+
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .light-mode .card-hover {
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .dark-mode .card-hover {
+            background: #1e293b;
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.25);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .font-mono-card {
+            font-family: 'Share Tech Mono', monospace;
+        }
+    </style>
+</head>
+<body class="light-mode min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white relative overflow-x-hidden">
+
+    <!-- Header Section -->
+    <header class="text-center pt-8 pb-6 px-4 relative overflow-hidden transition-colors z-10">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3 mb-4">
+            <div class="flex items-center gap-2">
+                <button id="theme-toggle-btn" onclick="toggleTheme()" class="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-sm flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i> <span id="theme-text">מצב לילה</span>
+                </button>
+            </div>
+            
+            <button onclick="toggleAdminModal()" class="p-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-600 dark:text-amber-400 border border-amber-500/40 rounded-xl font-black text-sm transition flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-user-gear text-amber-500"></i> <span>פאנל אדמין (Shift)</span>
+            </button>
+        </div>
+
+        <!-- Floating Math Challenge & Cart Buttons -->
+        <div class="fixed top-4 left-4 z-50 flex flex-col gap-2">
+            <!-- Math Challenge Button -->
+            <button onclick="openMathChallenge()" class="px-5 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-black text-sm rounded-2xl shadow-2xl border-2 border-purple-300 flex items-center gap-3 transition transform active:scale-95 animate-bounce">
+                <i class="fa-solid fa-calculator text-xl text-yellow-300"></i>
+                <span>אתגר השלבים בחשבון 🧠</span>
+            </button>
+
+            <!-- Cart Button -->
+            <button onclick="scrollToCheckout()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-sm rounded-2xl shadow-2xl border-2 border-emerald-300 flex items-center gap-3 transition transform active:scale-95">
+                <i class="fa-solid fa-cart-shopping text-xl"></i>
+                <span>סל קניות</span>
+                <span id="cart-badge-count" class="bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-full text-xs font-black">0</span>
+            </button>
+        </div>
+
+        <!-- Banner for Active 5-Minute Timer Discount -->
+        <div id="timer-discount-banner" class="hidden bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white py-2 px-4 text-center font-black text-sm shadow-md animate-pulse">
+            <span>🔥 בונוס שלב הושלם! 20% הנחה נוספת פעילה בחנות! נותרו: </span>
+            <span id="timer-countdown" class="font-mono text-yellow-200 underline text-base">05:00</span>
+        </div>
+
+        <h1 class="text-3xl md:text-5xl font-black tracking-tight mb-3" id="main-title">
+            לבזבז את הכסף 👑 - מהדורת שלבי חשבון!
+        </h1>
+        <p class="max-w-2xl mx-auto text-sm md:text-base leading-relaxed opacity-80">
+            תקציב אדיר של 100 דוצנטריון דולר! פתור תרגילי חשבון לקבלת הנחות ענק ובונוסים כספיים!
+        </p>
+    </header>
+
+    <!-- Sticky Counter Bar -->
+    <div class="money-sticky py-3 px-4">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-right">
+                <span class="text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold block mb-0.5">יתרה עדכנית:</span>
+                <span id="money-display" class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight text-glow break-all">
+                    $100,000,000,000,000,000,000,000,000
+                </span>
+            </div>
+
+            <div class="w-full md:w-1/3 flex flex-col items-center md:items-end">
+                <div class="flex justify-between w-full text-xs font-semibold mb-1.5 opacity-90">
+                    <span>שלב נוכחי: <strong id="math-level-display" class="text-amber-500 font-bold">שלב 1/5</strong></span>
+                    <span>הנחה סה"כ: <strong id="discount-display" class="text-emerald-600 dark:text-emerald-400 font-bold">0%</strong></span>
+                </div>
+            </div>
+
+            <button onclick="resetAll()" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl border border-slate-300 dark:border-slate-700 transition">
+                <i class="fa-solid fa-rotate-right"></i> איפוס
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Interactive 3D Virtual Credit Card Bar -->
+    <div class="card-sticky-bar py-3 px-4">
+        <div id="virtual-card" onmousemove="handleCardTilt(event)" onmouseleave="resetCardTilt()" class="max-w-4xl mx-auto vip-credit-card p-5 md:p-6 rounded-3xl text-white flex flex-wrap items-center justify-between gap-4 cursor-pointer">
+            
+            <!-- Left Side: Gold Chip & Cardholder Info -->
+            <div class="flex items-center gap-4">
+                <!-- Real Gold SIM Chip -->
+                <div class="sim-chip w-12 h-9 rounded-lg shrink-0 flex items-center justify-center">
+                    <div class="w-6 h-6 border-r border-b border-amber-800/40 opacity-75"></div>
+                </div>
+
+                <!-- Contactless Icon & Holder Details -->
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-wifi text-amber-300 text-lg rotate-90 opacity-90"></i>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] font-mono tracking-widest text-amber-400 uppercase font-black">VIP BLACK INFINITE CARD</span>
+                            <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[9px] px-2 py-0.5 rounded-full font-bold">פעיל</span>
+                        </div>
+                        <span id="top-card-holder-name" class="font-extrabold text-sm sm:text-base text-white tracking-wide block drop-shadow-sm">
+                            כרטיס אשראי אולטרה 👑
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Card Number -->
+            <div class="font-mono-card text-base sm:text-lg md:text-xl tracking-widest text-amber-100 font-bold drop-shadow flex items-center gap-2">
+                <span>7777</span>
+                <span class="opacity-60">• • • •</span>
+                <span class="opacity-60">• • • •</span>
+                <span class="text-amber-300">9999</span>
+            </div>
+
+            <!-- Right Side: Expiry & Pay Action -->
+            <div class="flex items-center gap-4">
+                <div class="font-mono-card text-left text-xs hidden sm:block border-l border-white/10 pl-4">
+                    <span class="block text-[9px] text-slate-300 uppercase tracking-widest">EXP / CVV</span>
+                    <span class="text-amber-300 font-bold">12/99 • 777</span>
+                </div>
+
+                <!-- Payment Button -->
+                <button onclick="checkoutPay(event)" class="px-6 py-3 bg-gradient-to-r from-amber-400 via-emerald-400 to-emerald-500 hover:from-amber-300 hover:to-emerald-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-lg hover:shadow-emerald-500/30 transition transform active:scale-95 flex items-center gap-2 border border-amber-200/50">
+                    <i class="fa-solid fa-credit-card text-slate-950 text-base"></i>
+                    <span>שלם בלחיצה 💳</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full z-10 space-y-8">
+        <!-- Products Grid Container -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Cart Section -->
+        <section id="checkout-section" class="glass-panel p-6 md:p-8 rounded-3xl space-y-6 mt-12 border-2 border-emerald-500/40">
+            <h2 class="text-2xl font-black flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                <i class="fa-solid fa-cart-shopping"></i> סל הקניות שלך
+            </h2>
+            <div id="cart-items-container" class="space-y-3">
+                <div class="text-center py-6 text-slate-400">הסל ריק כרגע.</div>
+            </div>
+            <div class="flex justify-between items-center pt-4 border-t border-slate-700">
+                <span class="font-bold text-lg">סה"כ לתשלום:</span>
+                <span id="cart-total-price" class="text-2xl font-black text-emerald-500">$0</span>
+            </div>
+            <button onclick="checkoutPay(event)" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xl rounded-2xl shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-credit-card"></i> אישור ותשלום בכרטיס האשראי ✨
+            </button>
+        </section>
+    </main>
+
+    <!-- Purchase Success Popup Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[110] hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6 rounded-3xl border-2 border-emerald-400 shadow-2xl text-center bg-slate-900 text-white relative">
+            <div class="w-20 h-20 bg-emerald-500/20 rounded-full border border-emerald-400 flex items-center justify-center mx-auto mb-4 text-emerald-400 text-4xl shadow-lg shadow-emerald-500/30">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-2xl font-black text-emerald-400 mb-2">הקנייה בוצעה בהצלחה! 🎉</h3>
+            <p id="success-msg-details" class="text-sm text-slate-300 mb-6">התשלום אושר בכרטיס האשראי הווירטואלי!</p>
+            <button onclick="closeSuccessModal()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black rounded-xl text-lg shadow-lg">
+                אישור וחזרה לחנות
+            </button>
+        </div>
+    </div>
+
+    <!-- Math Challenge Popup Modal -->
+    <div id="math-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[115] hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6 rounded-3xl border-2 border-purple-400 shadow-2xl text-center bg-slate-900 text-white relative">
+            <button onclick="closeMathModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="w-16 h-16 bg-purple-500/20 rounded-2xl border border-purple-400/50 flex items-center justify-center mx-auto mb-3 text-purple-300 text-3xl">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h3 class="text-2xl font-black text-purple-300 mb-1" id="math-modal-title">אתגר חשבון - שלב 1</h3>
+            <p class="text-xs text-slate-300 mb-4" id="math-modal-desc">פתור 3 תרגילים ברצף כדי להשלים את השלב ולפתוח 20% הנחה לכל החנות ל-5 דקות!</p>
+
+            <div class="flex justify-center gap-2 mb-3">
+                <span id="step-dot-1" class="w-3 h-3 rounded-full bg-slate-600"></span>
+                <span id="step-dot-2" class="w-3 h-3 rounded-full bg-slate-600"></span>
+                <span id="step-dot-3" class="w-3 h-3 rounded-full bg-slate-600"></span>
+            </div>
+            
+            <div class="bg-slate-800/90 p-4 rounded-2xl border border-purple-500/30 mb-4 text-3xl font-black tracking-wider text-yellow-300 font-mono" id="math-question-text">
+                12 + 8 = ?
+            </div>
+
+            <input type="number" id="math-user-input" placeholder="הכנס את התשובה שלך..." class="w-full px-4 py-3 bg-slate-950 rounded-xl border border-purple-500/50 text-center text-xl font-bold text-white mb-4 focus:outline-none focus:border-purple-400">
+
+            <button onclick="submitMathAnswer()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black rounded-xl text-lg shadow-lg transition transform active:scale-95">
+                בדוק תשובה ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Cheat Menu Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-xl w-full p-6 rounded-3xl border-2 border-amber-400/80 shadow-2xl relative bg-slate-900 text-white max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleAdminModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-700">
+                <div class="p-3 bg-amber-500 text-slate-950 rounded-2xl text-2xl font-black">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-amber-400">פאנל אדמין ומפתח מורחב 👑</h3>
+                    <p class="text-xs text-slate-400">ניהול צ'יטים, יתרה, הנחות והוספת פריטים</p>
+                </div>
+            </div>
+
+            <!-- Admin Tools Tabs / Sections -->
+            <div class="space-y-4 text-right">
+                <!-- Section 1: Money & Balance Controls -->
+                <div class="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-wallet"></i> ניהול יתרה וכספים
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="adminAddMoney('100000000000000')" class="p-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs transition">
+                            💰 +100 טריליון $
+                        </button>
+                        <button onclick="adminAddMoney('1000000000000000000')" class="p-2.5 bg-teal-600 hover:bg-teal-500 font-bold rounded-xl text-xs transition">
+                            💎 +1 קווינטיליון $
+                        </button>
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <input type="number" id="custom-money-input" placeholder="הכנס סכום מותאם..." class="w-full px-3 py-2 bg-slate-900 rounded-xl border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400">
+                        <button onclick="adminAddCustomMoney()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs shrink-0">
+                            הוסף
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Discounts & Math Points -->
+                <div class="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-bold text-purple-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-percent"></i> שליטה בהנחות ונקודות
+                    </h4>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="adminSetDiscount(25)" class="p-2 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl text-xs">
+                            25% הנחה
+                        </button>
+                        <button onclick="adminSetDiscount(50)" class="p-2 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl text-xs">
+                            50% הנחה
+                        </button>
+                        <button onclick="adminSetDiscount(99)" class="p-2 bg-pink-600 hover:bg-pink-500 font-bold rounded-xl text-xs">
+                            99% הנחה 🔥
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 3: Add Custom Item -->
+                <div class="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i> הוספת מוצר חדש לחנות
+                    </h4>
+                    <div class="space-y-2">
+                        <input type="text" id="new-item-name" placeholder="שם המוצר (למשל: חללית זהב 🚀)" class="w-full px-3 py-2 bg-slate-900 rounded-xl border border-slate-700 text-xs text-white">
+                        <input type="number" id="new-item-price" placeholder="מחיר בדולרים" class="w-full px-3 py-2 bg-slate-900 rounded-xl border border-slate-700 text-xs text-white">
+                        <input type="text" id="new-item-img" placeholder="קישור לתמונה (URL)" class="w-full px-3 py-2 bg-slate-900 rounded-xl border border-slate-700 text-xs text-white">
+                        <button onclick="adminAddNewProduct()" class="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-black rounded-xl text-xs">
+                            + הוסף מוצר לחנות
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 4: Quick Actions & Reset -->
+                <div class="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-bold text-rose-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-gears"></i> פעולות מהירות ואיפוס
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="adminBuyAll()" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">
+                            🛒 קנה 1 מכל פריט
+                        </button>
+                        <button onclick="adminClearCart()" class="p-2.5 bg-slate-700 hover:bg-slate-600 font-bold rounded-xl text-xs">
+                            🗑️ רוקן סל קניות
+                        </button>
+                    </div>
+                    <button onclick="adminResetMoney()" class="w-full p-2.5 bg-rose-600 hover:bg-rose-500 font-bold rounded-xl text-xs mt-2">
+                        ⚠️ איפוס מוחלט של המשחק
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        const INITIAL_BALANCE = BigInt("100000000000000000000000000"); // 100 Septillion
+        let balance = INITIAL_BALANCE;
+        let baseDiscount = 0;
+        let timedDiscount = 0; // 20% when stage completed
+        let mathPoints = 0;
+        let currentMathAns = 0;
+        let currentStage = 1;
+        let stageProgress = 0; // 0 to 3 correct answers needed per stage
+        let timerInterval = null;
+        let timeLeftSeconds = 0;
+
+        // Products and Cart initial State definition
+<!-- ... existing code -->

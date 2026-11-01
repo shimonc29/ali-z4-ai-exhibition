@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מאגר הצ'יטים והקודים למשחקים</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Heebo -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gamer: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#8b5cf6',
+                            accentHover: '#7c3aed',
+                            neon: '#06b6d4',
+                            gold: '#f59e0b',
+                            heart: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Heebo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+        .glow-effect:hover {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+        }
+        .like-anim {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .like-anim:active {
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gamer-accent selection:text-white">
+
+    <!-- Header Section -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gamer-accent to-gamer-neon flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-purple-500/30">
+                        <i class="fa-solid font-black fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-indigo-300">
+                            CHEATS VAULT
+                        </h1>
+                        <p class="text-xs text-slate-400 font-medium">מאגר הקודים והצ'יטים הגדול למחשב ולקונסולות</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="openShareModal()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-gamer-neon border border-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-95">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span class="hidden sm:inline">שתף את האפליקציה</span>
+                    </button>
+                    <button onclick="openAddModal()" class="flex items-center gap-2 bg-gradient-to-r from-gamer-accent to-purple-600 hover:from-purple-600 hover:to-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-purple-500/20 active:scale-95">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="hidden sm:inline">הוסף צ'יט אישי</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Search & Filter Controls -->
+        <section class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 backdrop-blur-sm mb-8 shadow-xl">
+            <div class="flex flex-col md:flex-row gap-4">
+                <!-- Main Search Bar -->
+                <div class="relative flex-grow">
+                    <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="חפש לפי שם משחק, צ'יט או אפקט (למשל: GTA, כסף, בריאות)..." 
+                           class="w-full pl-4 pr-11 py-3.5 bg-slate-950 border border-slate-700/60 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-gamer-accent focus:ring-1 focus:ring-gamer-accent transition duration-200">
+                </div>
+
+                <!-- Platform Filter -->
+                <div class="w-full md:w-48">
+                    <select id="platformFilter" onchange="applyFilters()" class="w-full px-4 py-3.5 bg-slate-950 border border-slate-700/60 rounded-xl text-white focus:outline-none focus:border-gamer-accent transition duration-200 cursor-pointer">
+                        <option value="ALL">כל הפלטפורמות</option>
+                        <option value="PC">PC (מחשב)</option>
+                        <option value="PlayStation">PlayStation</option>
+                        <option value="Xbox">Xbox</option>
+                    </select>
+                </div>
+
+                <!-- Genre Filter -->
+                <div class="w-full md:w-48">
+                    <select id="genreFilter" onchange="applyFilters()" class="w-full px-4 py-3.5 bg-slate-950 border border-slate-700/60 rounded-xl text-white focus:outline-none focus:border-gamer-accent transition duration-200 cursor-pointer">
+                        <option value="ALL">כל הז'אנרים</option>
+                        <option value="Action">אקשן / עולם פתוח</option>
+                        <option value="RPG">תפקידים (RPG)</option>
+                        <option value="Strategy">אסטרטגיה</option>
+                        <option value="Simulation">סימולציה</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Fast Quick-Select Chips -->
+            <div class="mt-4 flex flex-wrap gap-2 items-center">
+                <span class="text-xs text-slate-400 font-semibold ml-2">משחקים פופולריים:</span>
+                <button onclick="quickFilter('')" class="chip text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">הכל</button>
+                <button onclick="quickFilter('GTA San Andreas')" class="chip text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">GTA San Andreas</button>
+                <button onclick="quickFilter('GTA V')" class="chip text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">GTA V</button>
+                <button onclick="quickFilter('Minecraft')" class="chip text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">Minecraft</button>
+                <button onclick="quickFilter('The Sims 4')" class="chip text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">The Sims 4</button>
+                <button onclick="quickFilter('Subway Surfers')" class="chip text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">Subway Surfers</button>
+            </div>
+        </section>
+
+        <!-- Category Tabs -->
+        <div class="flex border-b border-slate-800 mb-6 gap-2 overflow-x-auto pb-1">
+            <button onclick="switchTab('ALL')" id="tab-ALL" class="tab-btn px-5 py-2.5 rounded-t-xl text-sm font-semibold transition border-b-2 border-gamer-accent text-gamer-accent bg-slate-900/50">
+                <i class="fa-solid fa-layer-group ml-1.5"></i> הכל
+            </button>
+            <button onclick="switchTab('CHEATS')" id="tab-CHEATS" class="tab-btn px-5 py-2.5 rounded-t-xl text-sm font-semibold text-slate-400 hover:text-slate-200 transition border-b-2 border-transparent">
+                <i class="fa-solid fa-gamepad ml-1.5"></i> קודי צ'יט (Singleplayer)
+            </button>
+            <button onclick="switchTab('CONSOLE')" id="tab-CONSOLE" class="tab-btn px-5 py-2.5 rounded-t-xl text-sm font-semibold text-slate-400 hover:text-slate-200 transition border-b-2 border-transparent">
+                <i class="fa-solid fa-terminal ml-1.5"></i> פקודות קונסולה
+            </button>
+            <button onclick="switchTab('SECRETS')" id="tab-SECRETS" class="tab-btn px-5 py-2.5 rounded-t-xl text-sm font-semibold text-slate-400 hover:text-slate-200 transition border-b-2 border-transparent">
+                <i class="fa-solid fa-user-secret ml-1.5"></i> טיפים וסודות
+            </button>
+            <button onclick="switchTab('LIKED')" id="tab-LIKED" class="tab-btn px-5 py-2.5 rounded-t-xl text-sm font-semibold text-slate-400 hover:text-slate-200 transition border-b-2 border-transparent">
+                <i class="fa-solid fa-heart text-red-500 ml-1.5"></i> אהבתי (לייקים)
+            </button>
+            <button onclick="switchTab('CUSTOM')" id="tab-CUSTOM" class="tab-btn px-5 py-2.5 rounded-t-xl text-sm font-semibold text-slate-400 hover:text-slate-200 transition border-b-2 border-transparent">
+                <i class="fa-solid fa-bookmark ml-1.5"></i> הצ'יטים שלי
+            </button>
+        </div>
+
+        <!-- Cheats Display Grid -->
+        <div id="cheatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be dynamically generated by JS -->
+        </div>
+
+        <!-- Empty State Message -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-slate-800/80 rounded-full flex items-center justify-center mx-auto text-slate-500 mb-4 text-2xl">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-300">לא נמצאו צ'יטים תואמים</h3>
+            <p class="text-sm text-slate-500 mt-1">נסה לשנות את מילות החיפוש, הלשונית או הסינון שלך.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>שמור על חוויית משחק מהנה! מיועד למשחקי יחיד (Singleplayer) ופקודות פיתוח.</p>
+        </div>
+    </footer>
+
+    <!-- Add Custom Cheat Modal -->
+    <div id="addModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeAddModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus text-gamer-accent"></i>
+                הוספת צ'יט אישי
+            </h2>
+
+            <form id="addCheatForm" onsubmit="saveCustomCheat(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">שם המשחק</label>
+                    <input type="text" id="customGame" required placeholder="לדוגמה: Red Dead Redemption 2" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-gamer-accent">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">פלטפורמה</label>
+                        <select id="customPlatform" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-gamer-accent">
+                            <option value="PC">PC</option>
+                            <option value="PlayStation">PlayStation</option>
+                            <option value="Xbox">Xbox</option>
+                            <option value="ALL">הכל</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">סוג הקוד</label>
+                        <select id="customCategory" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-gamer-accent">
+                            <option value="CHEATS">קוד צ'יט</option>
+                            <option value="CONSOLE">פקודת קונסולה</option>
+                            <option value="SECRETS">סוד / טיפ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">תיאור האפקט</label>
+                    <input type="text" id="customTitle" required placeholder="לדוגמה: כסף בלתי מוגבל" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-gamer-accent">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">הקוד או הפקודה להקלדה</label>
+                    <input type="text" id="customCode" required placeholder="לדוגמה: GREEDISGOOD" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm font-mono focus:outline-none focus:border-gamer-accent">
+                </div>
+
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm rounded-lg transition">ביטול</button>
+                    <button type="submit" class="px-4 py-2 bg-gamer-accent hover:bg-gamer-accentHover text-white text-sm rounded-lg font-semibold transition shadow-md">שמור צ'יט</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-6 bg-slate-800 border border-emerald-500/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-300 z-50">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMsg" class="text-sm font-medium">הפעולה בוצעה בהצלחה!</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Database of Cheats
+        const defaultCheats = [
+            // GTA San Andreas
+            { id: 1, game: "GTA San Andreas", genre: "Action", platform: "PC", category: "CHEATS", title: "בריאות מלאה, שריון ו-$250,000", code: "HESOYAM", desc: "מעניק חיים מלאים, מגן מקסימלי וכסף מזומן.", baseLikes: 142, rating: 4.9 },
+            { id: 2, game: "GTA San Andreas", genre: "Action", platform: "PC", category: "CHEATS", title: "ערכת נשקים 3 (כבד)", code: "UZUMYMW", desc: "כולל מסור חשמלי, M4, משגר טילים, מטען חבלה ועוד.", baseLikes: 89, rating: 4.6 },
+            { id: 3, game: "GTA San Andreas", genre: "Action", platform: "PC", category: "CHEATS", title: "ג'טפק (Jetpack)", code: "ROCKETMAN", desc: "מזמן תרמיל ריחף לגב הדמות.", baseLikes: 215, rating: 4.8 },
+            { id: 4, game: "GTA San Andreas", genre: "Action", platform: "PC", category: "CHEATS", title: "רכב לא פגיע", code: "JCNRUAD", desc: "הרכב שאתה נוהג בו הופך לבלתי שביר.", baseLikes: 64, rating: 4.3 },
+            
+            // GTA V
+            { id: 5, game: "GTA V", genre: "Action", platform: "PC", category: "CHEATS", title: "מצב אלוהים (ללא פגיעות - 5 דקות)", code: "PAINKILLER", desc: "הופך את הדמות לבלתי פגיעה למשך חמש דקות.", baseLikes: 310, rating: 4.9 },
+            { id: 6, game: "GTA V", genre: "Action", platform: "PC", category: "CHEATS", title: "ריצה מהירה", code: "CATCHME", desc: "מגביר את מהירות הריצה של השחקן.", baseLikes: 45, rating: 4.1 },
+            { id: 7, game: "GTA V", genre: "Action", platform: "PlayStation", category: "CHEATS", title: "מקס בריאות ושריון", code: "עיגול, L1, משולש, R2, איקס, ריבוע, עיגול, ימינה, ריבוע, L1, L1, L1", desc: "ממלא מחדש מד חיים ומגן.", baseLikes: 98, rating: 4.7 },
+            
+            // Minecraft
+            { id: 8, game: "Minecraft", genre: "Action", platform: "PC", category: "CONSOLE", title: "שינוי מצב משחק ליצירתי (Creative)", code: "/gamemode creative", desc: "מאפשר תעופה, משאבים בלתי מוגבלים וחסינות מנזק.", baseLikes: 180, rating: 4.85 },
+            { id: 9, game: "Minecraft", genre: "Action", platform: "PC", category: "CONSOLE", title: "קבלת יהלומים (64 יחידות)", code: "/give @p diamond 64", desc: "מעניק מחסנית מלאה של יהלומים לשחקן הקרוב.", baseLikes: 240, rating: 4.95 },
+            { id: 10, game: "Minecraft", genre: "Action", platform: "PC", category: "CONSOLE", title: "שמירה על הציוד במוות", code: "/gamerule keepInventory true", desc: "מונע אובדן חפצים בעת מוות בעולם.", baseLikes: 388, rating: 4.9 },
+            
+            // The Sims 4
+            { id: 11, game: "The Sims 4", genre: "Simulation", platform: "PC", category: "CONSOLE", title: "הפעלת מצב צ'יטים ראשי", code: "testingcheats true", desc: "חובה להקיש קוד זה ראשון כדי להפעיל פקודות מתקדמות.", baseLikes: 112, rating: 4.4 },
+            { id: 12, game: "The Sims 4", genre: "Simulation", platform: "PC", category: "CHEATS", title: "הוספת 50,000 סימולאונים (כסף)", code: "motherlode", desc: "מוסיף סכום כסף גדול מיד לחשבון הבית.", baseLikes: 295, rating: 4.88 },
+            { id: 13, game: "The Sims 4", genre: "Simulation", platform: "PC", category: "CHEATS", title: "חופש מיקום חפצים", code: "bb.moveobjects", desc: "מאפשר להניח חפצים בכל מקום ללא הגבלת המשחק.", baseLikes: 173, rating: 4.65 },
+
+            // Skyrim
+            { id: 14, game: "Skyrim", genre: "RPG", platform: "PC", category: "CONSOLE", title: "מצב אלוהים (God Mode)", code: "tgm", desc: "חיים, קסם וסיבולת בלתי מוגבלים + נשיאת משקל ללא גבול.", baseLikes: 156, rating: 4.75 },
+            { id: 15, game: "Skyrim", genre: "RPG", platform: "PC", category: "CONSOLE", title: "הוספת זהב (10,000)", code: "player.additem 0000000f 10000", desc: "מוסיף מטבעות זהב ישר לתיק.", baseLikes: 87, rating: 4.2 },
+            { id: 16, game: "Skyrim", genre: "RPG", platform: "PC", category: "SECRETS", title: "פתיחת כל הנקודות במפה", code: "tmm 1", desc: "מגלה את כל המיקומים במפה ומאפשר נסיעה מהירה אליהם.", baseLikes: 104, rating: 4.5 },
+
+            // Age of Empires II
+            { id: 17, game: "Age of Empires II", genre: "Strategy", platform: "PC", category: "CHEATS", title: "מכונית קוברה יורקת אש", code: "how do you turn this on", desc: "יוצר מכונית מרוץ קטלנית ויורה במהירות.", baseLikes: 230, rating: 4.9 },
+            { id: 18, game: "Age of Empires II", genre: "Strategy", platform: "PC", category: "CHEATS", title: "10,000 זהב", code: "robin hood", desc: "מוסיף משאב זהב מיידית.", baseLikes: 77, rating: 4.3 },
+            
+            // Web / Online Games
+            { id: 20, game: "Subway Surfers", genre: "Action", platform: "PC", category: "SECRETS", title: "קפיצת סופר כפולה בלתי מוגבלת", code: "Hold Up + Double Tap Jetpack", desc: "טריגר קפיצה כפולה ושימוש בסקייטבורד מעוף.", baseLikes: 164, rating: 4.4 }
+        ];
+
+        // Global State
+        let allCheats = [];
+        let currentTab = 'ALL';
+        let searchQuery = '';
+        let selectedPlatform = 'ALL';
+        let selectedGenre = 'ALL';
+        let userLikes = {}; // Format: { cheatId: true/false }
+
+        // Initialize App
+        window.onload = function() {
+            loadLikes();
+            loadCheats();
+            renderCheats();
+        };
+
+        // Load Likes from localStorage
+        function loadLikes() {
+            const storedLikes = localStorage.getItem('user_cheat_likes');
+            userLikes = storedLikes ? JSON.parse(storedLikes) : {};
+        }
+
+        // Save Likes to localStorage
+        function saveLikes() {
+            localStorage.setItem('user_cheat_likes', JSON.stringify(userLikes));
+        }
+
+        // Load cheats including LocalStorage items
+        function loadCheats() {
+            const stored = localStorage.getItem('custom_cheats');
+            const customCheats = stored ? JSON.parse(stored) : [];
+            allCheats = [...defaultCheats, ...customCheats];
+        }
+
+        // Toggle Like State
+        function toggleLike(cheatId) {
+            const isLiked = !!userLikes[cheatId];
+            if (isLiked) {
+                delete userLikes[cheatId];
+                showToast('הסרת את ה-Like', 'fa-heart-broken', 'text-slate-400');
+            } else {
+                userLikes[cheatId] = true;
+                showToast('נוסף ל-Likes שלך!', 'fa-heart', 'text-red-500');
+            }
+            saveLikes();
+            renderCheats();
+        }
+
+        // Switch Tabs
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-gamer-accent', 'text-gamer-accent', 'bg-slate-900/50');
+                btn.classList.add('border-transparent', 'text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-400');
+                activeBtn.classList.add('border-gamer-accent', 'text-gamer-accent', 'bg-slate-900/50');
+            }
+            renderCheats();
+        }
+
+        // Quick Filter Helper
+        function quickFilter(gameName) {
+            document.getElementById('searchInput').value = gameName;
+            searchQuery = gameName.toLowerCase();
+            renderCheats();
+        }
+
+        // Filter Handlers
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            renderCheats();
+        }
+
+        function applyFilters() {
+            selectedPlatform = document.getElementById('platformFilter').value;
+            selectedGenre = document.getElementById('genreFilter').value;
+            renderCheats();
+        }
+
+        // Render Cheats Cards
+        function renderCheats() {
+            const grid = document.getElementById('cheatsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            const filtered = allCheats.filter(item => {
+                // Tab Filter
+                if (currentTab === 'CUSTOM' && !item.isCustom) return false;
+                if (currentTab === 'LIKED' && !userLikes[item.id]) return false;
+                if (currentTab !== 'ALL' && currentTab !== 'CUSTOM' && currentTab !== 'LIKED' && item.category !== currentTab) return false;
+
+                // Platform Filter
+                if (selectedPlatform !== 'ALL' && item.platform !== selectedPlatform && item.platform !== 'ALL') return false;
+
+                // Genre Filter
+                if (selectedGenre !== 'ALL' && item.genre !== selectedGenre) return false;
+
+                // Search Query Filter
+                if (searchQuery) {
+                    const matchGame = item.game.toLowerCase().includes(searchQuery);
+                    const matchTitle = item.title.toLowerCase().includes(searchQuery);
+                    const matchCode = item.code.toLowerCase().includes(searchQuery);
+                    const matchDesc = item.desc ? item.desc.toLowerCase().includes(searchQuery) : false;
+                    return matchGame || matchTitle || matchCode || matchDesc;
+                }
+
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filtered.forEach(item => {
+                    grid.appendChild(createCheatCard(item));
+                });
+            }
+        }
+
+        // Create Card Element
+        function createCheatCard(item) {
+            const card = document.createElement('div');
+            card.className = "bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 glow-effect relative overflow-hidden group";
+
+            // Category Badge colors
+            let categoryLabel = "קוד צ'יט";
+            let badgeBg = "bg-purple-500/10 text-purple-400 border-purple-500/20";
+            if (item.category === 'CONSOLE') {
+                categoryLabel = "פקודת קונסולה";
+                badgeBg = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
+            } else if (item.category === 'SECRETS') {
+                categoryLabel = "סוד / טיפ";
+                badgeBg = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+            }
+
+            // Like calculations
+            const isLiked = !!userLikes[item.id];
+            const totalLikes = (item.baseLikes || 0) + (isLiked ? 1 : 0);
+
+            // Rating calculations
+            const userRating = getUserRating(item.id);
+            const avgRating = getAverageRating(item);
+
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                const isFilled = i <= (userRating || Math.round(avgRating));
+                starsHtml += `
+                    <button onclick="rateCheat(${item.id}, ${i})" class="${isFilled ? 'text-amber-400' : 'text-slate-600'} hover:text-amber-300 text-xs transition" title="דרג ${i} כוכבים">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                `;
+            }
+
+            card.innerHTML = `
+                <div>
+                    <!-- Header Badges & Actions -->
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="text-xs font-bold text-slate-300 bg-slate-800 px-2.5 py-1 rounded-md border border-slate-700/60">
+                            <i class="fa-solid fa-gamepad ml-1 text-slate-400"></i> ${escapeHtml(item.game)}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md border ${badgeBg}">
+                                ${categoryLabel}
+                            </span>
+                            ${item.isCustom ? `
+                                <button onclick="deleteCustomCheat(${item.id})" class="text-slate-500 hover:text-red-400 p-1 transition" title="מחק צ'יט אישי">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Title & Description -->
+                    <h3 class="font-bold text-slate-100 text-base mb-1.5">${escapeHtml(item.title)}</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-3">${escapeHtml(item.desc || '')}</p>
+
+                    <!-- Interactive Rating & Like Bar -->
+                    <div class="flex items-center justify-between bg-slate-950/60 border border-slate-800/80 px-3 py-2 rounded-lg mb-4">
+                        <div class="flex items-center gap-1">
+                            ${starsHtml}
+                            <span class="text-[11px] font-bold text-amber-400 mr-1">
+                                ${avgRating.toFixed(1)}
+                            </span>
+                        </div>
+                        
+                        <!-- LIKE BUTTON -->
+                        <button onclick="toggleLike(${item.id})" class="like-anim flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition border ${isLiked ? 'bg-red-500/10 border-red-500/40 text-red-500' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'}">
+                            <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart ${isLiked ? 'text-red-500' : ''}"></i>
+                            <span>${totalLikes}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Code Container & Copy Action -->
+                <div class="mt-2">
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between group-hover:border-slate-700 transition">
+                        <code class="font-mono text-gamer-neon text-sm font-semibold tracking-wide break-all dir-ltr text-left select-all">${escapeHtml(item.code)}</code>
+                        <div class="flex items-center gap-1">
+                            <button onclick="openShareModal(${item.id})" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg transition duration-200 active:scale-95" title="שתף צ'יט זה">
+                                <i class="fa-solid fa-share-nodes text-sm"></i>
+                            </button>
+                            <button onclick="copyToClipboard('${escapeHtml(item.code)}')" class="bg-slate-800 hover:bg-gamer-accent text-slate-300 hover:text-white p-2 rounded-lg transition duration-200 active:scale-95" title="העתק קוד">
+                                <i class="fa-regular fa-copy text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Ratings Helper Functions
+        function getUserRating(cheatId) {
+            const ratings = JSON.parse(localStorage.getItem('cheat_ratings') || '{}');
+            return ratings[cheatId] || 0;
+        }
+
+        // Generate pseudo-random rating based on item ID if no default rating exists
+        function getAverageRating(item) {
+            const userRating = getUserRating(item.id);
+            if (userRating) return userRating;
+            if (item.rating) return item.rating;
+            
+            // Generate deterministic varied rating between 4.0 and 5.0 using item id
+            const pseudoRandom = ((item.id * 9301 + 49297) % 233280) / 233280;
+            return Math.round((4.0 + pseudoRandom * 1.0) * 10) / 10;
+        }
+
+        function rateCheat(cheatId, stars) {
+            const ratings = JSON.parse(localStorage.getItem('cheat_ratings') || '{}');
+            ratings[cheatId] = stars;
+            localStorage.setItem('cheat_ratings', JSON.stringify(ratings));
+            renderCheats();
+            showToast(`דירגת ${stars} כוכבים!`);
+        }
+
+        // Helper functions & Modal handlers
+        function copyToClipboard(text) {
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('הקוד הועתק ללוח!');
+        }
+
+        function showToast(message, iconClass = 'fa-circle-check', iconColor = 'text-emerald-400') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+            
+            if (toastMsg) toastMsg.innerText = message;
+            if (toastIcon) toastIcon.className = `fa-solid ${iconClass} ${iconColor} text-lg`;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2500);
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function openShareModal(id = null) {
+            let text = "";
+            if (id) {
+                const cheat = allCheats.find(c => c.id === id);
+                if (cheat) {
+                    text = `קוד צ'יט למשחק ${cheat.game}:\n${cheat.title}\nקוד: ${cheat.code}`;
+                } else {
+                    text = `מאגר הצ'יטים והקודים הגדול למשחקים!`;
+                }
+            } else {
+                text = `מאגר הצ'יטים והקודים הגדול למשחקים!`;
+            }
+
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function saveCustomCheat(e) {
+            e.preventDefault();
+            const newCheat = {
+                id: Date.now(),
+                game: document.getElementById('customGame').value,
+                platform: document.getElementById('customPlatform').value,
+                category: document.getElementById('customCategory').value,
+                title: document.getElementById('customTitle').value,
+                code: document.getElementById('customCode').value,
+                desc: 'צ\'יט אישי שנשמר במכשיר',
+                baseLikes: 0,
+                rating: 5.0,
+                isCustom: true
+            };
+            const stored = localStorage.getItem('custom_cheats');
+            const customCheats = stored ? JSON.parse(stored) : [];
+            customCheats.push(newCheat);
+            localStorage.setItem('custom_cheats', JSON.stringify(customCheats));
+            allCheats.push(newCheat);
+            closeAddModal();
+            renderCheats();
+            showToast('הצ\'יט האישי נשמר בהצלחה!');
+        }
+
+        function deleteCustomCheat(id) {
+            const stored = localStorage.getItem('custom_cheats');
+            if (stored) {
+                let customCheats = JSON.parse(stored);
+                customCheats = customCheats.filter(item => item.id !== id);
+                localStorage.setItem('custom_cheats', JSON.stringify(customCheats));
+            }
+            allCheats = allCheats.filter(item => item.id !== id);
+            renderCheats();
+            showToast('הצ\'יט הוסר.');
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

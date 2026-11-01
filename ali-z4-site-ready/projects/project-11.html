@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מרכז המידע והידע - Knowledge Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rubik', 'Inter', 'Segoe UI', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- Top Recommendation Bar -->
+    <div class="bg-gradient-to-r from-brand-600 via-indigo-600 to-brand-700 text-white text-xs sm:text-sm font-medium py-2 px-4 text-center flex items-center justify-center gap-2 shadow-inner">
+        <span class="bg-white/20 text-white px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+            <i class="fa-solid fa-star text-yellow-300"></i> מומלץ לך
+        </span>
+        <span class="truncate">מבוא לבינה מלאכותית ומודלי שפה - המדריך המקיף לכלים המובילים לשנת 2026</span>
+        <button onclick="openArticleModal(1)" class="underline hover:text-brand-100 font-semibold cursor-pointer whitespace-nowrap mr-2">
+            לציפייה במאמר &larr;
+        </button>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="resetFilters()">
+                <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-book-bookmark text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-brand-600 to-indigo-600 dark:from-brand-400 dark:to-indigo-400 bg-clip-text text-transparent">דעת - מרכז הידע</span>
+                </div>
+            </div>
+
+            <!-- Quick Navigation & Dark Mode -->
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <nav class="hidden md:flex items-center space-x-6 space-x-reverse text-sm font-medium text-gray-600 dark:text-gray-300">
+                    <a href="#categories" class="hover:text-brand-600 dark:hover:text-brand-400 transition">קטגוריות</a>
+                    <a href="#articles" class="hover:text-brand-600 dark:hover:text-brand-400 transition">מאמרים ומדריכים</a>
+                    <a href="#events" class="hover:text-brand-600 dark:hover:text-brand-400 transition">אירועי החודש הבא</a>
+                    <a href="#about" class="hover:text-brand-600 dark:hover:text-brand-400 transition">אודות</a>
+                </nav>
+
+                <!-- Theme Toggle Button -->
+                <button id="themeToggle" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition" title="משנה ערכת נושא">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Search -->
+    <section class="relative py-16 md:py-24 bg-gradient-to-b from-brand-50/50 to-transparent dark:from-brand-950/20 dark:to-transparent border-b border-gray-200/50 dark:border-gray-800/50">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 mb-4">
+                <i class="fa-solid fa-sparkles"></i> מאגר המידע המקיף בישראל
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-4 leading-tight">
+                כל המידע, הכלים והמדריכים במקום אחד
+            </h1>
+            <p class="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                חפש במאגר המאמרים המקצועיים שלנו בתחומי הטכנולוגיה, הפרודוקטיביות, הכלים הדיגיטליים והמדע.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-2xl mx-auto">
+                <div class="relative flex items-center">
+                    <i class="fa-solid fa-magnifying-glass absolute right-4 text-gray-400 text-lg"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="מה ברצונך למדוד, ללמוד או לחקור היום? (לדוגמה: בינה מלאכותית, ניהול זמן...)" 
+                        class="w-full pl-4 pr-12 py-4 text-base rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-xl transition">
+                    <button onclick="clearSearch()" id="clearBtn" class="hidden absolute left-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i class="fa-solid fa-circle-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow w-full">
+
+        <!-- Categories Section -->
+        <section id="categories" class="mb-16">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">קטגוריות ראשיות</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">בחר נושא כדי לסנן את התוכן</p>
+                </div>
+                <button onclick="filterCategory('all')" id="showAllBtn" class="text-sm text-brand-600 dark:text-brand-400 font-medium hover:underline hidden">
+                    הצג הכל
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="categoriesGrid">
+                <!-- Categories populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Articles Grid Section -->
+        <section id="articles">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white" id="sectionTitle">כל המאמרים והמדריכים</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400" id="articlesCount">מציג תוצאות למאגר</p>
+                </div>
+
+                <!-- Sort Control -->
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <label for="sortSelect" class="text-xs text-gray-500 dark:text-gray-400">מיון לפי:</label>
+                    <select id="sortSelect" onchange="renderArticles()" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <option value="newest">החדשים ביותר</option>
+                        <option value="popular">הפופולריים ביותר</option>
+                        <option value="time">זמן קריאה (מהקצר לארוך)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Articles Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+                <!-- Dynamic Article Cards -->
+            </div>
+
+            <!-- Empty Search State -->
+            <div id="noResults" class="hidden text-center py-16 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-800">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-folder-open text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">לא נמצאו תוצאות</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">נסה לחפש מילת מפתח אחרת או לנקות את הניקוי</p>
+                <button onclick="resetFilters()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition">
+                    איפוס חיפוש וסננים
+                </button>
+            </div>
+        </section>
+
+        <!-- Events Section (Next Month Activities) -->
+        <section id="events" class="mt-20">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 mb-2 inline-block">
+                        <i class="fa-regular fa-calendar-check ml-1"></i> לו"ז אירועים
+                    </span>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">פעילויות ואירועים בחודש הבא</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">סדנאות לייב, הרצאות ומפגשי למידה מקוונים</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="eventsGrid">
+                <!-- Event 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-between hover:border-brand-500 transition">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-brand-600 dark:text-brand-400 mb-3">
+                            <span><i class="fa-solid fa-video ml-1"></i> וובינר מקוון</span>
+                            <span class="bg-brand-50 dark:bg-brand-950 px-2.5 py-1 rounded-md">10 בדצמבר</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">סדנת יסודות הבינה המלאכותית</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                            מפגש מעשי לייב המציג כלים שמומלץ להכיר לעבודה יומיומית יעילה ופרודוקטיבית.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                        <span class="text-xs text-gray-500"><i class="fa-regular fa-clock ml-1"></i> 18:00 - 19:30</span>
+                        <button onclick="showToast('נרשמת בהצלחה לוובינר!')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium transition">
+                            הרשמה ללא עלות
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-between hover:border-brand-500 transition">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-3">
+                            <span><i class="fa-solid fa-users ml-1"></i> מפגש קהילה</span>
+                            <span class="bg-indigo-50 dark:bg-indigo-950 px-2.5 py-1 rounded-md">18 בדצמבר</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">שולחן עגול: ניהול זמן בפרויקטים</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                            דיון פתוח ושיתוף פרקטיקות בנושא שיטות עבודה, תיעוד ידע וניהול משימות בצוותים.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                        <span class="text-xs text-gray-500"><i class="fa-regular fa-clock ml-1"></i> 19:00 - 20:15</span>
+                        <button onclick="showToast('נרשמת בהצלחה למפגש הקהילה!')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium transition">
+                            שמירת מקום
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-between hover:border-brand-500 transition">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-3">
+                            <span><i class="fa-solid fa-laptop-code ml-1"></i> מדריך בלייב</span>
+                            <span class="bg-emerald-50 dark:bg-emerald-950 px-2.5 py-1 rounded-md">24 בדצמבר</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">בניית מרכז ידע מאפס</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                            הדרכה ממוקדת על ארגון נתונים, עיצוב ממשקים והנגשת מידע בצורה נוחה.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                        <span class="text-xs text-gray-500"><i class="fa-regular fa-clock ml-1"></i> 17:30 - 18:30</span>
+                        <button onclick="showToast('נרשמת בהצלחה להדרכה!')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium transition">
+                            הרשמה מהירה
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="mt-20 p-8 md:p-12 rounded-3xl bg-gradient-to-r from-brand-600 to-indigo-700 text-white shadow-xl">
+            <div class="max-w-3xl mx-auto text-center">
+                <i class="fa-regular fa-envelope-open text-4xl mb-4 opacity-90"></i>
+                <h2 class="text-2xl md:text-3xl font-bold mb-3">הישאר מעודכן בתוכן חדש</h2>
+                <p class="text-brand-100 text-sm md:text-base mb-6">
+                    הירשם לניוזלטר שלנו וקבל עדכונים שבועיים על מאמרים חדשים, סדנאות וכלים שימושיים ישירות לתיבת הדואר שלך.
+                </p>
+                <form onsubmit="handleSubscribe(event)" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input type="email" required placeholder="כתובת האימייל שלך..." class="px-4 py-3 rounded-xl text-gray-900 w-full focus:outline-none text-sm placeholder-gray-400">
+                    <button type="submit" class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl text-sm transition whitespace-nowrap shadow-md">
+                        הרשמה
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="mt-16 p-8 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">על מרכז הידע</h2>
+                <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base mb-6">
+                    מרכז הידע נועד לספק גישה חופשית, נוחה ומהירה למאמרים מקצועיים, מדריכים מעשיים וכלים דיגיטליים בתחומי העתיד. המטרה שלנו היא לאפשר לכל אדם להעשיר את הידע שלו, להשתפר בפרודוקטיביות ולהישאר מעודכן בטכנולוגיות החדשות.
+                </p>
+                <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> תוכן איכותי ומבוקר</span>
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> התאמה מלאה לכל המכשירים</span>
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> עדכונים שוטפים</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Article Modal -->
+    <div id="articleModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-start justify-between bg-gray-50 dark:bg-gray-800/80">
+                <div class="pr-2">
+                    <span id="modalCategory" class="inline-block px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300 mb-2">
+                        קטגוריה
+                    </span>
+                    <h3 id="modalTitle" class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-snug">
+                        כותרת המאמר
+                    </h3>
+                    <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        <span><i class="fa-regular fa-calendar ml-1"></i><span id="modalDate">---</span></span>
+                        <span><i class="fa-regular fa-clock ml-1"></i><span id="modalReadTime">---</span> דקות קריאה</span>
+                        <span><i class="fa-regular fa-eye ml-1"></i><span id="modalViews">---</span> צפיות</span>
+                    </div>
+                </div>
+                <button onclick="closeArticleModal()" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 md:p-8 overflow-y-auto space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base" id="modalBody">
+                <!-- Article Content JS -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex items-center justify-between">
+                <button onclick="copyArticleLink()" class="inline-flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400">
+                    <i class="fa-regular fa-copy"></i> העתק קישור למאמר
+                </button>
+                <button onclick="closeArticleModal()" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl text-sm transition">
+                    סגור
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toastMessage" class="text-sm font-medium">הפעולה בוצעה בהצלחה</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 מרכז הידע והמידע - כל הזכויות שמורות.</p>
+        </div>
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        // Data structure for categories
+        const categories = [
+            { id: 'tech', name: 'טכנולוגיה', icon: 'fa-laptop-code', count: 0 },
+            { id: 'productivity', name: 'פרודוקטיביות', icon: 'fa-chart-line', count: 0 },
+            { id: 'tools', name: 'כלים דיגיטליים', icon: 'fa-wrench', count: 0 },
+            { id: 'science', name: 'מדע ומחקר', icon: 'fa-atom', count: 0 },
+            { id: 'tutorials', name: 'מדריכים מעשיים', icon: 'fa-graduation-cap', count: 0 }
+        ];
+
+        // Sample Data for Articles
+        const articles = [
+            {
+                id: 1,
+                title: 'מבוא לבינה מלאכותית ומודלי שפה גדולים',
+                category: 'tech',
+                summary: 'סקירה מקיפה על אופן הפעולה של מודלי שפה, היישומים המרכזיים שלהם וכיצד הם משנים את עולם העבודה.',
+                content: `
+                    <p class="font-medium text-lg text-gray-900 dark:text-white">בינה מלאכותית (AI) הפכה בשנים האחרונות לאחד המנועים המרכזיים של החדשנות הטכנולוגית.</p>
+                    <p>מודלי שפה גדולים (LLMs) מסוגלים להבין טקסט, לנתח נתונים, לייצר קוד ולסייע בפתרון בעיות מורכבות בצורה המזכירה חשיבה אנושית.</p>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mt-4">שימושים מרכזיים:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>ניתוח נתונים וסיכום מסמכים ארוכים.</li>
+                        <li>כתיבת קוד ואיתור באגים בתוכנה.</li>
+                        <li>אוטומציה של תהליכים עסקיים ושירות לקוחות.</li>
+                    </ul>
+                    <p class="mt-3">הבנת הכלים הללו מאפשרת לבעלי מקצוע לשפר את היעילות האישית והארגונית באופן משמעותי.</p>
+                `,
+                date: '02/11/2026',
+                readTime: 5,
+                views: 1240
+            },
+            {
+                id: 2,
+                title: 'שיטת ניהול הזמן לביצועים מרביים',
+                category: 'productivity',
+                summary: 'טכניקות בדוקות לניהול משימות, תיעדוף נכון והתמודדות עם דחיינות בסביבת עבודה עמוסה.',
+                content: `
+                    <p>ניהול זמן יעיל אינו עוסק בעבודה קשה יותר, אלא בעבודה חכמה וממוקדת יותר.</p>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mt-4">שיטות מומלצות:</h4>
+                    <ol class="list-decimal list-inside space-y-2 mt-2">
+                        <li><strong>טכניקת פומודורו:</strong> עבודה בריכוז מלא במשך 25 דקות ולאחריה הפסקה קצרה של 5 דקות.</li>
+                        <li><strong>מטריצת אייזנהאואר:</strong> חלוקת משימות לפי דחיפות וחשיבות לקבלת החלטות מהירה.</li>
+                        <li><strong>Time Blocking:</strong> הקצאת חלונות זמן מוגדרים מראש ביומן עבור כל משימה.</li>
+                    </ol>
+                    <p class="mt-4">יישום עקבי של שיטות אלו מסייע בהפחתת עומס נפשי והגברת התפוקה היומית.</p>
+                `,
+                date: '28/10/2026',
+                readTime: 4,
+                views: 890
+            },
+            {
+                id: 3,
+                title: 'מדריך מעשי לבניית אתרים מודרניים',
+                category: 'tutorials',
+                summary: 'צעד אחר צעד: איך לתכנן, לעצב ולפתח אתר אינטרנט מהיר ומותאם לכל המכשירים.',
+                content: `
+                    <p>בניית אתר אינטרנט מודרני דורשת דגש על חווית משתמש (UX), עיצוב נקי (UI) וביצועים מהירים.</p>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mt-4">שלבי הפיתוח המרכזיים:</h4>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li><strong>אפיון ומבנה:</strong> הגדרת מטרות האתר ומפת העמודים.</li>
+                        <li><strong>עיצוב רספונסיבי:</strong> התאמה מוחלטת למסכי מובייל ודפדפנים שונים.</li>
+                        <li><strong>אופטימיזציה:</strong> טעינה מהירה של נכסים ונגישות ברמה גבוהה.</li>
+                    </ul>
+                `,
+                date: '15/10/2026',
+                readTime: 7,
+                views: 2100
+            },
+            {
+                id: 4,
+                title: 'הכלים הדיגיטליים המומלצים לשנת 2026',
+                category: 'tools',
+                summary: 'סקירת האפליקציות והתוכנות המובילות לארגון מידע, ניהול פרויקטים ועבודה צוותית מרחוק.',
+                content: `
+                    <p>הכלים הדיגיטליים הנכונים יכולים לחסוך שעות עבודה רבות בכל שבוע.</p>
+                    <p class="mt-2">במאמר זה סקרנו יישומים מובילים לניהול משימות, תיעוד ידע, ניהול קבצים בענן ותקשורת צוותית יעילה.</p>
+                `,
+                date: '01/11/2026',
+                readTime: 6,
+                views: 1530
+            },
+            {
+                id: 5,
+                title: 'טרנדים חדשים במדע וטכנולוגיה',
+                category: 'science',
+                summary: 'מחשוב קוונטי, אנרגיה ירוקה ומחקרים פורצי דרך המעצבים את עתיד האנושות.',
+                content: `
+                    <p>ההתפתחות המדעית בשנים האחרונות מתקדמת בקצב חסר תקדים.</p>
+                    <p class="mt-2">התקדמות במחשוב קוונטי ובמקורות אנרגיה מתחדשים פותחת אפשרויות חדשות לפתרון אתגרים עולמיים מורכבים.</p>
+                `,
+                date: '20/10/2026',
+                readTime: 5,
+                views: 740
+            }
+        ];
+
+        let selectedCategory = 'all';
+        let searchQuery = '';
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateCategoryCounts();
+            renderCategories();
+            renderArticles();
+            initTheme();
+        });
+
+        // Theme management
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = 'fa-solid fa-sun';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeIcon').className = 'fa-solid fa-moon';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        // Calculate articles count per category
+        function calculateCategoryCounts() {
+            categories.forEach(cat => {
+                cat.count = articles.filter(a => a.category === cat.id).length;
+            });
+        }
+
+        // Render Categories Grid
+        function renderCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = categories.map(cat => `
+                <div onclick="filterCategory('${cat.id}')" 
+                    class="category-card cursor-pointer p-4 rounded-2xl border transition-all duration-200 flex flex-col items-center text-center ${selectedCategory === cat.id ? 'bg-brand-600 text-white border-brand-600 shadow-lg shadow-brand-500/20' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-brand-400 dark:hover:border-brand-500 text-gray-800 dark:text-gray-200'}">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-3 ${selectedCategory === cat.id ? 'bg-white/20 text-white' : 'bg-brand-50 dark:bg-gray-700 text-brand-600 dark:text-brand-400'}">
+                        <i class="fa-solid ${cat.icon}"></i>
+                    </div>
+                    <h3 class="font-bold text-sm mb-1">${cat.name}</h3>
+                    <span class="text-xs opacity-75">${cat.count} מאמרים</span>
+                </div>
+            `).join('');
+        }
+
+        // Filter functionality
+        function filterCategory(catId) {
+            selectedCategory = catId;
+            document.getElementById('showAllBtn').classList.toggle('hidden', catId === 'all');
+            renderCategories();
+            renderArticles();
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            searchQuery = input.value.trim().toLowerCase();
+            document.getElementById('clearBtn').classList.toggle('hidden', searchQuery === '');
+            renderArticles();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            document.getElementById('clearBtn').classList.add('hidden');
+            renderArticles();
+        }
+
+        function resetFilters() {
+            selectedCategory = 'all';
+            clearSearch();
+            document.getElementById('showAllBtn').classList.add('hidden');
+            renderCategories();
+        }
+
+        // Filter & Sort Articles
+        function getFilteredArticles() {
+            const sortBy = document.getElementById('sortSelect').value;
+
+            let result = articles.filter(article => {
+                const matchesCategory = selectedCategory === 'all' || article.category === selectedCategory;
+                const matchesSearch = searchQuery === '' || 
+                    article.title.toLowerCase().includes(searchQuery) || 
+                    article.summary.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            // Sorting
+            if (sortBy === 'popular') {
+                result.sort((a, b) => b.views - a.views);
+            } else if (sortBy === 'time') {
+                result.sort((a, b) => a.readTime - b.readTime);
+            } else {
+                // newest
+                result.sort((a, b) => b.id - a.id);
+            }
+
+            return result;
+        }
+
+        // Render Articles Cards
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            const noResults = document.getElementById('noResults');
+            const countLabel = document.getElementById('articlesCount');
+            const sectionTitle = document.getElementById('sectionTitle');
+
+            const list = getFilteredArticles();
+
+            // Update Header Title
+            if (selectedCategory !== 'all') {
+                const catObj = categories.find(c => c.id === selectedCategory);
+                sectionTitle.innerText = `מאמרים בנושא: ${catObj ? catObj.name : ''}`;
+            } else if (searchQuery !== '') {
+                sectionTitle.innerText = `תוצאות חיפוש עבור: "${searchQuery}"`;
+            } else {
+                sectionTitle.innerText = 'כל המאמרים והמדריכים';
+            }
+
+            countLabel.innerText = `מציג ${list.length} מאמרים`;
+
+            if (list.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            grid.innerHTML = list.map(article => {
+                const cat = categories.find(c => c.id === article.category);
+                return `
+                    <article class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700/80 p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300">
+                                    <i class="fa-solid ${cat ? cat.icon : 'fa-folder'} ml-1"></i> ${cat ? cat.name : article.category}
+                                </span>
+                                <span class="text-xs text-gray-400 dark:text-gray-500">${article.date}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition" onclick="openArticleModal(${article.id})">
+                                ${article.title}
+                            </h3>
+                            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed">
+                                ${article.summary}
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700/50 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                            <span class="flex items-center"><i class="fa-regular fa-clock ml-1"></i> ${article.readTime} דקות קריאה</span>
+                            <button onclick="openArticleModal(${article.id})" class="font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">
+                                קרא עוד <i class="fa-solid fa-arrow-left text-xs"></i>
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        // Modal Controls
+        function openArticleModal(id) {
+            const article = articles.find(a => a.id === id);
+            if (!article) return;
+
+            const cat = categories.find(c => c.id === article.category);
+
+            document.getElementById('modalTitle').innerText = article.title;
+            document.getElementById('modalCategory').innerText = cat ? cat.name : article.category;
+            document.getElementById('modalDate').innerText = article.date;
+            document.getElementById('modalReadTime').innerText = article.readTime;
+            document.getElementById('modalViews').innerText = article.views;
+            document.getElementById('modalBody').innerHTML = article.content;
+
+            document.getElementById('articleModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeArticleModal() {
+            document.getElementById('articleModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Copy Link Action
+        function copyArticleLink() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            showToast('הקישור הועתק ללוח!');
+        }
+
+        // Newsletter Handler
+        function handleSubscribe(event) {
+            event.preventDefault();
+            event.target.reset();
+            showToast('תודה שנרשמת לניוזלטר שלנו!');
+        }
+
+        // Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeArticleModal();
+        });
+    </script>
+</body>
+</html>
