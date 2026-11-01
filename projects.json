@@ -174,5 +174,104 @@
     "emoji": "🦁",
     "color": "#4ade80",
     "thumbnail": "assets/thumbnails/16.webp"
+  },
+  {
+    "id": 17,
+    "student": "דביר ביין",
+    "title": "מחשבון רעיונות תעסוקה",
+    "category": "אפליקציות",
+    "description": "כלי למציאת רעיונות עבודה לפי כישורים, עם כרטיס ביקור אישי.",
+    "url": "projects/project-17.html",
+    "emoji": "💼",
+    "color": "#60a5fa",
+    "thumbnail": "assets/thumbnails/17.svg"
+  },
+  {
+    "id": 18,
+    "student": "איתמר מישרים",
+    "title": "טנקי אונליין 3D",
+    "category": "משחקים",
+    "description": "משחק טנקים בתלת־ממד עם גלי אויבים, נשקים ושדרוגים.",
+    "url": "projects/project-18.html",
+    "emoji": "🛡️",
+    "color": "#fbbf24",
+    "thumbnail": "assets/thumbnails/18.svg"
+  },
+  {
+    "id": 19,
+    "student": "איתמר מישרים",
+    "title": "טנקופדיה",
+    "category": "סימולטורים",
+    "description": "אנציקלופדיה אינטראקטיבית על טנקים עם מודלים בתלת־ממד וסימולטור.",
+    "url": "projects/project-19.html",
+    "emoji": "🚜",
+    "color": "#86efac",
+    "thumbnail": "assets/thumbnails/19.svg"
+  },
+  {
+    "id": 20,
+    "student": "אריאל שלמה",
+    "title": "Spinner.io — ספינר ארינה",
+    "category": "משחקים",
+    "description": "בחר ספינר, אסוף אנרגיה, התחרה ביריבים וגדל בזירה.",
+    "url": "projects/project-20.html",
+    "emoji": "🌀",
+    "color": "#f472b6",
+    "thumbnail": "assets/thumbnails/20.svg"
+  },
+  {
+    "id": 21,
+    "student": "יהודה ביתן",
+    "title": "English World",
+    "category": "אפליקציות",
+    "description": "תרגול אנגלית לכיתה ז׳ עם כרטיסיות, דקדוק וחידונים.",
+    "url": "projects/project-21.html",
+    "emoji": "🇬🇧",
+    "color": "#2dd4bf",
+    "thumbnail": "assets/thumbnails/21.svg"
+  },
+  {
+    "id": 22,
+    "student": "נדב ויצחק",
+    "title": "סנייק — משחק הנחש",
+    "category": "משחקים",
+    "description": "משחק סנייק קלאסי בשתי רמות, עם ניקוד ומצב השהייה.",
+    "url": "projects/project-22.html",
+    "emoji": "🐍",
+    "color": "#4ade80",
+    "thumbnail": "assets/thumbnails/22.svg"
+  },
+  {
+    "id": 23,
+    "student": "ניר סיגאווי",
+    "title": "עולם המשחקים — 16 משחקים",
+    "category": "משחקים",
+    "description": "אוסף 16 משחקי ארקייד: מירוצים, ספינרים, סנייק, טטריס ועוד.",
+    "url": "projects/project-23.html",
+    "emoji": "🕹️",
+    "color": "#818cf8",
+    "thumbnail": "assets/thumbnails/23.svg"
+  },
+  {
+    "id": 24,
+    "student": "עמיחי לזיר",
+    "title": "אינדקס ציוד ומוצרי איכות",
+    "category": "אפליקציות",
+    "description": "קטלוג מוצרים עם חיפוש, סינון, דירוגים וחוות דעת.",
+    "url": "projects/project-24.html",
+    "emoji": "🛍️",
+    "color": "#38bdf8",
+    "thumbnail": "assets/thumbnails/24.svg"
+  },
+  {
+    "id": 25,
+    "student": "שחר רוט",
+    "title": "אקדמיה AI",
+    "category": "אפליקציות",
+    "description": "מערכת למידה אישית עם תוכנית לימודים, תרגולים ומדריך למידה.",
+    "url": "projects/project-25.html",
+    "emoji": "🎓",
+    "color": "#c084fc",
+    "thumbnail": "assets/thumbnails/25.svg"
   }
 ]

@@ -174,6 +174,105 @@ const projects = [
     "emoji": "🦁",
     "color": "#4ade80",
     "thumbnail": "assets/thumbnails/16.webp"
+  },
+  {
+    "id": 17,
+    "student": "דביר ביין",
+    "title": "מחשבון רעיונות תעסוקה",
+    "category": "אפליקציות",
+    "description": "כלי למציאת רעיונות עבודה לפי כישורים, עם כרטיס ביקור אישי.",
+    "url": "projects/project-17.html",
+    "emoji": "💼",
+    "color": "#60a5fa",
+    "thumbnail": "assets/thumbnails/17.svg"
+  },
+  {
+    "id": 18,
+    "student": "איתמר מישרים",
+    "title": "טנקי אונליין 3D",
+    "category": "משחקים",
+    "description": "משחק טנקים בתלת־ממד עם גלי אויבים, נשקים ושדרוגים.",
+    "url": "projects/project-18.html",
+    "emoji": "🛡️",
+    "color": "#fbbf24",
+    "thumbnail": "assets/thumbnails/18.svg"
+  },
+  {
+    "id": 19,
+    "student": "איתמר מישרים",
+    "title": "טנקופדיה",
+    "category": "סימולטורים",
+    "description": "אנציקלופדיה אינטראקטיבית על טנקים עם מודלים בתלת־ממד וסימולטור.",
+    "url": "projects/project-19.html",
+    "emoji": "🚜",
+    "color": "#86efac",
+    "thumbnail": "assets/thumbnails/19.svg"
+  },
+  {
+    "id": 20,
+    "student": "אריאל שלמה",
+    "title": "Spinner.io — ספינר ארינה",
+    "category": "משחקים",
+    "description": "בחר ספינר, אסוף אנרגיה, התחרה ביריבים וגדל בזירה.",
+    "url": "projects/project-20.html",
+    "emoji": "🌀",
+    "color": "#f472b6",
+    "thumbnail": "assets/thumbnails/20.svg"
+  },
+  {
+    "id": 21,
+    "student": "יהודה ביתן",
+    "title": "English World",
+    "category": "אפליקציות",
+    "description": "תרגול אנגלית לכיתה ז׳ עם כרטיסיות, דקדוק וחידונים.",
+    "url": "projects/project-21.html",
+    "emoji": "🇬🇧",
+    "color": "#2dd4bf",
+    "thumbnail": "assets/thumbnails/21.svg"
+  },
+  {
+    "id": 22,
+    "student": "נדב ויצחק",
+    "title": "סנייק — משחק הנחש",
+    "category": "משחקים",
+    "description": "משחק סנייק קלאסי בשתי רמות, עם ניקוד ומצב השהייה.",
+    "url": "projects/project-22.html",
+    "emoji": "🐍",
+    "color": "#4ade80",
+    "thumbnail": "assets/thumbnails/22.svg"
+  },
+  {
+    "id": 23,
+    "student": "ניר סיגאווי",
+    "title": "עולם המשחקים — 16 משחקים",
+    "category": "משחקים",
+    "description": "אוסף 16 משחקי ארקייד: מירוצים, ספינרים, סנייק, טטריס ועוד.",
+    "url": "projects/project-23.html",
+    "emoji": "🕹️",
+    "color": "#818cf8",
+    "thumbnail": "assets/thumbnails/23.svg"
+  },
+  {
+    "id": 24,
+    "student": "עמיחי לזיר",
+    "title": "אינדקס ציוד ומוצרי איכות",
+    "category": "אפליקציות",
+    "description": "קטלוג מוצרים עם חיפוש, סינון, דירוגים וחוות דעת.",
+    "url": "projects/project-24.html",
+    "emoji": "🛍️",
+    "color": "#38bdf8",
+    "thumbnail": "assets/thumbnails/24.svg"
+  },
+  {
+    "id": 25,
+    "student": "שחר רוט",
+    "title": "אקדמיה AI",
+    "category": "אפליקציות",
+    "description": "מערכת למידה אישית עם תוכנית לימודים, תרגולים ומדריך למידה.",
+    "url": "projects/project-25.html",
+    "emoji": "🎓",
+    "color": "#c084fc",
+    "thumbnail": "assets/thumbnails/25.svg"
   }
-];
-const grid=document.getElementById('projectsGrid');const input=document.getElementById('search');const count=document.getElementById('shownCount');const filters=document.getElementById('filters');let cat='הכל';const norm=s=>(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').trim();function render(){const q=norm(input.value);const matches=projects.filter(p=>(cat==='הכל'||p.category===cat)&&norm([p.title,p.student,p.description,p.category].join(' ')).includes(q));count.textContent=matches.length+' פרויקטים';document.getElementById('noResults').hidden=matches.length>0;grid.innerHTML=matches.map(p=>`<a class="project-card" href="${p.url}" target="_blank" rel="noopener noreferrer" aria-label="פתיחת ${p.title} של ${p.student}"><div class="thumb" style="--accent:${p.color}"><div class="thumb-placeholder">${p.emoji}</div><img src="${p.thumbnail}" loading="lazy" alt="תמונת שער מעוצבת עבור ${p.title}" onerror="this.style.display='none'"><span class="category-label">${p.category}</span></div><div class="project-body"><div class="project-student">מאת ${p.student}</div><h3 class="project-title">${p.title}</h3><p class="project-desc">${p.description}</p><div class="project-bottom"><span class="open-project">לפתיחת הפרויקט <span class="arrow">↗</span></span><span class="project-number">${String(p.id).padStart(2,'0')} / 16</span></div></div></a>`).join('')}filters.addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;cat=b.dataset.cat;filters.querySelectorAll('.filter').forEach(el=>el.classList.toggle('active',el===b));render()});input.addEventListener('input',render);document.getElementById('resetFilters').addEventListener('click',()=>{cat='הכל';input.value='';filters.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.cat==='הכל'));render()});document.getElementById('studentChips').innerHTML=[...new Set(projects.map(p=>p.student))].sort((a,b)=>a.localeCompare(b,'he')).map(name=>`<button type="button" data-name="${name}">${name}</button>`).join('');document.getElementById('studentChips').addEventListener('click',e=>{const b=e.target.closest('[data-name]');if(!b)return;cat='הכל';input.value=b.dataset.name;filters.querySelectorAll('.filter').forEach(el=>el.classList.toggle('active',el.dataset.cat==='הכל'));render();document.getElementById('gallery').scrollIntoView({behavior:'smooth'})});render();
+]
+const grid=document.getElementById('projectsGrid');const input=document.getElementById('search');const count=document.getElementById('shownCount');const filters=document.getElementById('filters');let cat='הכל';const norm=s=>(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').trim();function render(){const q=norm(input.value);const matches=projects.filter(p=>(cat==='הכל'||p.category===cat)&&norm([p.title,p.student,p.description,p.category].join(' ')).includes(q));count.textContent=matches.length+' פרויקטים';document.getElementById('noResults').hidden=matches.length>0;grid.innerHTML=matches.map(p=>`<a class="project-card" href="${p.url}" target="_blank" rel="noopener noreferrer" aria-label="פתיחת ${p.title} של ${p.student}"><div class="thumb" style="--accent:${p.color}"><div class="thumb-placeholder">${p.emoji}</div><img src="${p.thumbnail}" loading="lazy" alt="תמונת שער מעוצבת עבור ${p.title}" onerror="this.style.display='none'"><span class="category-label">${p.category}</span></div><div class="project-body"><div class="project-student">מאת ${p.student}</div><h3 class="project-title">${p.title}</h3><p class="project-desc">${p.description}</p><div class="project-bottom"><span class="open-project">לפתיחת הפרויקט <span class="arrow">↗</span></span><span class="project-number">${String(p.id).padStart(2,'0')} / 25</span></div></div></a>`).join('')}filters.addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;cat=b.dataset.cat;filters.querySelectorAll('.filter').forEach(el=>el.classList.toggle('active',el===b));render()});input.addEventListener('input',render);document.getElementById('resetFilters').addEventListener('click',()=>{cat='הכל';input.value='';filters.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.cat==='הכל'));render()});document.getElementById('studentChips').innerHTML=[...new Set(projects.map(p=>p.student))].sort((a,b)=>a.localeCompare(b,'he')).map(name=>`<button type="button" data-name="${name}">${name}</button>`).join('');document.getElementById('studentChips').addEventListener('click',e=>{const b=e.target.closest('[data-name]');if(!b)return;cat='הכל';input.value=b.dataset.name;filters.querySelectorAll('.filter').forEach(el=>el.classList.toggle('active',el.dataset.cat==='הכל'));render();document.getElementById('gallery').scrollIntoView({behavior:'smooth'})});render();
