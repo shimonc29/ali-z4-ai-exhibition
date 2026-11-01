@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>אינדקס ציוד ומוצרי איכות</title>
+  <style>
+    :root {
+      --bg-color: #f4f7f6;
+      --card-bg: #ffffff;
+      --primary: #1e3a8a;
+      --primary-hover: #1e40af;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --whatsapp-color: #25d366;
+      --star-color: #f59e0b;
+      --text-dark: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding-bottom: 40px;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+      color: #ffffff;
+      padding: 60px 20px 40px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    /* Controls (Search, Filters & Sort) */
+    .controls-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .search-box {
+      margin-top: -25px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-box input {
+      width: 100%;
+      max-width: 500px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      outline: none;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .filter-sort-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 35px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .category-btn {
+      background-color: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .category-btn:hover, .category-btn.active {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .sort-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .sort-select {
+      background-color: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      outline: none;
+      font-size: 0.9rem;
+    }
+
+    /* Section Header */
+    .section-title {
+      max-width: 1200px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+      font-size: 1.5rem;
+      color: var(--primary);
+      border-right: 4px solid var(--accent);
+      padding-right: 10px;
+    }
+
+    /* Grid & Cards */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .product-card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: var(--accent);
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .card-header {
+      padding: 25px 20px 15px;
+    }
+
+    .category-tag {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .product-title {
+      font-size: 1.3rem;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .score-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .score-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .score-max {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Social & Review Bar */
+    .social-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #f9fafb;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .social-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .like-btn, .whatsapp-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 15px;
+      padding: 4px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      color: var(--text-dark);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .like-btn.liked {
+      background-color: #fee2e2;
+      border-color: #ef4444;
+      color: #dc2626;
+    }
+
+    .whatsapp-btn {
+      background-color: #e8f5e9;
+      border-color: var(--whatsapp-color);
+      color: #1b5e20;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: var(--whatsapp-color);
+      color: #ffffff;
+    }
+
+    .reviews-link {
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .card-body {
+      padding: 15px 20px;
+      flex-grow: 1;
+    }
+
+    .metrics-list {
+      list-style: none;
+    }
+
+    .metrics-list li {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+
+    .metrics-list strong {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-footer {
+      padding: 15px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-cta {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background-color: var(--primary);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 0;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-cta:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-best-price {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background-color: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 0;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-best-price:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 20px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .review-form {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .review-form h4 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .star-rating-select {
+      display: flex;
+      gap: 5px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+      color: #d1d5db;
+    }
+
+    .star-rating-select .star.selected {
+      color: var(--star-color);
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .btn-submit {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .reviews-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-item {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .review-item-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .review-author {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .stars-display {
+      color: var(--star-color);
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>אינדקס ציוד ומוצרי איכות</h1>
+    <p>מוצאים עבורך את המוצרים האיכותיים ביותר מבין הספקים המומלצים</p>
+  </header>
+
+  <!-- Controls Section -->
+  <div class="controls-container">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="חפש מוצר או קטגוריה...">
+    </div>
+
+    <div class="filter-sort-bar">
+      <div class="categories" id="categoriesContainer">
+        <button class="category-btn active" data-category="all">הכל</button>
+        <button class="category-btn" data-category="אלקטרוניקה">אלקטרוניקה</button>
+        <button class="category-btn" data-category="ציוד היקפי">ציוד היקפי</button>
+        <button class="category-btn" data-category="בית ומטבח">בית ומטבח</button>
+        <button class="category-btn" data-category="ריהוט וציוד משרדי">ריהוט וציוד משרדי</button>
+      </div>
+
+      <div class="sort-container">
+        <label for="sortSelect">מיין לפי:</label>
+        <select id="sortSelect" class="sort-select">
+          <option value="popularity">פופולריות (לפי מספרי לייקים)</option>
+          <option value="score-desc">ציון עורכים: מהגבוה לנמוך</option>
+          <option value="score-asc">ציון עורכים: מהנמוך לגבוה</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main>
+    <h2 class="section-title">בחירת העורך - המוצרים המובילים</h2>
+    <div class="products-grid" id="productsGrid">
+      <!-- כרטיסי המוצרים יווצרו באמצעות JavaScript -->
+    </div>
+  </main>
+
+  <!-- Modal Reviews -->
+  <div class="modal-overlay" id="reviewsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalProductTitle">חוות דעת</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="review-form">
+          <h4>הוסף חוות דעת</h4>
+          <div class="star-rating-select" id="starPicker">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <div class="form-group">
+            <input type="text" id="reviewerName" placeholder="שמך הלא מלא">
+          </div>
+          <div class="form-group">
+            <textarea id="reviewText" rows="3" placeholder="כתוב את תגובתך..."></textarea>
+          </div>
+          <button class="btn-submit" onclick="submitReview()">שלח חוות דעת</button>
+        </div>
+
+        <h4>חוות דעת של גולשים</h4>
+        <div class="reviews-list" id="reviewsList">
+          <!-- תגובות יוטענו כאן -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        title: "מסך מחשב 4K ProVision",
+        category: "ציוד היקפי",
+        score: 9.8,
+        likes: 142,
+        material: "אלומיניום תעופתי וזכוכית מחוסמת",
+        warranty: "3 שנים בבית הלקוח",
+        advantage: "דיוק צבעים גבוה וקצב רענון 144Hz",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מסך מחשב 4K ProVision"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מסך מחשב 4K ProVision מחיר הכי זול"),
+        reviews: [
+          { author: "ישראל", rating: 5, text: "מסך מדהים, איכות תמונה יוצאת מן הכלל!", date: "2026-02-10" },
+          { author: "דוד", rating: 4, text: "מעולה לעריכת וידאו ולעבודה משרדית.", date: "2026-02-12" }
+        ]
+      },
+      {
+        id: 2,
+        title: "מקלדת מכנית Ergonomic Master",
+        category: "ציוד היקפי",
+        score: 9.6,
+        likes: 89,
+        material: "פלסטיק PBT עמיד ושלדת מתכת",
+        warranty: "2 שנות אחריות יבואן רשמי",
+        advantage: "מקשים ארגונומיים וחיבור אלחוטי כפול",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מקלדת מכנית Ergonomic Master"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מקלדת מכנית Ergonomic Master מחיר הכי זול"),
+        reviews: [
+          { author: "משה", rating: 5, text: "נוחה מאוד להקלדה ארוכה.", date: "2026-01-20" }
+        ]
+      },
+      {
+        id: 3,
+        title: "עכבר ארגונומי Precision Pro",
+        category: "ציוד היקפי",
+        score: 9.7,
+        likes: 215,
+        material: "ציפוי טקסטורלי למניעת החלקה",
+        warranty: "2 שנות אחריות",
+        advantage: "חיישן אופטי מדויק וחיי סוללה ארוכים",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("עכבר ארגונומי Precision Pro"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("עכבר ארגונומי Precision Pro מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 4,
+        title: "כבל Thunderbolt 4 מהיר",
+        category: "ציוד היקפי",
+        score: 9.5,
+        likes: 45,
+        material: "סיבי ניילון שזורים ומחברי אלומיניום",
+        warranty: "אחריות לכל החיים",
+        advantage: "קצב העברת נתונים עד 40Gbps וטעינה 100W",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("כבל Thunderbolt 4"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("כבל Thunderbolt 4 מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 5,
+        title: "מחשב נייד UltraBook Pro 15",
+        category: "אלקטרוניקה",
+        score: 9.9,
+        likes: 310,
+        material: "אלומיניום מלא אחוד",
+        warranty: "3 שנות אחריות VIP",
+        advantage: "מעבד חזק, משקל קל וסוללה ל-18 שעות",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מחשב נייד UltraBook Pro 15"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מחשב נייד UltraBook Pro 15 מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 6,
+        title: "קונסולת משחקים PlayStation 5",
+        category: "אלקטרוניקה",
+        score: 9.8,
+        likes: 520,
+        material: "פלסטיק קשיח ומערכת קירור מתקדמת",
+        warranty: "שנתיים יבואן רשמי",
+        advantage: "כונן SSD אולטרה-מהיר ותמיכה ב-4K 120Hz",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("PlayStation 5"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("PlayStation 5 מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 7,
+        title: "אוזניות מנטלות רעש SoundPure X",
+        category: "אלקטרוניקה",
+        score: 9.7,
+        likes: 180,
+        material: "ריפוד עור טבעי ופלסטיק קשיח",
+        warranty: "2 שנות אחריות",
+        advantage: "סינון רעשים אקטיבי מוביל בקטגוריה",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("אוזניות מנטלות רעש SoundPure X"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("אוזניות מנטלות רעש SoundPure X מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 8,
+        title: "מיקסר מקצועי ChefPro 1200W",
+        category: "בית ומטבח",
+        score: 9.6,
+        likes: 95,
+        material: "קערת נירוסטה 6.7 ליטר ושלדת יציקת אלומיניום",
+        warranty: "5 שנות אחריות על המנוע",
+        advantage: "מנוע עוצמתי השומר על מהירות קבועה לעומס כבד",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מיקסר מקצועי ChefPro 1200W"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מיקסר מקצועי ChefPro 1200W מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 9,
+        title: "מכונת גלידה ביתית GelatoMatic",
+        category: "בית ומטבח",
+        score: 9.4,
+        likes: 62,
+        material: "נירוסטה מוברשת ופלסטיק BPA Free",
+        warranty: "שנתיים אחריות",
+        advantage: "מדחס פנימי מובנה ללא צורך בהקפאה מוקדמת",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מכונת גלידה ביתית GelatoMatic"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מכונת גלידה ביתית GelatoMatic מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 10,
+        title: "מכונת קפה EspressoElite",
+        category: "בית ומטבח",
+        score: 9.5,
+        likes: 240,
+        material: "נירוסטה מוברשת",
+        warranty: "שנה אחריות יבואן",
+        advantage: "לחץ משאבה 19 בר להפקת קפה מקצועית",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מכונת קפה EspressoElite"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מכונת קפה EspressoElite מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 11,
+        title: "שולחן עבודה חשמלי מתכוונן DeskPro",
+        category: "ריהוט וציוד משרדי",
+        score: 9.7,
+        likes: 175,
+        material: "פלטת עץ מלא ושלדת פלדה מחוזקת",
+        warranty: "5 שנות אחריות",
+        advantage: "מנוע כפול שקט לכיוון גובה מדויק וזכרונות",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("שולחן עבודה חשמלי מתכוונן DeskPro"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("שולחן עבודה חשמלי מתכוונן DeskPro מחיר הכי זול"),
+        reviews: []
+      },
+      {
+        id: 12,
+        title: "מנורת שולחן חכמה EyeCare LED",
+        category: "ריהוט וציוד משרדי",
+        score: 9.5,
+        likes: 110,
+        material: "אלומיניום קל ופלסטיק איכותי",
+        warranty: "שנתיים אחריות",
+        advantage: "תאורה מוגנת עיניים עם שליטה בטמפרטורת האור",
+        link: "https://www.google.com/search?q=" + encodeURIComponent("מנורת שולחן חכמה EyeCare LED"),
+        bestPriceLink: "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent("מנורת שולחן חכמה EyeCare LED מחיר הכי זול"),
+        reviews: []
+      }
+    ];
+
+    const productsGrid = document.getElementById('productsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const sortSelect = document.getElementById('sortSelect');
+    
+    let currentCategory = 'all';
+    let searchQuery = '';
+    let currentSort = 'popularity';
+    let activeProductId = null;
+    let selectedRating = 5;
+
+    const userLikes = JSON.parse(localStorage.getItem('userLikes') || '{}');
+
+    function toggleLike(productId) {
+      if (userLikes[productId]) {
+        delete userLikes[productId];
+        const prod = products.find(p => p.id === productId);
+        if (prod) prod.likes--;
+      } else {
+        userLikes[productId] = true;
+        const prod = products.find(p => p.id === productId);
+        if (prod) prod.likes++;
+      }
+      localStorage.setItem('userLikes', JSON.stringify(userLikes));
+      renderProducts();
+    }
+
+    function shareWhatsApp(title, link) {
+      const text = encodeURIComponent(`תראה את המוצר הזה: ${title}\n${link}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function getStarsDisplay(rating) {
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        stars += i <= rating ? '★' : '☆';
+      }
+      return stars;
+    }
+
+    function renderProducts() {
+      productsGrid.innerHTML = '';
+
+      let filteredProducts = products.filter(product => {
+        const matchesCategory = currentCategory === 'all' || product.category === currentCategory;
+        const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              product.category.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      if (currentSort === 'popularity') {
+        filteredProducts.sort((a, b) => b.likes - a.likes);
+      } else if (currentSort === 'score-desc') {
+        filteredProducts.sort((a, b) => b.score - a.score);
+      } else if (currentSort === 'score-asc') {
+        filteredProducts.sort((a, b) => a.score - b.score);
+      }
+
+      if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = '<div class="no-results">לא נמצאו מוצרים התואמים את החיפוש.</div>';
+        return;
+      }
+
+      filteredProducts.forEach(product => {
+        const isLiked = !!userLikes[product.id];
+        const reviewCount = product.reviews ? product.reviews.length : 0;
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <span class="badge">בחירת העורך - הכי איכותי</span>
+          <div class="card-header">
+            <div class="category-tag">${product.category}</div>
+            <h3 class="product-title">${product.title}</h3>
+            <div class="score-container">
+              <div>
+                <span class="score-value">${product.score.toFixed(1)}</span>
+                <span class="score-max">/ 10</span>
+              </div>
+            </div>
+          </div>
+          <div class="social-stats">
+            <div class="social-actions">
+              <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${product.id})">
+                ❤️ <span>${product.likes}</span>
+              </button>
+              <button class="whatsapp-btn" onclick="shareWhatsApp('${product.title}', '${product.link}')">
+                💬 שתף
+              </button>
+            </div>
+            <span class="reviews-link" onclick="openReviewsModal(${product.id})">
+              תגובות (${reviewCount})
+            </span>
+          </div>
+          <div class="card-body">
+            <ul class="metrics-list">
+              <li><strong>איכות חומרים:</strong> ${product.material}</li>
+              <li><strong>תקופת אחריות:</strong> ${product.warranty}</li>
+              <li><strong>יתרון מרכזי:</strong> ${product.advantage}</li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <a href="${product.link}" target="_blank" rel="noopener noreferrer" class="btn-cta">לצפייה בחנות המומלצת</a>
+            <a href="${product.bestPriceLink}" target="_blank" rel="noopener noreferrer" class="btn-best-price">🏷️ המחיר הכי משתלם</a>
+          </div>
+        `;
+        productsGrid.appendChild(card);
+      });
+    }
+
+    function openReviewsModal(productId) {
+      activeProductId = productId;
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      document.getElementById('modalProductTitle').innerText = `חוות דעת - ${product.title}`;
+      renderReviewsList(product);
+      setStarRating(5);
+      document.getElementById('reviewsModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('reviewsModal').classList.remove('active');
+      activeProductId = null;
+    }
+
+    function renderReviewsList(product) {
+      const container = document.getElementById('reviewsList');
+      container.innerHTML = '';
+
+      if (!product.reviews || product.reviews.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">אין חוות דעת עדיין. היה הראשון לכתוב!</p>';
+        return;
+      }
+
+      product.reviews.forEach(rev => {
+        const item = document.createElement('div');
+        item.className = 'review-item';
+        item.innerHTML = `
+          <div class="review-item-header">
+            <span class="review-author">${rev.author}</span>
+            <span>${rev.date}</span>
+          </div>
+          <div class="stars-display">${getStarsDisplay(rev.rating)}</div>
+          <p style="margin-top: 5px; font-size: 0.95rem;">${rev.text}</p>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    const stars = document.querySelectorAll('#starPicker .star');
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        const val = parseInt(star.getAttribute('data-value'));
+        setStarRating(val);
+      });
+    });
+
+    function setStarRating(rating) {
+      selectedRating = rating;
+      stars.forEach(star => {
+        const val = parseInt(star.getAttribute('data-value'));
+        if (val <= rating) {
+          star.classList.add('selected');
+        } else {
+          star.classList.remove('selected');
+        }
+      });
+    }
+
+    function submitReview() {
+      const nameInput = document.getElementById('reviewerName');
+      const textInput = document.getElementById('reviewText');
+
+      const name = nameInput.value.trim() || 'אנונימי';
+      const text = textInput.value.trim();
+
+      if (!text) {
+        alert('אנא כתוב תוכן לחוות הדעת');
+        return;
+      }
+
+      const product = products.find(p => p.id === activeProductId);
+      if (product) {
+        if (!product.reviews) product.reviews = [];
+        const today = new Date().toISOString().split('T')[0];
+        product.reviews.unshift({
+          author: name,
+          rating: selectedRating,
+          text: text,
+          date: today
+        });
+
+        nameInput.value = '';
+        textInput.value = '';
+        renderReviewsList(product);
+        renderProducts();
+      }
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentCategory = button.getAttribute('data-category');
+        renderProducts();
+      });
+    });
+
+    sortSelect.addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      renderProducts();
+    });
+
+    renderProducts();
+  </script>
+</body>
+</html>
