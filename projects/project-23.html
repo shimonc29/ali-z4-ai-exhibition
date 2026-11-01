@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מרכז משחקי ארקייד - 16 משחקים</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        canvas {
+            display: block;
+            touch-action: none;
+        }
+        .arcade-glow {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.7), 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .arcade-card {
+            transition: all 0.25s ease;
+        }
+        .arcade-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchGame('menu')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h1 class="text-2xl font-black tracking-wide bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent arcade-glow">
+                    עולם המשחקים (16 משחקים)
+                </h1>
+            </div>
+
+            <button onclick="toggleAudio()" id="audioBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-sm flex items-center gap-2">
+                <i class="fa-solid fa-volume-high text-blue-400" id="audioIcon"></i>
+                <span id="audioText" class="hidden sm:inline">סאונד פעיל</span>
+            </button>
+            <button onclick="shareOnWhatsApp()" class="px-3 py-1.5 rounded-lg bg-emerald-600 border border-emerald-500 text-white hover:bg-emerald-500 text-sm flex items-center gap-2 transition">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                <span class="hidden sm:inline">שתף בוואטסאפ</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Portal Area -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-1 flex flex-col">
+
+        <!-- Main Menu Selection Grid (16 Games) -->
+        <div id="gameMenu" class="space-y-6 my-auto">
+            
+            <!-- Featured Game Recommendation Banner -->
+            <div class="bg-gradient-to-r from-emerald-600/30 via-teal-600/30 to-blue-600/30 border border-emerald-500/40 rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 flex items-center justify-center text-white text-2xl shadow-lg shrink-0">
+                        <i class="fa-solid fa-compact-disc animate-spin" style="animation-duration: 3s;"></i>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 mb-1">
+                            <i class="fa-solid fa-star"></i> משחק חדש ומומלץ!
+                        </div>
+                        <h3 class="text-xl font-black text-white">זירת ספינרים (Spinner Battle Arena)</h3>
+                        <p class="text-slate-300 text-xs sm:text-sm">שלוט בספינר המסתובב שלך, התנגש בספינרי האויב בעוצמה והדף אותם מחוץ לזירה העגולה!</p>
+                    </div>
+                </div>
+                <button onclick="switchGame('spinnerArena')" class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black rounded-xl shadow-lg shadow-emerald-500/30 transition transform hover:scale-105 active:scale-95 shrink-0 flex items-center gap-2 text-base">
+                    <i class="fa-solid fa-play"></i>
+                    <span>שחק עכשיו</span>
+                </button>
+            </div>
+
+            <div class="text-center space-y-1 max-w-2xl mx-auto pt-2">
+                <h2 class="text-3xl font-black text-white">בחר משחק להתחלה</h2>
+                <p class="text-slate-400 text-sm">16 משחקי ארקייד מלאים ומהנים בדפדפן!</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                
+                <!-- 1: Spinner Arena -->
+                <div onclick="switchGame('spinnerArena')" class="arcade-card bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group ring-1 ring-emerald-500/20">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-compact-disc"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-400">חדש!</span>
+                            <h3 class="text-lg font-bold text-white">זירת ספינרים</h3>
+                            <p class="text-slate-400 text-xs mt-1">התנגש בספינרי היריב והפיל אותם מחוץ לזירה!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2: Racing -->
+                <div onclick="switchGame('racing')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-car-burst"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-red-400">אקשן</span>
+                            <h3 class="text-lg font-bold text-white">מרוץ מכוניות + ירי</h3>
+                            <p class="text-slate-400 text-xs mt-1">נווט בחצים ימין/שמאל וירה פגזים ברכב האויב!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3: Ninja Stars -->
+                <div onclick="switchGame('ninja')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-shuriken"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-violet-400">קרב חלל</span>
+                            <h3 class="text-lg font-bold text-white">מלחמת כוכבי נינג'ה</h3>
+                            <p class="text-slate-400 text-xs mt-1">זרוק שוריקנים מסתובבים והשמד מטרות נעות בחלל!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4: Wrestling -->
+                <div onclick="switchGame('wrestling')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-hand-rock"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-orange-400">קרב זירה</span>
+                            <h3 class="text-lg font-bold text-white">קרב היאבקות / סומו</h3>
+                            <p class="text-slate-400 text-xs mt-1">דחף את המתחרה אל מחוץ לזירה בעזרת תזמון מדויק!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5: Spinner Speed Challenge -->
+                <div onclick="switchGame('spinner')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-rotate text-teal-400"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-teal-400">מהירות</span>
+                            <h3 class="text-lg font-bold text-white">אתגר הספינר המהיר</h3>
+                            <p class="text-slate-400 text-xs mt-1">סובב את הספינר במהירות שיא ושמור על איזון!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6: Football -->
+                <div onclick="switchGame('football')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-futbol"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-400">ספורט</span>
+                            <h3 class="text-lg font-bold text-white">פנדלים בכדורגל</h3>
+                            <p class="text-slate-400 text-xs mt-1">כוון ובעט אל השער מעבר לשוער המרחף.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7: Basketball -->
+                <div onclick="switchGame('basketball')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-basketball"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-amber-400">דיוק</span>
+                            <h3 class="text-lg font-bold text-white">קליעות לסל</h3>
+                            <p class="text-slate-400 text-xs mt-1">גרור לשחרור הכדור וקנח בסלים בזמן הקצוב.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8: Tanks -->
+                <div onclick="switchGame('tanks')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-purple-400">קרב</span>
+                            <h3 class="text-lg font-bold text-white">קרב טנקים</h3>
+                            <p class="text-slate-400 text-xs mt-1">תמרן את הטנק והשמד את טנקי האויב בשדה.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9: Snake -->
+                <div onclick="switchGame('snake')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-staff-snake"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-green-400">קלאסי</span>
+                            <h3 class="text-lg font-bold text-white">סנייק (Snake)</h3>
+                            <p class="text-slate-400 text-xs mt-1">אכול תפוחים, גדל והימנע מפגיעה בקירות!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10: Pong -->
+                <div onclick="switchGame('pong')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400">נוסטלגיה</span>
+                            <h3 class="text-lg font-bold text-white">פונג / הוקי</h3>
+                            <p class="text-slate-400 text-xs mt-1">משחק מטקות רטרו מהיר נגד המחשב.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11: Block Breaker -->
+                <div onclick="switchGame('breakout')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-rose-400">ארקייד</span>
+                            <h3 class="text-lg font-bold text-white">שבור הבלוקים</h3>
+                            <p class="text-slate-400 text-xs mt-1">הקפץ את הכדור והשמד את שורות הבלוקים.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12: Flappy Bird -->
+                <div onclick="switchGame('flappy')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-dove"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-yellow-400">מיומנות</span>
+                            <h3 class="text-lg font-bold text-white">פלאפי בירד</h3>
+                            <p class="text-slate-400 text-xs mt-1">עוף בין הצינורות בלחיצות קצובות.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13: Tetris -->
+                <div onclick="switchGame('tetris')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-shapes"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-400">חשיבה</span>
+                            <h3 class="text-lg font-bold text-white">טטריס</h3>
+                            <p class="text-slate-400 text-xs mt-1">סובב וסדר צורות נופלות כדי למלא שורות.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14: Space Invaders -->
+                <div onclick="switchGame('invaders')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-spaghetti-monster-flying"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-teal-400">קלאסיקה</span>
+                            <h3 class="text-lg font-bold text-white">פולשי החלל</h3>
+                            <p class="text-slate-400 text-xs mt-1">הגן על הגלקסיה מפני גלי חייזרים.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 15: Simon Memory -->
+                <div onclick="switchGame('simon')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-pink-400">זיכרון</span>
+                            <h3 class="text-lg font-bold text-white">סיימון (צלילים)</h3>
+                            <p class="text-slate-400 text-xs mt-1">חזור על רצף הצבעים והצלילים במדויק.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 16: Connect 4 -->
+                <div onclick="switchGame('connect4')" class="arcade-card bg-slate-900 border border-slate-800 rounded-2xl p-4 cursor-pointer flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-border-all"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-blue-400">אסטרטגיה</span>
+                            <h3 class="text-lg font-bold text-white">ארבע בשורה</h3>
+                            <p class="text-slate-400 text-xs mt-1">צור רצף של 4 אסימונים נגד הבינה המלאכותית.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Gameplay Area Wrapper -->
+        <div id="gameView" class="hidden flex-1 flex-col items-center justify-center space-y-4">
+            
+            <!-- Top Dashboard Control -->
+            <div class="w-full max-w-3xl flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+                <button onclick="switchGame('menu')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl border border-slate-700 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>תפריט ראשי</span>
+                </button>
+
+                <div id="gameTitleDisplay" class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                    <!-- Dynamic Game Title -->
+                </div>
+
+                <div class="flex items-center gap-4 text-sm sm:text-base">
+                    <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-xs block">ניקוד</span>
+                        <span id="scoreDisplay" class="font-bold text-amber-400 text-lg">0</span>
+                    </div>
+                    <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-xs block">שיא</span>
+                        <span id="highScoreDisplay" class="font-bold text-emerald-400 text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions Banner -->
+            <div id="instructionsBox" class="w-full max-w-3xl bg-blue-950/40 border border-blue-800/50 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-blue-200 text-center">
+                <!-- Dynamic Game Instruction -->
+            </div>
+
+            <!-- Canvas View Box -->
+            <div class="relative w-full max-w-3xl aspect-[4/3] bg-slate-900 rounded-2xl border-2 border-slate-800 overflow-hidden shadow-2xl flex items-center justify-center">
+                <canvas id="gameCanvas" class="w-full h-full rounded-xl"></canvas>
+
+                <!-- Game Over Overlay -->
+                <div id="gameOverOverlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center space-y-4 p-6 hidden z-20">
+                    <div class="w-16 h-16 rounded-full bg-red-500/20 border border-red-500/40 text-red-500 flex items-center justify-center text-3xl animate-bounce">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 id="overlayTitle" class="text-3xl font-black text-white">המשחק הסתיים!</h3>
+                    <p id="overlaySubtitle" class="text-slate-300 text-center max-w-md">השגת ניקוד מדהים!</p>
+                    <div class="flex gap-3">
+                        <button onclick="restartCurrentGame()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition transform hover:scale-105 active:scale-95 flex items-center gap-2 text-lg">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>שחק שוב</span>
+                        </button>
+                        <button onclick="shareOnWhatsApp()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30 transition transform hover:scale-105 active:scale-95 flex items-center gap-2 text-lg">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <span>שתף תוצאה</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Touch Controls for Mobile Screen -->
+            <div id="mobileControls" class="w-full max-w-3xl gap-3 justify-center hidden">
+                <!-- Dynamic Touch Buttons -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
+        <p>© 2026 מרכז משחקי ארקייד בע"מ - 16 משחקים מלאים כולל זירת ספינרים</p>
+    </footer>
+
+    <!-- Game Engine Logic -->
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentGame = null;
+        let currentGameKey = '';
+        let animationFrameId = null;
+        let soundEnabled = true;
+        const keys = {};
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth || 800;
+            canvas.height = container.clientHeight || 600;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        window.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code) && currentGameKey !== 'menu') {
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('keyup', (e) => { keys[e.code] = false; });
+
+        // Synthesizer Audio API
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx && AudioContextClass) {
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type, freqOverride) {
+            if (!soundEnabled) return;
+            try {
+                const ctxAudio = getAudioContext();
+                if (!ctxAudio) return;
+
+                const osc = ctxAudio.createOscillator();
+                const gain = ctxAudio.createGain();
+                osc.connect(gain);
+                gain.connect(ctxAudio.destination);
+
+                if (type === 'shoot') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(400, ctxAudio.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, ctxAudio.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.2, ctxAudio.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctxAudio.currentTime + 0.15);
+                    osc.start(); osc.stop(ctxAudio.currentTime + 0.15);
+                } else if (type === 'explosion') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, ctxAudio.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(30, ctxAudio.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, ctxAudio.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctxAudio.currentTime + 0.3);
+                    osc.start(); osc.stop(ctxAudio.currentTime + 0.3);
+                } else if (type === 'score') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freqOverride || 523.25, ctxAudio.currentTime);
+                    gain.gain.setValueAtTime(0.2, ctxAudio.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctxAudio.currentTime + 0.2);
+                    osc.start(); osc.stop(ctxAudio.currentTime + 0.2);
+                }
+            } catch(e) {}
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('audioText').innerText = soundEnabled ? "סאונד פעיל" : "סאונד מבוטל";
+            document.getElementById('audioIcon').className = soundEnabled ? "fa-solid fa-volume-high text-blue-400" : "fa-solid fa-volume-xmark text-slate-500";
+        }
+
+        function shareOnWhatsApp() {
+            const score = document.getElementById('scoreDisplay').innerText;
+            let text = "בואו לשחק במרכז משחקי הארקייד!";
+            if (currentGameKey && currentGameKey !== 'menu') {
+                text = `השגתי ${score} נקודות במשחק במרכז הארקייד! תנסו לנצח אותי:`;
+            }
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}%20${url}`, '_blank');
+        }
+
+        function updateScore(score) {
+            document.getElementById('scoreDisplay').innerText = score;
+            const localKey = 'arcade_highscore_' + currentGameKey;
+            const currentHigh = parseInt(localStorage.getItem(localKey) || '0');
+            if (score > currentHigh) {
+                localStorage.setItem(localKey, score);
+                document.getElementById('highScoreDisplay').innerText = score;
+            }
+        }
+
+        function showOverlay(title, subtitle) {
+            document.getElementById('overlayTitle').innerText = title;
+            document.getElementById('overlaySubtitle').innerText = subtitle;
+            document.getElementById('gameOverOverlay').classList.remove('hidden');
+        }
+
+        function restartCurrentGame() {
+            document.getElementById('gameOverOverlay').classList.add('hidden');
+            if (currentGame) currentGame.init();
+        }
+
+        // Clean Canvas Listeners when switching games
+        function cleanupCurrentGame() {
+            if (currentGame && typeof currentGame.destroy === 'function') {
+                currentGame.destroy();
+            }
+            canvas.onclick = null;
+            canvas.onmousedown = null;
+            canvas.onmousemove = null;
+            canvas.onmouseup = null;
+            canvas.ontouchstart = null;
+            canvas.ontouchmove = null;
+            canvas.ontouchend = null;
+        }
+
+        // Game Loop
+        function gameLoop() {
+            if (currentGame) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                currentGame.update();
+                currentGame.draw();
+            }
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // Switch Game Engine Manager
+        function switchGame(gameKey) {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            cleanupCurrentGame();
+
+            document.getElementById('gameOverOverlay').classList.add('hidden');
+            currentGameKey = gameKey;
+
+            const menu = document.getElementById('gameMenu');
+            const view = document.getElementById('gameView');
+            const titleEl = document.getElementById('gameTitleDisplay');
+            const instructionsEl = document.getElementById('instructionsBox');
+            const mobileCtrls = document.getElementById('mobileControls');
+
+            if (gameKey === 'menu') {
+                menu.classList.remove('hidden');
+                view.classList.add('hidden');
+                currentGame = null;
+                return;
+            }
+
+            menu.classList.add('hidden');
+            view.classList.remove('hidden');
+            resizeCanvas();
+
+            const localKey = 'arcade_highscore_' + gameKey;
+            document.getElementById('highScoreDisplay').innerText = localStorage.getItem(localKey) || 0;
+            document.getElementById('scoreDisplay').innerText = 0;
+            mobileCtrls.innerHTML = '';
+            mobileCtrls.classList.remove('flex', 'hidden');
+
+            if (gameKey === 'spinnerArena') {
+                titleEl.innerHTML = `<i class="fa-solid fa-compact-disc text-emerald-400"></i> <span>זירת ספינרים</span>`;
+                instructionsEl.innerText = "השתמש בחצים / WASD כדי להאיץ את הספינר שלך, להלום בספינרי היריב ולהפיל אותם מהזירה העגולה!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <div class="grid grid-cols-3 gap-2 w-full max-w-xs mx-auto">
+                        <div></div><button ontouchstart="keys['ArrowUp']=true" ontouchend="keys['ArrowUp']=false" class="py-3 bg-slate-800 rounded-lg text-white font-bold">▲</button><div></div>
+                        <button ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false" class="py-3 bg-slate-800 rounded-lg text-white font-bold">◄</button>
+                        <button ontouchstart="keys['Space']=true" ontouchend="keys['Space']=false" class="py-3 bg-emerald-600 rounded-lg font-bold text-white">⚡ הדיפה</button>
+                        <button ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false" class="py-3 bg-slate-800 rounded-lg text-white font-bold">►</button>
+                        <div></div><button ontouchstart="keys['ArrowDown']=true" ontouchend="keys['ArrowDown']=false" class="py-3 bg-slate-800 rounded-lg text-white font-bold">▼</button><div></div>
+                    </div>`;
+                currentGame = new SpinnerArenaGame();
+            } else if (gameKey === 'racing') {
+                titleEl.innerHTML = `<i class="fa-solid fa-car text-red-500"></i> <span>מרוץ וירי</span>`;
+                instructionsEl.innerText = "חצים ימין/שמאל לניווט וכיוון. רווח לירייה!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">◀ שמאלה</button>
+                    <button ontouchstart="keys['Space']=true" ontouchend="keys['Space']=false" class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold">🔥 ירי</button>
+                    <button ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">ימינה ▶</button>`;
+                currentGame = new RacingGame();
+            } else if (gameKey === 'ninja') {
+                titleEl.innerHTML = `<i class="fa-solid fa-shuriken text-violet-400"></i> <span>מלחמת כוכבי נינג'ה</span>`;
+                instructionsEl.innerText = "חצים ימין/שמאל להזזה. מקש רווח לשיגור כוכבי נינג'ה מסתובבים בחלל!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">◀ שמאלה</button>
+                    <button ontouchstart="keys['Space']=true" ontouchend="keys['Space']=false" class="flex-1 py-3 bg-violet-600 text-white rounded-xl font-bold">✴ שיגור כוכב</button>
+                    <button ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">ימינה ▶</button>`;
+                currentGame = new NinjaStarsGame();
+            } else if (gameKey === 'wrestling') {
+                titleEl.innerHTML = `<i class="fa-solid fa-hand-rock text-orange-500"></i> <span>היאבקות / סומו</span>`;
+                instructionsEl.innerText = "לחץ רווח / דחף בעזרת החצים כדי לנגוח ביריב ולהוציא אותו מהזירה!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button ontouchstart="keys['Space']=true" ontouchend="keys['Space']=false" class="w-full py-4 bg-orange-600 text-white rounded-xl text-lg font-black">💥 דחיפה חזקה!</button>`;
+                currentGame = new WrestlingGame();
+            } else if (gameKey === 'spinner') {
+                titleEl.innerHTML = `<i class="fa-solid fa-rotate text-teal-400"></i> <span>אתגר הספינר המהיר</span>`;
+                instructionsEl.innerText = "לחץ שוב ושוב במהירות על רווח / מסך כדי להאיץ את הספינר לשיא סיבובים!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button onclick="if(currentGame && currentGame.spin) currentGame.spin()" class="w-full py-4 bg-teal-600 text-white rounded-xl text-lg font-black">🌀 סובב במהירות!</button>`;
+                currentGame = new SpinnerGame();
+            } else if (gameKey === 'football') {
+                titleEl.innerHTML = `<i class="fa-solid fa-futbol text-emerald-500"></i> <span>פנדלים בכדורגל</span>`;
+                instructionsEl.innerText = "גרור מהכדור אל השער כדי לכוון ולבעוט!";
+                mobileCtrls.classList.add('hidden');
+                currentGame = new FootballGame();
+            } else if (gameKey === 'basketball') {
+                titleEl.innerHTML = `<i class="fa-solid fa-basketball text-amber-500"></i> <span>קליעות לסל</span>`;
+                instructionsEl.innerText = "גרור לאחור מהכדור ומשוך לזווית הקליעה!";
+                mobileCtrls.classList.add('hidden');
+                currentGame = new BasketballGame();
+            } else if (gameKey === 'tanks') {
+                titleEl.innerHTML = `<i class="fa-solid fa-shield-halved text-purple-500"></i> <span>קרב טנקים</span>`;
+                instructionsEl.innerText = "חצים לניווט הטנק, מקש רווח לירייה!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <div class="grid grid-cols-3 gap-2 w-full max-w-md">
+                        <div></div><button ontouchstart="keys['ArrowUp']=true" ontouchend="keys['ArrowUp']=false" class="py-2.5 bg-slate-800 rounded-lg">▲</button><div></div>
+                        <button ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false" class="py-2.5 bg-slate-800 rounded-lg">◄</button>
+                        <button ontouchstart="keys['Space']=true" ontouchend="keys['Space']=false" class="py-2.5 bg-purple-600 rounded-lg font-bold">🔥</button>
+                        <button ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false" class="py-2.5 bg-slate-800 rounded-lg">►</button>
+                        <div></div><button ontouchstart="keys['ArrowDown']=true" ontouchend="keys['ArrowDown']=false" class="py-2.5 bg-slate-800 rounded-lg">▼</button><div></div>
+                    </div>`;
+                currentGame = new TankGame();
+            } else if (gameKey === 'snake') {
+                titleEl.innerHTML = `<i class="fa-solid fa-staff-snake text-green-500"></i> <span>סנייק (Snake)</span>`;
+                instructionsEl.innerText = "ניווט בעזרת מקשי החצים. אוכלים תפוחים ונזהרים מקירות!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <div class="grid grid-cols-3 gap-2 w-full max-w-xs">
+                        <div></div><button onclick="currentGame.setDir(0,-1)" class="py-3 bg-slate-800 text-white rounded-lg">▲</button><div></div>
+                        <button onclick="currentGame.setDir(-1,0)" class="py-3 bg-slate-800 text-white rounded-lg">◄</button><div></div>
+                        <button onclick="currentGame.setDir(1,0)" class="py-3 bg-slate-800 text-white rounded-lg">►</button>
+                        <div></div><button onclick="currentGame.setDir(0,1)" class="py-3 bg-slate-800 text-white rounded-lg">▼</button><div></div>
+                    </div>`;
+                currentGame = new SnakeGame();
+            } else if (gameKey === 'pong') {
+                titleEl.innerHTML = `<i class="fa-solid fa-table-tennis-paddle-ball text-cyan-500"></i> <span>פונג / הוקי</span>`;
+                instructionsEl.innerText = "זקוף את המטקה בחצים למעלה/למטה!";
+                mobileCtrls.classList.add('hidden');
+                currentGame = new PongGame();
+            } else if (gameKey === 'breakout') {
+                titleEl.innerHTML = `<i class="fa-solid fa-cubes text-rose-500"></i> <span>שבור את הבלוקים</span>`;
+                instructionsEl.innerText = "הזז את המחבט שמאלה וימינה כדי להקפיץ את הכדור!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">◄ שמאלה</button>
+                    <button ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">ימינה ►</button>`;
+                currentGame = new BreakoutGame();
+            } else if (gameKey === 'flappy') {
+                titleEl.innerHTML = `<i class="fa-solid fa-dove text-yellow-500"></i> <span>פלאפי בירד</span>`;
+                instructionsEl.innerText = "לחץ רווח או נגע במסך כדי לעופף בין הצינורות!";
+                mobileCtrls.classList.add('hidden');
+                currentGame = new FlappyGame();
+            } else if (gameKey === 'tetris') {
+                titleEl.innerHTML = `<i class="fa-solid fa-shapes text-indigo-500"></i> <span>טטריס</span>`;
+                instructionsEl.innerText = "חצים: ימין/שמאל להזזה, למעלה לסובב, למטה להנחית במהירות!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button onclick="currentGame.move(-1)" class="flex-1 py-3 bg-slate-800 rounded-xl">◄</button>
+                    <button onclick="currentGame.rotate()" class="flex-1 py-3 bg-indigo-600 rounded-xl font-bold">🔄 סובב</button>
+                    <button onclick="currentGame.move(1)" class="flex-1 py-3 bg-slate-800 rounded-xl">►</button>
+                    <button onclick="currentGame.drop()" class="flex-1 py-3 bg-slate-800 rounded-xl">▼</button>`;
+                currentGame = new TetrisGame();
+            } else if (gameKey === 'invaders') {
+                titleEl.innerHTML = `<i class="fa-solid fa-spaghetti-monster-flying text-teal-500"></i> <span>פולשי החלל</span>`;
+                instructionsEl.innerText = "זז בחצים ימין ושמאל, יורה במקש רווח!";
+                mobileCtrls.classList.add('flex');
+                mobileCtrls.innerHTML = `
+                    <button ontouchstart="keys['ArrowLeft']=true" ontouchend="keys['ArrowLeft']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">◄ שמאלה</button>
+                    <button ontouchstart="keys['Space']=true" ontouchend="keys['Space']=false" class="flex-1 py-3 bg-teal-600 text-white rounded-xl font-bold">🔥 ירי</button>
+                    <button ontouchstart="keys['ArrowRight']=true" ontouchend="keys['ArrowRight']=false" class="flex-1 py-3 bg-slate-800 text-white rounded-xl">ימינה ►</button>`;
+                currentGame = new InvadersGame();
+            } else if (gameKey === 'simon') {
+                titleEl.innerHTML = `<i class="fa-solid fa-brain text-pink-500"></i> <span>סיימון (זיכרון צלילים)</span>`;
+                instructionsEl.innerText = "זכור את סדר האורות והצלילים ולחץ לפי הסדר!";
+                mobileCtrls.classList.add('hidden');
+                currentGame = new SimonGame();
+            } else if (gameKey === 'connect4') {
+                titleEl.innerHTML = `<i class="fa-solid fa-border-all text-blue-500"></i> <span>ארבע בשורה</span>`;
+                instructionsEl.innerText = "לחץ על הטור שברצונך להפיל בו אסימון. צור רצף של 4 לנצחון!";
+                mobileCtrls.classList.add('hidden');
+                currentGame = new Connect4Game();
+            }
+
+            currentGame.init();
+            gameLoop();
+        }
+
+        // Helper to convert click/touch coords relative to Canvas internal resolution
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+
+        // ==========================================
+        // GAME CLASSES IMPLEMENTATION
+        // ==========================================
+
+        class SpinnerArenaGame {
+            init() {
+                this.arenaRadius = Math.min(canvas.width, canvas.height) * 0.4;
+                this.cx = canvas.width / 2;
+                this.cy = canvas.height / 2;
+                this.score = 0;
+                this.isGameOver = false;
+
+                this.player = {
+                    x: this.cx - 60,
+                    y: this.cy,
+                    vx: 0,
+                    vy: 0,
+                    radius: 28,
+                    angle: 0,
+                    color: '#10b981',
+                    accel: 0.65
+                };
+
+                this.enemies = [];
+                this.spawnWave(2);
+            }
+
+            spawnWave(count) {
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = Math.random() * (this.arenaRadius - 80) + 30;
+                    this.enemies.push({
+                        x: this.cx + Math.cos(angle) * dist,
+                        y: this.cy + Math.sin(angle) * dist,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        radius: 26,
+                        angle: 0,
+                        color: ['#ef4444', '#f59e0b', '#a855f7', '#ec4899'][Math.floor(Math.random() * 4)],
+                        speed: 0.35 + Math.random() * 0.25
+                    });
+                }
+            }
+
+            update() {
+                if (this.isGameOver) return;
+
+                if (keys['ArrowLeft'] || keys['KeyA']) this.player.vx -= this.player.accel;
+                if (keys['ArrowRight'] || keys['KeyD']) this.player.vx += this.player.accel;
+                if (keys['ArrowUp'] || keys['KeyW']) this.player.vy -= this.player.accel;
+                if (keys['ArrowDown'] || keys['KeyS']) this.player.vy += this.player.accel;
+
+                if (keys['Space']) {
+                    this.player.vx *= 1.25;
+                    this.player.vy *= 1.25;
+                    keys['Space'] = false;
+                    playSound('shoot');
+                }
+
+                this.player.x += this.player.vx;
+                this.player.y += this.player.vy;
+                this.player.vx *= 0.92;
+                this.player.vy *= 0.92;
+                this.player.angle += (Math.hypot(this.player.vx, this.player.vy) + 2) * 0.08;
+
+                const playerDist = Math.hypot(this.player.x - this.cx, this.player.y - this.cy);
+                if (playerDist > this.arenaRadius) {
+                    this.isGameOver = true;
+                    playSound('explosion');
+                    showOverlay("עפת מהזירה!", `הפלת ${this.score / 200} ספינרים יריבים! ניקוד: ${this.score}`);
+                    return;
+                }
+
+                for (let i = this.enemies.length - 1; i >= 0; i--) {
+                    const e = this.enemies[i];
+                    
+                    const dx = this.player.x - e.x;
+                    const dy = this.player.y - e.y;
+                    const len = Math.hypot(dx, dy) || 1;
+                    e.vx += (dx / len) * e.speed;
+                    e.vy += (dy / len) * e.speed;
+
+                    e.x += e.vx;
+                    e.y += e.vy;
+                    e.vx *= 0.91;
+                    e.vy *= 0.91;
+                    e.angle += (Math.hypot(e.vx, e.vy) + 2) * 0.08;
+
+                    const distP = Math.hypot(this.player.x - e.x, this.player.y - e.y);
+                    if (distP < this.player.radius + e.radius) {
+                        const nx = (e.x - this.player.x) / (distP || 1);
+                        const ny = (e.y - this.player.y) / (distP || 1);
+
+                        const pImpulse = Math.hypot(this.player.vx, this.player.vy) + 6;
+                        e.vx += nx * pImpulse * 1.5;
+                        e.vy += ny * pImpulse * 1.5;
+                        this.player.vx -= nx * 4;
+                        this.player.vy -= ny * 4;
+                        playSound('explosion');
+                    }
+
+                    const eDist = Math.hypot(e.x - this.cx, e.y - this.cy);
+                    if (eDist > this.arenaRadius) {
+                        this.enemies.splice(i, 1);
+                        this.score += 200;
+                        updateScore(this.score);
+                        playSound('score');
+                    }
+                }
+
+                if (this.enemies.length === 0) {
+                    this.spawnWave(Math.min(2 + Math.floor(this.score / 400), 6));
+                }
+            }
+
+            drawSpinnerBody(x, y, radius, angle, mainColor, centerColor) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+
+                for (let i = 0; i < 3; i++) {
+                    ctx.rotate((Math.PI * 2) / 3);
+                    ctx.fillStyle = mainColor;
+                    ctx.beginPath();
+                    ctx.arc(0, -radius * 1.3, radius * 0.65, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#0f172a';
+                    ctx.beginPath();
+                    ctx.arc(0, -radius * 1.3, radius * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = mainColor;
+                    ctx.fillRect(-radius * 0.3, -radius * 1.3, radius * 0.6, radius * 1.3);
+                }
+
+                ctx.fillStyle = centerColor || '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(0, 0, radius * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            draw() {
+                ctx.fillStyle = '#030712';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#111827';
+                ctx.beginPath();
+                ctx.arc(this.cx, this.cy, this.arenaRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 10;
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(this.cx, this.cy, this.arenaRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                this.enemies.forEach(e => {
+                    this.drawSpinnerBody(e.x, e.y, e.radius, e.angle, e.color, '#f59e0b');
+                });
+
+                this.drawSpinnerBody(this.player.x, this.player.y, this.player.radius, this.player.angle, this.player.color, '#67e8f9');
+            }
+        }
+
+        class NinjaStarsGame {
+            init() {
+                this.player = { x: canvas.width / 2, y: canvas.height - 50, speed: 7 };
+                this.stars = [];
+                this.enemies = [];
+                this.starsBg = Array.from({ length: 40 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 1 }));
+                this.score = 0;
+                this.spawnTimer = 0;
+                this.isGameOver = false;
+                this.lastShot = 0;
+            }
+            update() {
+                if (this.isGameOver) return;
+                if ((keys['ArrowLeft'] || keys['KeyA']) && this.player.x > 30) this.player.x -= this.player.speed;
+                if ((keys['ArrowRight'] || keys['KeyD']) && this.player.x < canvas.width - 30) this.player.x += this.player.speed;
+
+                if (keys['Space']) {
+                    const now = Date.now();
+                    if (now - this.lastShot > 200) {
+                        this.stars.push({ x: this.player.x, y: this.player.y - 15, vy: -12, angle: 0 });
+                        this.lastShot = now;
+                        playSound('shoot');
+                    }
+                }
+
+                this.starsBg.forEach(s => { s.y += 1; if (s.y > canvas.height) s.y = 0; });
+
+                for (let i = this.stars.length - 1; i >= 0; i--) {
+                    const st = this.stars[i];
+                    st.y += st.vy;
+                    st.angle += 0.3;
+                    if (st.y < -30) this.stars.splice(i, 1);
+                }
+
+                this.spawnTimer++;
+                if (this.spawnTimer > 40) {
+                    this.spawnTimer = 0;
+                    this.enemies.push({ x: Math.random() * (canvas.width - 60) + 30, y: -40, radius: 22, vx: (Math.random() - 0.5) * 3, vy: Math.random() * 2 + 2 });
+                }
+
+                for (let i = this.enemies.length - 1; i >= 0; i--) {
+                    const e = this.enemies[i];
+                    e.x += e.vx; e.y += e.vy;
+                    if (e.x < e.radius || e.x > canvas.width - e.radius) e.vx *= -1;
+
+                    for (let j = this.stars.length - 1; j >= 0; j--) {
+                        const st = this.stars[j];
+                        if (Math.hypot(st.x - e.x, st.y - e.y) < e.radius + 12) {
+                            this.stars.splice(j, 1);
+                            this.enemies.splice(i, 1);
+                            this.score += 150;
+                            updateScore(this.score);
+                            playSound('explosion');
+                            break;
+                        }
+                    }
+
+                    if (e && e.y > canvas.height + 40) {
+                        this.enemies.splice(i, 1);
+                    } else if (e && Math.hypot(e.x - this.player.x, e.y - this.player.y) < e.radius + 20) {
+                        this.isGameOver = true;
+                        playSound('explosion');
+                        showOverlay("כוכב האויב פגע בך!", `ניקוד נינג'ה סופי: ${this.score}`);
+                    }
+                }
+            }
+            draw() {
+                ctx.fillStyle = '#090d16'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                this.starsBg.forEach(s => ctx.fillRect(s.x, s.y, s.size, s.size));
+
+                ctx.fillStyle = '#8b5cf6';
+                ctx.beginPath(); ctx.arc(this.player.x, this.player.y, 20, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#c084fc';
+                ctx.fillRect(this.player.x - 12, this.player.y - 6, 24, 12);
+
+                this.stars.forEach(st => {
+                    ctx.save();
+                    ctx.translate(st.x, st.y);
+                    ctx.rotate(st.angle);
+                    ctx.fillStyle = '#e0e7ff';
+                    for (let l = 0; l < 4; l++) {
+                        ctx.rotate(Math.PI / 2);
+                        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-5, -16); ctx.lineTo(0, -22); ctx.lineTo(5, -16); ctx.closePath(); ctx.fill();
+                    }
+                    ctx.restore();
+                });
+
+                this.enemies.forEach(e => {
+                    ctx.fillStyle = '#f43f5e';
+                    ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2); ctx.fill();
+                    ctx.strokeStyle = '#fb7185'; ctx.lineWidth = 3; ctx.stroke();
+                });
+            }
+        }
+
+        class WrestlingGame {
+            init() {
+                this.ringRadius = Math.min(canvas.width, canvas.height) * 0.38;
+                this.p1 = { x: canvas.width / 2 - 60, y: canvas.height / 2, radius: 24, vx: 0, vy: 0, color: '#3b82f6' };
+                this.p2 = { x: canvas.width / 2 + 60, y: canvas.height / 2, radius: 24, vx: 0, vy: 0, color: '#ef4444' };
+                this.score = 0; this.isGameOver = false; this.pushCooldown = false;
+            }
+            update() {
+                if (this.isGameOver) return;
+                const center = { x: canvas.width / 2, y: canvas.height / 2 };
+
+                if (keys['Space'] && !this.pushCooldown) {
+                    const angle = Math.atan2(this.p2.y - this.p1.y, this.p2.x - this.p1.x);
+                    this.p1.vx += Math.cos(angle) * 9;
+                    this.p1.vy += Math.sin(angle) * 9;
+                    this.pushCooldown = true;
+                    playSound('shoot');
+                    setTimeout(() => { this.pushCooldown = false; }, 300);
+                }
+
+                const aiAngle = Math.atan2(this.p1.y - this.p2.y, this.p1.x - this.p2.x);
+                this.p2.vx += Math.cos(aiAngle) * 0.25;
+                this.p2.vy += Math.sin(aiAngle) * 0.25;
+
+                this.p1.x += this.p1.vx; this.p1.y += this.p1.vy;
+                this.p2.x += this.p2.vx; this.p2.y += this.p2.vy;
