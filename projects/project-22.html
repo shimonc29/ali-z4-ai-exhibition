@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק סנייק - רמות והשהייה</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            color: #4CAF50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .score-board {
+            display: flex;
+            gap: 20px;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            background: #2a2a2a;
+            padding: 8px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 4px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #111;
+        }
+
+        canvas {
+            display: block;
+            background-color: #111;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .overlay h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .overlay p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+            margin: 8px;
+            min-width: 200px;
+        }
+
+        .btn:hover {
+            background-color: #43A047;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #22bf5b;
+        }
+
+        .controls-hint {
+            margin-top: 15px;
+            color: #888;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>משחק סנייק</h1>
+    
+    <div class="score-board">
+        <div>ניקוד: <span id="currentScore">0</span></div>
+        <div>שיא: <span id="highScore">0</span></div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        
+        <!-- תפריט בחירת רמות -->
+        <div id="menuOverlay" class="overlay">
+            <h2>בחר רמת משחק</h2>
+            <button class="btn" onclick="startGame('classic')">רמה קלאסית (התנגשות בקירות)</button>
+            <button class="btn" onclick="startGame('ghost')">רמה חופשית (מעבר דרך קירות)</button>
+        </div>
+
+        <!-- מסך השהייה (Pause) -->
+        <div id="pauseOverlay" class="overlay" style="display: none;">
+            <h2 style="color: #ffeb3b;">המשחק מושהה</h2>
+            <p>לחץ על מקש הרווח כדי להמשיך</p>
+        </div>
+
+        <!-- תפריט סיום משחק -->
+        <div id="gameOverOverlay" class="overlay" style="display: none;">
+            <h2 style="color: #ff5252;">המשחק נגמר!</h2>
+            <p>הניקוד שלך: <span id="finalScore">0</span></p>
+            <div>
+                <button class="btn" onclick="showMenu()">תפריט ראשי</button>
+                <a id="whatsappBtn" class="btn btn-whatsapp" href="#" target="_blank">
+                    שתף בוואטסאפ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-hint">
+        השתמש בחיצי המקלדת לשליטה | מקש רווח להשהייה/המשך
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
+
+        let snake = [];
+        let food = { x: 5, y: 5 };
+        let dx = 1;
+        let dy = 0;
+        let score = 0;
+        let highScore = localStorage.getItem("snakeHighScore") || 0;
+        let gameInterval = null;
+        let changingDirection = false;
+        let currentMode = 'classic';
+        let isPlaying = false;
+        let isPaused = false;
+
+        document.getElementById("highScore").innerText = highScore;
+
+        function showMenu() {
+            clearInterval(gameInterval);
+            isPlaying = false;
+            isPaused = false;
+            document.getElementById("gameOverOverlay").style.display = "none";
+            document.getElementById("pauseOverlay").style.display = "none";
+            document.getElementById("menuOverlay").style.display = "flex";
+        }
+
+        function startGame(mode) {
+            currentMode = mode;
+            isPlaying = true;
+            isPaused = false;
+            document.getElementById("menuOverlay").style.display = "none";
+            document.getElementById("gameOverOverlay").style.display = "none";
+            document.getElementById("pauseOverlay").style.display = "none";
+
+            snake = [
+                { x: 10, y: 10 },
+                { x: 9, y: 10 },
+                { x: 8, y: 10 }
+            ];
+            dx = 1;
+            dy = 0;
+            score = 0;
+            document.getElementById("currentScore").innerText = score;
+            spawnFood();
+            
+            if (gameInterval) clearInterval(gameInterval);
+            let speed = (currentMode === 'ghost') ? 110 : 130;
+            gameInterval = setInterval(gameLoop, speed);
+        }
+
+        function togglePause() {
+            if (!isPlaying) return; // לא להשהות אם המשחק לא התחיל או נגמר
+
+            isPaused = !isPaused;
+            const pauseOverlay = document.getElementById("pauseOverlay");
+
+            if (isPaused) {
+                clearInterval(gameInterval);
+                pauseOverlay.style.display = "flex";
+            } else {
+                pauseOverlay.style.display = "none";
+                let speed = (currentMode === 'ghost') ? 110 : 130;
+                gameInterval = setInterval(gameLoop, speed);
+            }
+        }
+
+        function spawnFood() {
+            food.x = Math.floor(Math.random() * tileCount);
+            food.y = Math.floor(Math.random() * tileCount);
+            
+            snake.forEach(part => {
+                if (part.x === food.x && part.y === food.y) {
+                    spawnFood();
+                }
+            });
+        }
+
+        function gameLoop() {
+            changingDirection = false;
+            
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            if (currentMode === 'ghost') {
+                if (head.x < 0) head.x = tileCount - 1;
+                else if (head.x >= tileCount) head.x = 0;
+
+                if (head.y < 0) head.y = tileCount - 1;
+                else if (head.y >= tileCount) head.y = 0;
+            } else {
+                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                    endGame();
+                    return;
+                }
+            }
+
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    endGame();
+                    return;
+                }
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById("currentScore").innerText = score;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("snakeHighScore", highScore);
+                    document.getElementById("highScore").innerText = highScore;
+                }
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+
+            draw();
+        }
+
+        function draw() {
+            ctx.fillStyle = "#111";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // ציור אוכל
+            ctx.fillStyle = "#ff5252";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#ff5252";
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+            ctx.shadowBlur = 0;
+
+            // ציור נחש
+            snake.forEach((part, index) => {
+                ctx.fillStyle = index === 0 ? "#4CAF50" : "#66BB6A";
+                ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
+            });
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            isPlaying = false;
+            document.getElementById("finalScore").innerText = score;
+            
+            const whatsappText = encodeURIComponent(`היי! שיחקתי בסנייק (רמת ${currentMode === 'classic' ? 'קלאסית' : 'חופשית'}) והגעתי לניקוד של ${score}! נסו אותי:`);
+            document.getElementById("whatsappBtn").href = `https://api.whatsapp.com/send?text=${whatsappText}`;
+            
+            document.getElementById("gameOverOverlay").style.display = "flex";
+        }
+
+        // האזנה למקשי המקלדת
+        document.addEventListener("keydown", e => {
+            // מקש רווח להשהייה/המשך
+            if (e.code === "Space") {
+                e.preventDefault(); // מונע גלילה של העמוד בלחיצה על רווח
+                togglePause();
+                return;
+            }
+
+            if (isPaused || !isPlaying || changingDirection) return;
+
+            if (e.key === "ArrowLeft" && dx === 0) {
+                dx = -1;
+                dy = 0;
+                changingDirection = true;
+            } else if (e.key === "ArrowRight" && dx === 0) {
+                dx = 1;
+                dy = 0;
+                changingDirection = true;
+            } else if (e.key === "ArrowUp" && dy === 0) {
+                dx = 0;
+                dy = -1;
+                changingDirection = true;
+            } else if (e.key === "ArrowDown" && dy === 0) {
+                dx = 0;
+                dy = 1;
+                changingDirection = true;
+            }
+        });
+    </script>
+</body>
+</html>
