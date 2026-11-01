@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון רעיונות תעסוקה וכרטיס אישי</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font - Heebo -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <!-- Header / Hero Section -->
+    <header class="gradient-bg text-white py-10 px-4 shadow-lg">
+        <div class="max-w-4xl mx-auto text-center space-y-4">
+            <div class="inline-block p-3 bg-white/10 rounded-full mb-2">
+                <i class="fa-solid fa-briefcase text-4xl text-amber-400"></i>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">הדרך שלך להצלחה ולפרנסה</h1>
+            <p class="text-base md:text-lg text-slate-200 max-w-2xl mx-auto">
+                הכנס את הפרטים והכישורים שלך, וקבל הצעות מותאמות אישית לרעיונות עבודה, טיפים מעשיים לבניית היכולת הפיננסית וכרטיס ביקור אישי שאפשר להדפיס או לשתף!
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto w-full px-4 py-8 space-y-10 flex-grow">
+
+        <!-- Form Section -->
+        <section class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100">
+            <h2 class="text-2xl font-bold text-slate-800 border-r-4 border-blue-600 pr-3 mb-6">
+                צעד ראשון: ספר לנו על עצמך
+            </h2>
+            <form id="profileForm" class="space-y-6" onsubmit="event.preventDefault(); generateIdeas();">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="fullName" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fa-solid fa-user text-blue-600 ml-1"></i> שם מלא:
+                        </label>
+                        <input type="text" id="fullName" required placeholder="לדוגמה: ישראל ישראלי" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label for="contactInfo" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fa-solid fa-phone text-blue-600 ml-1"></i> טלפון / אימייל ליצירת קשר:
+                        </label>
+                        <input type="text" id="contactInfo" placeholder="לדוגמה: 050-1234567" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Profile Image Upload Section -->
+                <div>
+                    <label for="profileImageInput" class="block text-sm font-semibold text-slate-700 mb-2">
+                        <i class="fa-solid fa-image text-blue-600 ml-1"></i> הוסף תמונה / לוגו לכרטיס הביקור (אופציונלי):
+                    </label>
+                    <input type="file" id="profileImageInput" accept="image/*" onchange="previewImage(event)" 
+                        class="w-full px-4 py-2 bg-slate-50 rounded-xl border border-slate-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        <i class="fa-solid fa-star text-amber-500 ml-1"></i> במה אתה טוב? (בחר מהרשימה או הוסף):
+                    </label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="מחשבים" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">מחשבים וטכנולוגיה</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="ארגון" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">ארגון וסדר</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="עיצוב" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">עיצוב / אומנות</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="כתיבה" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">כתיבה ועריכה</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="הדרכה" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">הדרכה ולימוד</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="עבודת כפיים" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">עבודת כפיים / פיזית</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="צילום ווידאו" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">צילום ועריכת וידאו</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="תיקון ציוד" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">תיקון מוצרים וציוד</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="שיווק דיגיטלי" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">שיווק וניהול מדיה</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="מכירת ברד ומיצים" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">מכירת ברד ומיצים קרים</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="ניקוי מכוניות" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">ניקוי מכוניות פנימי וחיצוני</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" value="בייביסיטר ושמירה" class="skill-checkbox h-4 w-4 text-blue-600 rounded">
+                            <span class="text-sm">בייביסיטר ושמירה על ילדים</span>
+                        </label>
+                    </div>
+                    <input type="text" id="customSkills" placeholder="כישורים נוספים (לדוגמה: תיקונים קטנים, אנגלית ברמה גבוהה, בישול...)" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>צור רעיונות וכרטיס אישי</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Dynamic Output Section (Hidden by default) -->
+        <div id="outputSection" class="hidden space-y-10">
+
+            <!-- Dynamic Selected Skill Guide Section -->
+            <section id="dynamicGuideSection" class="hidden bg-amber-50 rounded-2xl shadow-md p-6 md:p-8 border border-amber-200 space-y-6">
+                <!-- Content generated dynamically based on choices -->
+            </section>
+
+            <!-- Popularity & Recommendations Section -->
+            <section class="bg-indigo-50/70 rounded-2xl shadow-md p-6 border border-indigo-100 space-y-3">
+                <h3 class="font-bold text-indigo-900 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-orange-500"></i> המלצות ומדד פופולריות לפי ביקוש (באחוזים)
+                </h3>
+                <p class="text-xs text-indigo-700">האחוזים מייצגים את רמת הביקוש והפופולריות של התחומים המובילים שנבחרו על ידי משתמשים:</p>
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-indigo-950 mb-1">
+                            <span>1. מכירת ברד, מיצים וחטיפים</span>
+                            <span class="text-orange-600 font-bold">94% פופולריות</span>
+                        </div>
+                        <div class="w-full bg-indigo-200/60 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full" style="width: 94%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-indigo-950 mb-1">
+                            <span>2. ניקוי ושטיפת מכוניות</span>
+                            <span class="text-amber-600 font-bold">88% פופולריות</span>
+                        </div>
+                        <div class="w-full bg-indigo-200/60 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-500 to-amber-500 h-full rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-indigo-950 mb-1">
+                            <span>3. בייביסיטר ושמירה על ילדים</span>
+                            <span class="text-blue-600 font-bold">82% פופולריות</span>
+                        </div>
+                        <div class="w-full bg-indigo-200/60 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-teal-500 to-blue-600 h-full rounded-full" style="width: 82%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-indigo-950 mb-1">
+                            <span>4. הוצאת כלבים וטיפול בחיות מחמד</span>
+                            <span class="text-emerald-600 font-bold">76% פופולריות</span>
+                        </div>
+                        <div class="w-full bg-indigo-200/60 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full" style="width: 76%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ideas Section -->
+            <section class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100 space-y-4">
+                <h2 class="text-2xl font-bold text-slate-800 border-r-4 border-amber-500 pr-3">
+                    רעיונות מותאמים עבורך להרווחת כסף (לחץ על רעיון להרחבה)
+                </h2>
+                <div id="ideasList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Ideas generated dynamically -->
+                </div>
+            </section>
+
+            <!-- Business Card Preview Section -->
+            <section class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100 space-y-4">
+                <h2 class="text-2xl font-bold text-slate-800 border-r-4 border-green-500 pr-3">
+                    כרטיס הביקור האישי שלך
+                </h2>
+                <div id="cardPreview" class="p-6 rounded-2xl bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-lg space-y-4 max-w-md mx-auto relative overflow-hidden">
+                    <div class="flex justify-between items-center gap-4">
+                        <div>
+                            <h3 id="cardName" class="text-2xl font-bold"></h3>
+                            <p id="cardContact" class="text-sm opacity-90 mt-1"></p>
+                        </div>
+                        <div id="cardImageContainer" class="w-16 h-16 rounded-full bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center flex-shrink-0">
+                            <i id="cardDefaultIcon" class="fa-solid fa-id-card text-2xl opacity-80"></i>
+                            <img id="cardImage" class="w-full h-full object-cover hidden" alt="תמונת פרופיל">
+                        </div>
+                    </div>
+                    <hr class="border-white/20">
+                    <div>
+                        <p class="text-xs font-semibold opacity-75 mb-1">תחומי התמחות ושירותים:</p>
+                        <p id="cardSkills" class="text-sm font-medium"></p>
+                    </div>
+                    
+                    <!-- Share Buttons -->
+                    <div class="pt-2 space-y-2">
+                        <button onclick="shareOnWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center space-x-2 space-x-reverse text-sm">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            <span>שתף כרטיס ביקור ב-WhatsApp</span>
+                        </button>
+                        <button onclick="shareAppOnWhatsApp()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center space-x-2 space-x-reverse text-sm">
+                            <i class="fa-solid fa-share-nodes text-base"></i>
+                            <span>שתף את האתר כולו לחברים ב-WhatsApp</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-sm mt-10">
+        <p>© כל הזכויות שמורות - כלי לתכנון עבודה והצלחה פיננסית</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let uploadedImageBase64 = null;
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    const cardImg = document.getElementById('cardImage');
+                    const defaultIcon = document.getElementById('cardDefaultIcon');
+                    cardImg.src = uploadedImageBase64;
+                    cardImg.classList.remove('hidden');
+                    defaultIcon.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        const skillGuides = {
+            'מכירת ברד ומיצים': {
+                title: 'מדריך מפורט: מכירת ברד ומיצים קרים',
+                icon: 'fa-glass-water',
+                details: '<b>איפה קונים ציוד?</b> מכונות ברד ביתיות/חצי-מקצועיות ניתן לקנות ברשתות חשמל (KSP, אייס) או להשכיר מחברות השכרת ציוד לאירועים.<br><b>תרכיז וכוסות:</b> ניתן לרכוש בחנויות מזון סיטונאיות או בשווקים. תרכיז עולה כ-25-40 ₪ לגלון ומספיק לעשרות כוסות.<br><b>מתי למכור?</b> בימי קיץ חמים, בפארקים או ליד אירועים בשעות אחה"כ.'
+            },
+            'ניקוי מכוניות': {
+                title: 'מדריך מפורט: ניקוי מכוניות פנימי וחיצוני',
+                icon: 'fa-car-wash',
+                details: '<b>ציוד נדרש:</b> שמפו לרכב, מטליות מיקרופייבר, דליים, שואב אבק וחומר לחידוש פלסטיק (ניתן לרכוש באייס/הום סנטר).<br><b>מתי למכור?</b> בימי שישי בבוקר או בסופי שבוע כשהרכבים בחניה.<br><b>תמחור:</b> 50-80 ₪ לשטיפה מלאה.'
+            }
+        };
+
+        function generateIdeas() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const contactInfo = document.getElementById('contactInfo').value.trim();
+            const customSkills = document.getElementById('customSkills').value.trim();
+
+            const checkedSkills = Array.from(document.querySelectorAll('.skill-checkbox:checked')).map(cb => cb.value);
+
+            if (customSkills) {
+                checkedSkills.push(customSkills);
+            }
+
+            // Update Business Card
+            document.getElementById('cardName').innerText = fullName || 'ישראל ישראלי';
+            document.getElementById('cardContact').innerText = contactInfo ? `ליצירת קשר: ${contactInfo}` : 'פרטי התקשרות יתווספו כאן';
+            document.getElementById('cardSkills').innerText = checkedSkills.length > 0 ? checkedSkills.join(', ') : 'מגוון שירותים ועבודות';
+
+            // Handle Dynamic Guide
+            const guideContainer = document.getElementById('dynamicGuideSection');
+            guideContainer.innerHTML = '';
+            let guideFound = false;
+
+            checkedSkills.forEach(skill => {
+                if (skillGuides[skill]) {
+                    guideFound = true;
+                    const guide = skillGuides[skill];
+                    const guideEl = document.createElement('div');
+                    guideEl.className = 'space-y-2 border-b border-amber-200 pb-4 last:border-b-0 last:pb-0';
+                    guideEl.innerHTML = `
+                        <h3 class="font-bold text-amber-900 text-lg flex items-center gap-2">
+                            <i class="fa-solid ${guide.icon} text-amber-600"></i> ${guide.title}
+                        </h3>
+                        <div class="text-sm text-amber-950 leading-relaxed">${guide.details}</div>
+                    `;
+                    guideContainer.appendChild(guideEl);
+                }
+            });
+
+            if (guideFound) {
+                guideContainer.classList.remove('hidden');
+            } else {
+                guideContainer.classList.add('hidden');
+            }
+
+            // Populate Ideas
+            const ideasList = document.getElementById('ideasList');
+            ideasList.innerHTML = '';
+
+            const defaultIdeas = [
+                {
+                    title: 'מכירת ברד ומיצים קרים',
+                    desc: 'הקמת דוכן ברד קטן בימים חמים בפארקים או באירועים קהילתיים.',
+                    when: 'מתי כדאי? בימי הקיץ החמים, אחה"כ ואירועים (16:00-19:00).',
+                    details: '<b>עלויות וציוד:</b> תרכיז ברד (כ-25-40 ₪ לגלון 4-5 ליטר), כוסות חד פעמיות וקשיות רחבות.<br><b>איפה קונים תרכיז?</b> בחנויות סיטונאיות למזון, שווקים מרכזיים, רשתות כמו הסטוק או חנויות לציוד ימי הולדת/אירועים.<br><b>טיפ להצלחה:</b> גבו 7-10 ₪ לכוס, כאשר העלות למנה היא כ-1.5 ₪ בלבד.'
+                },
+                {
+                    title: 'ניקוי מכוניות (חיצוני ופנימי)',
+                    desc: 'שירות שטיפת רכבים ידנית לפתחי הבתים בשכונה.',
+                    when: 'מתי כדאי? בימי שישי בבוקר, או בסופי שבוע כשהמכוניות בחניה.',
+                    details: '<b>ציוד נדרש:</b> שמפו לרכב, שני דליים, מטליות מיקרופייבר, שואב אבק נייד/הארכה, חומר לחידוש פלסטיק.<br><b>איפה קונים?</b> ברשתות עשה-זאת-בעצמך (אייס, הום סנטר) או סופרמרקטים.<br><b>מחירון מומלץ:</b> 50-80 ₪ לשטיפה חיצונית ופנימית מקיפה.'
+                },
+                {
+                    title: 'בייביסיטר ושמירה על ילדים',
+                    desc: 'מתן שירותי השגחה על ילדים בשכונה.',
+                    when: 'מתי כדאי? בשעות הערב או אחה"כ שההורים בעבודה/סידורים.',
+                    details: '<b>מה צריך?</b> אחריות, יכולת ליצור קשר טוב עם ילדים וסבלנות.<br><b>ערך מוסף:</b> הכנת משחקי חברה, פאזלים או דפי צביעה מראש להעברת הזמן בכיף.<br><b>תמחור:</b> 35-50 ₪ לשעה בהתאם לגיל ולמספר הילדים.'
+                },
+                {
+                    title: 'הוצאת כלבים וטיפול בחיות מחמד (Dog Walking)',
+                    desc: 'טיולים יומיים או האכלה והשגחה על חיות מחמד בזמן שהבעלים בעבודה או בחופשה.',
+                    when: 'מתי כדאי? בשעות הבוקר מוקדם, בצהריים ובשעות הערב.',
+                    details: '<b>מה צריך?</b> אהבה לחיות, רצועות ושקיות איסוף.<br><b>איך להשיג לקוחות?</b> פירסום בקבוצות וואטסאפ או פליירים בשכונה.<br><b>תמחור מומלץ:</b> 30-50 ₪ לטיול של חצי שעה.'
+                },
+                {
+                    title: 'שיעורים פרטיים ועזרה בשיעורי בית',
+                    desc: 'סיוע לתלמידים צעירים במקצועות כמו חשבון, אנגלית, או קריאה.',
+                    when: 'מתי כדאי? בשעות אחה"כ בתמיכות לאורך שנת הלימודים.',
+                    details: '<b>מה צריך?</b> סבלנות, חומרי לימוד בסיסיים, וידע טוב בחומר הספציפי.<br><b>איפה ללמד?</b> בבית התלמיד, בביתך או בספרייה עירונית.<br><b>תמחור מומלץ:</b> 50-90 ₪ לשעת לימוד.'
+                },
+                {
+                    title: 'סיוע בארגון וסידור הבית והמחסן',
+                    desc: 'עזרה למשפחות בסידור מחסנים, ארונות או הכנה למעבר דירה.',
+                    when: 'מתי כדאי? בסופי שבוע ובתקופות חגים.',
+                    details: '<b>ציוד נדרש:</b> קופסאות קרטון, שקיות אשפה חזקות, מדבקות לסיווג, ומטלית אבק.<br><b>איפה מוצאים ציוד?</b> קרטונים ניתן להשיג בחינם מאחורי מרכולים.<br><b>תמחור:</b> לפי שעה (40-60 ₪ לשעה) או לפי פרויקט.'
+                },
+                {
+                    title: 'הקלדת מסמכים והזנת נתונים',
+                    desc: 'המרת מסמכים בכתב יד לקבצי Word או Excel עבור סטודנטים או בעלי עסקים.',
+                    when: 'מתי כדאי? בשעות הפנאי מהבית דרך המחשב.',
+                    details: '<b>ציוד נדרש:</b> מחשב ותוכנת מעבד תמלילים.<br><b>תמחור:</b> לפי עמוד (10-20 ₪ לעמוד) או לפי שעה.'
+                },
+                {
+                    title: 'ניקוי חלונות ותריסים בבתים',
+                    desc: 'שירות ניקוי יסודי של חלונות, רשתות ותריסים בבתים פרטיים.',
+                    when: 'מתי כדאי? ימי שישי או לפני חגים (כמו פריחת הקיץ ופסח).',
+                    details: '<b>ציוד נדרש:</b> מנגב חלונות (סקוויג׳י), חומר לניקוי זכוכיות, מטליות מיקרופייבר ודלי.<br><b>תמחור מומלץ:</b> 30-50 ₪ לחלון או מחירון גלובלי לכל הבית.'
+                },
+                {
+                    title: 'השקיית עציצים וטיפול בגינות בזמן חופשה',
+                    desc: 'מתן שירותי השקייה ודאגה לעציצים וגינות כשהשכנים נוסעים לחופשה.',
+                    when: 'מתי כדאי? תקופות החופש הגדול, חגים וסופי שבוע.',
+                    details: '<b>מה צריך?</b> אחריות, הקפדה על זמני ההשקייה ואמינות.<br><b>תמחור מומלץ:</b> 30-50 ₪ לביקור יומי.'
+                },
+                {
+                    title: 'עזרה בגינון קל וכיסוח דשא',
+                    desc: 'עשביה, גריפת עלים, כיסוח דשא וסידור גינות פרטיות.',
+                    when: 'מתי כדאי? שעות הבוקר או אחה"כ הנעימות.',
+                    details: '<b>ציוד נדרש:</b> מגרפה, מזמרה, כפפות עבודה (ומכסחת אם יש ללקוח).<br><b>תמחור מומלץ:</b> 40-60 ₪ לשעה.'
+                },
+                {
+                    title: 'דוכן מכירת חפצי יד שנייה (יריד שכונתי)',
+                    desc: 'איסוף או סדר בחפצים יפים שאינם בשימוש ומכירתם ביריד שכונתי או בפארק.',
+                    when: 'מתי כדאי? בימי שישי בבוקר או באירועים קהילתיים.',
+                    details: '<b>ציוד נדרש:</b> שולחן מתקפל, מחצלת ושלטי מחיר קלילים.<br><b>רווח:</b> 100% רווח נקי ממוצרים שכבר קיימים בבית.'
+                },
+                {
+                    title: 'מכירת פופקורן וצמר גפן מתוק (שערות סבתא)',
+                    desc: 'הפעלת דוכן חטיפים מתוקים ומלוחים בימי הולדת או בפארקים.',
+                    when: 'מתי כדאי? אחה"כ, סופי שבוע ואירועים פרטיים.',
+                    details: '<b>ציוד:</b> מכונת פופקורן ביתית/סיר ייעודי, גרעיני תירס, שקיות פופקורן.<br><b>עלות מול רווח:</b> עלות חומרי הגלם נמוכה מאוד והרווח גבוה.'
+                },
+                {
+                    title: 'חלוקת פליירים ודפי מידע לעסקים',
+                    desc: 'חלוקת פרסומים בתיבות דואר או חלוקת גלויות לעסקים מקומיים.',
+                    when: 'מתי כדאי? בשעות הבוקר או אחה"כ.',
+                    details: '<b>מה צריך?</b> נעלי הליכה נוחות ואחריות אישית לוודא שהפליירים מגיעים ליעדם.<br><b>תמחור:</b> לפי כמות פליירים (לדוגמה 100-150 ₪ ל-1,000 פליירים).'
+                },
+                {
+                    title: 'עזרה בקניות וסידורים לקשישים או משפחות עסוקות',
+                    desc: 'עריכת קניות בסופרמרקט או איסוף חבילות מהדואר עבור שכנים.',
+                    when: 'מתי כדאי? במהלך השבוע לפי צורכי הלקוח.',
+                    details: '<b>מה צריך?</b> דיוק, הקפדה על קבלות ואמינות מלאה.<br><b>תמחור מומלץ:</b> 30-50 ₪ לכל משלוח/סידור.'
+                },
+                {
+                    title: 'סידור וקיפול כביסה בבתי לקוחות',
+                    desc: 'סיוע למשפחות עמוסות בקיפול כביסה וארגון הארונות.',
+                    when: 'מתי כדאי? בשעות אחה"כ והערב.',
+                    details: '<b>מה צריך?</b> ידע בקיפול מהיר ונקי, סדר וארגון.<br><b>תמחור מומלץ:</b> 40-50 ₪ לשעה.'
+                },
+                {
+                    title: 'צילום אירועים קטנים או מוצרים לעסקים',
+                    desc: 'צילום תמונות איכותיות במצלמה או בסמארטפון עבור ימי הולדת, מוצרים או דפי עסק.',
+                    when: 'מתי כדאי? לפי תיאום מראש מול הלקוח.',
+                    details: '<b>ציוד:</b> סמארטפון עם מצלמה איכותית / מצלמה ואינטואיציה זוויתית טובה.<br><b>תמחור:</b> 100-300 ₪ לאירוע/סשן צילום.'
+                },
+                {
+                    title: 'בנייה ועיצוב מצגות (PowerPoint / Canva)',
+                    desc: 'עיצוב מצגות לבית ספר, ימי הולדת, אירועים או להרצאות.',
+                    when: 'מתי כדאי? עבודה גמישה מהבית בלוח זמנים חופשי.',
+                    details: '<b>ציוד:</b> מחשב וגישה ל-Canva או PowerPoint.<br><b>תמחור:</b> 50-150 ₪ למצגת.'
+                },
+                {
+                    title: 'הרכבת רהיטים פשוטים (איקאה וכד\')',
+                    desc: 'סיוע בהרכבת מדפים, שידות וכיסאות מודולריים.',
+                    when: 'מתי כדאי? סופי שבוע ואחה"כ.',
+                    details: '<b>ציוד נדרש:</b> מברג, מברגה נטענת, פלס ופטיש קטן.<br><b>תמחור מומלץ:</b> 50-100 ₪ לרהיט קטן-בינוני.'
+                },
+                {
+                    title: 'ארגון וקיטלוג ספרייות ביתיות',
+                    desc: 'סידור ספרים לפי סופרים, נושאים או א\'-\' עבור חובבי קריאה ומשפחות.',
+                    when: 'מתי כדאי? בשעות הפנאי שקטות.',
+                    details: '<b>מה צריך?</b> אהבה לספרים, דיוק וסבלנות.<br><b>תמחור:</b> לפי פרויקט (150-300 ₪).'
+                },
+                {
+                    title: 'שירותי הגהה ותיקון שגיאות כתיב',
+                    desc: 'בדיקת טקסטים, עבודות או פליירים לפני הדפסה לוודא שאין שגיאות כתיב.',
+                    when: 'מתי כדאי? בזמן החופשי מהבית.',
+                    details: '<b>מה צריך?</b> עברית ברמה גבוהה מאוד ותשומת לב לפרטים הקטנים.<br><b>תמחור:</b> לפי עמוד או פרויקט.'
+                },
+                {
+                    title: 'איסוף ומחזור בקבוקים/פחיות',
+                    desc: 'איסוף בקבוקים ופחיות החייבים בפיקדון והחזרתם לרשתות השיווק.',
+                    when: 'מתי כדאי? בשעות אחה"כ או בסוף אירועים קהילתיים.',
+                    details: '<b>ציוד:</b> שקיות גדולות וחזקות.<br><b>רווח:</b> תשלום ישיר ומיידי במזומן מכל סופרמרקט.'
+                },
+                {
+                    title: 'אפייה ומכירת עוגיות ביתיות למאורעות',
+                    desc: 'אפיית עוגיות, מאפים או חלות ביתיות ומכירה לשכנים בהזמנה מראש.',
+                    when: 'מתי כדאי? ימי חמישי ושישי לקראת שבת.',
+                    details: '<b>מה צריך?</b> תנור ביתי, תבניות וידע באפייה.<br><b>תמחור:</b> לפי מארז (25-40 ₪ למארז עוגיות).'
+                },
+                {
+                    title: 'שיעורי עזר ביישומי מחשב ואינטרנט למבוגרים',
+                    desc: 'הדרכה סבלנית למבוגרים בשימוש בטלפון החכם, ב-WhatsApp או בזום.',
+                    when: 'מתי כדאי? בשעות הבוקר או אחה"כ.',
+                    details: '<b>מה צריך?</b> סבלנות רבה, יחסי אנוש מעולים ושליטה טובה בנייד/מחשב.<br><b>תמחור מומלץ:</b> 40-60 ₪ לשעה.'
+                },
+                {
+                    title: 'שירות משלוחים קטנים ברגל או באופניים',
+                    desc: 'העברת מעטפות, חבילות קטנות או אוכל בין שכנים/חנויות בשכונה.',
+                    when: 'מתי כדאי? במהלך יום העבודה או אחה"כ.',
+                    details: '<b>ציוד:</b> אופניים/קורקינט ותיק גב נוח.<br><b>תמחור:</b> 15-30 ₪ למשלוח קצר בשכונה.'
+                }
+            ];
+
+            defaultIdeas.forEach((idea, index) => {
+                const card = document.createElement('div');
+                card.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white transition card-hover space-y-2 cursor-pointer';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> ${idea.title}
+                        </h3>
+                        <i class="fa-solid fa-chevron-down text-slate-400 text-sm transition-transform duration-200" id="icon-${index}"></i>
+                    </div>
+                    <p class="text-sm text-slate-600">${idea.desc}</p>
+                    <p class="text-xs font-semibold text-blue-600 bg-blue-50 p-2 rounded-lg">${idea.when}</p>
+                    <div id="details-${index}" class="hidden pt-3 border-t border-slate-200 text-xs text-slate-700 leading-relaxed bg-amber-50/50 p-3 rounded-lg mt-2">
+                        ${idea.details}
+                    </div>
+                `;
+
+                // Toggle Details on click
+                card.addEventListener('click', () => {
+                    const detailsDiv = document.getElementById(`details-${index}`);
+                    const icon = document.getElementById(`icon-${index}`);
+                    const isHidden = detailsDiv.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        detailsDiv.classList.remove('hidden');
+                        icon.classList.add('rotate-180');
+                    } else {
+                        detailsDiv.classList.add('hidden');
+                        icon.classList.remove('rotate-180');
+                    }
+                });
+
+                ideasList.appendChild(card);
+            });
+
+            // Show output section
+            document.getElementById('outputSection').classList.remove('hidden');
+            
+            // Smooth scroll to results
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function shareOnWhatsApp() {
+            const name = document.getElementById('cardName').innerText;
+            const contact = document.getElementById('cardContact').innerText;
+            const skills = document.getElementById('cardSkills').innerText;
+
+            if (!name) return;
+
+            const text = `שלום! שמי ${name}.\nאני מציע את השירותים הבאים: ${skills}.\nלפרטים ליצירת קשר: ${contact}`;
+            const encodedText = encodeURIComponent(text);
+            window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+        }
+
+        function shareAppOnWhatsApp() {
+            const currentUrl = window.location.href;
+            const text = `היי! מצאתי אתר מצוין שפועל לעזור במציאת רעיונות לעבודה ולהרווחת כסף, ויודע ליצור כרטיס ביקור אישי. מומלץ לבדוק:\n${currentUrl}`;
+            const encodedText = encodeURIComponent(text);
+            window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+        }
+    </script>
+</body>
+</html>
