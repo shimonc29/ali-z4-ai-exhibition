@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English World - Grade 7</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Varela Round for Hebrew/English balance -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Varela Round', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Varela Round', sans-serif;
+        }
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-teal-50 to-indigo-50 min-h-screen text-gray-800 flex flex-col">
+
+    <!-- Navigation Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-teal-900 leading-tight">English World</h1>
+                    <span class="text-xs text-teal-600 font-medium">למידת אנגלית הדרגתית (החל מיסודי ועד כיתה ז')</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-6 space-x-reverse text-sm font-semibold">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="text-teal-700 hover:text-teal-900 transition pb-1 border-b-2 border-teal-600">ראשי</button>
+                <button onclick="switchTab('vocabulary')" id="nav-vocabulary" class="text-gray-600 hover:text-teal-700 transition pb-1 border-b-2 border-transparent">אוצר מילים</button>
+                <button onclick="switchTab('grammar')" id="nav-grammar" class="text-gray-600 hover:text-teal-700 transition pb-1 border-b-2 border-transparent">דקדוק</button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="text-gray-600 hover:text-teal-700 transition pb-1 border-b-2 border-transparent">חידון ובוחן</button>
+            </nav>
+            <div class="flex items-center bg-teal-50 px-3 py-1.5 rounded-full border border-teal-200">
+                <i class="fa-solid fa-star text-amber-500 ml-1.5"></i>
+                <span class="text-xs font-bold text-teal-900">נקודות: <span id="global-score">0</span></span>
+            </div>
+        </div>
+        <!-- Mobile Sub-navigation -->
+        <div class="flex md:hidden bg-white border-t border-gray-100 justify-around py-2 text-xs font-semibold">
+            <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="text-teal-700 flex flex-col items-center"><i class="fa-solid fa-house mb-1"><span>ראשי</span></i></button>
+            <button onclick="switchTab('vocabulary')" id="mob-nav-vocabulary" class="text-gray-500 flex flex-col items-center"><i class="fa-solid fa-book-open mb-1"><span>מילים</span></i></button>
+            <button onclick="switchTab('grammar')" id="mob-nav-grammar" class="text-gray-500 flex flex-col items-center"><i class="fa-solid fa-pen-nib mb-1"><span>דקדוק</span></i></button>
+            <button onclick="switchTab('quiz')" id="mob-nav-quiz" class="text-gray-500 flex flex-col items-center"><i class="fa-solid fa-gamepad mb-1"><span>חידון</span></i></button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
+
+        <!-- DASHBOARD TAB -->
+        <section id="tab-dashboard" class="space-y-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
+                <div class="relative z-10 max-w-xl">
+                    <span class="bg-white/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">בחירת רמה חדשה!</span>
+                    <h2 class="text-2xl md:text-3xl font-bold mt-2">לומדים אנגלית בהתאמה אישית (מרמת יסודי ועד כיתה ז')</h2>
+                    <p class="mt-2 text-teal-100 text-sm md:text-base leading-relaxed">
+                        עכשיו האתר כולל רמות קלות יותר למתחילים, לצד רמת כיתה ז' המתקדמת. בחרו את הרמה הנוחה לכם והתחילו להתקדם שלב אחר שלב!
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <button onclick="switchTab('vocabulary')" class="bg-white text-teal-800 font-bold px-5 py-2.5 rounded-xl shadow hover:bg-teal-50 transition transform active:scale-95 flex items-center text-sm">
+                            <i class="fa-solid fa-book-bookmark ml-2"></i> התחל לאמן מילים
+                        </button>
+                        <button onclick="switchTab('quiz')" class="bg-teal-800/40 border border-white/30 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-teal-800/60 transition transform active:scale-95 flex items-center text-sm">
+                            <i class="fa-solid fa-bolt ml-2 text-amber-300"></i> שחק בחידון מהיר
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access Cards -->
+            <h3 class="text-lg font-bold text-gray-800">בחר נושא לתרגול:</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Module 1 Card -->
+                <div onclick="switchTab('vocabulary')" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:bg-teal-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-900 group-hover:text-teal-700 transition">1. אוצר מילים (Vocabulary)</h4>
+                        <p class="text-gray-500 text-sm mt-2">כרטיסיות זיכרון אינטראקטיביות (Flashcards) עם מילים מתקדמות לכיתה ז' ותרגום לעברית.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-teal-600 font-semibold text-sm">
+                        <span>תרגל כעת</span>
+                        <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Module 2 Card -->
+                <div onclick="switchTab('grammar')" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-spell-check"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 transition">2. אזור הדקדוק (Grammar)</h4>
+                        <p class="text-gray-500 text-sm mt-2">הסברים קצרים וברורים על Present Simple, Past Simple, ופעלי עזר כמו Can/Must עם תרגילים.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-blue-600 font-semibold text-sm">
+                        <span>למד ותרגל דקדוק</span>
+                        <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Module 3 Card -->
+                <div onclick="switchTab('quiz')" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-900 group-hover:text-amber-700 transition">3. חידון טריוויה (Trivia Quiz)</h4>
+                        <p class="text-gray-500 text-sm mt-2">בחן את ההבנה שלך עם שאלות רב-ברירה (Multiple Choice), פידבק מיידי וצבירת ניקוד!</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-amber-600 font-semibold text-sm">
+                        <span>התחל בחידון</span>
+                        <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VOCABULARY TAB -->
+        <section id="tab-vocabulary" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <i class="fa-solid fa-book-open text-teal-600 ml-2"></i> מודול 1: כרטיסיות אוצר מילים (Vocabulary Builder)
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1">בחר רמת קושי ולחץ על הכרטיסייה כדי לראות את התרגום.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="flex bg-gray-100 p-1 rounded-xl">
+                        <button onclick="setVocabLevel('easy')" id="vocab-level-easy" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-teal-700 shadow-sm">רמה קלה (יסודי / ה'-ו')</button>
+                        <button onclick="setVocabLevel('grade7')" id="vocab-level-grade7" class="px-3 py-1 rounded-lg text-xs font-bold transition text-gray-600">רמת כיתה ז'</button>
+                    </div>
+                    <span id="vocab-counter" class="text-sm font-semibold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-xl">כרטיס 1 מתוך 6</span>
+                    <button onclick="resetVocab()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-xl text-sm font-medium transition flex items-center">
+                        <i class="fa-solid fa-rotate-right ml-1"></i> אפס
+                    </button>
+                </div>
+            </div>
+
+            <!-- Flashcard Container -->
+            <div class="flex flex-col items-center justify-center py-6">
+                <div class="w-full max-w-md h-72 perspective-1000 cursor-pointer" onclick="flipCard()">
+                    <div id="flashcard" class="relative w-full h-full duration-500 transform-style-3d shadow-xl rounded-3xl">
+                        <!-- Front Face (English) -->
+                        <div class="absolute inset-0 w-full h-full bg-white rounded-3xl border-2 border-teal-100 flex flex-col items-center justify-center p-6 backface-hidden">
+                            <span class="text-xs font-semibold text-teal-600 uppercase tracking-wider mb-2 bg-teal-50 px-3 py-1 rounded-full">מילה באנגלית</span>
+                            <h4 id="vocab-en" class="text-3xl font-extrabold text-gray-800 mt-2 text-center">Achievement</h4>
+                            <p id="vocab-pos" class="text-sm text-gray-400 mt-1 italic">noun (שם עצם)</p>
+                            <div class="mt-4 bg-gray-50 rounded-xl p-3 w-full border border-gray-100 text-center">
+                                <p id="vocab-example" class="text-xs text-gray-600">"Winning the competition was a great achievement."</p>
+                            </div>
+                            <span class="text-xs text-teal-500 font-medium mt-4 animate-pulse"><i class="fa-solid fa-hand-pointer ml-1"></i> לחץ להפיכת הכרטיסייה</span>
+                        </div>
+                        <!-- Back Face (Hebrew) -->
+                        <div class="absolute inset-0 w-full h-full bg-teal-600 text-white rounded-3xl flex flex-col items-center justify-center p-6 backface-hidden rotate-y-180">
+                            <span class="text-xs font-semibold text-teal-200 uppercase tracking-wider mb-2 bg-white/20 px-3 py-1 rounded-full">תרגום לעברית</span>
+                            <h4 id="vocab-he" class="text-3xl font-extrabold mt-2 text-center">הישג</h4>
+                            <p class="text-sm text-teal-100 mt-2">כל הכבוד! נסה לחשוב על משפט משלך.</p>
+                            <div class="mt-6 bg-white/10 rounded-xl p-3 w-full border border-white/20 text-center">
+                                <p id="vocab-example-he" class="text-xs text-teal-100">"הזכייה בתחרות הייתה הישג גדול."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flashcard Controls -->
+                <div class="flex items-center gap-4 mt-8">
+                    <button onclick="prevVocab()" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold px-5 py-2.5 rounded-xl shadow-sm transition flex items-center">
+                        <i class="fa-solid fa-chevron-right ml-2"></i> הקודם
+                    </button>
+                    <button onclick="nextVocab()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center">
+                        הבא <i class="fa-solid fa-chevron-left mr-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRAMMAR TAB -->
+        <section id="tab-grammar" class="hidden space-y-6">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                    <i class="fa-solid fa-pen-nib text-blue-600 ml-2"></i> מודול 2: אזור הדקדוק (Grammar Zone)
+                </h3>
+                <p class="text-sm text-gray-500 mt-1">בחר נושא דקדוקי ורמת קושי (כולל הקדמות רכות למתחילים).</p>
+            </div>
+
+            <!-- Grammar Topic Selector Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <button onclick="selectGrammarTopic('basics')" id="btn-grammar-basics" class="p-3 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition text-center flex items-center justify-center">
+                    <i class="fa-solid fa-seedling ml-2 text-emerald-600"></i> היכרות בסיסית (Be / Pronouns)
+                </button>
+                <button onclick="selectGrammarTopic('present')" id="btn-grammar-present" class="p-3 rounded-xl font-bold text-sm bg-blue-600 text-white shadow-md transition text-center flex items-center justify-center">
+                    <i class="fa-regular fa-clock ml-2"></i> Present Simple
+                </button>
+                <button onclick="selectGrammarTopic('past')" id="btn-grammar-past" class="p-3 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition text-center flex items-center justify-center">
+                    <i class="fa-solid fa-history ml-2"></i> Past Simple
+                </button>
+                <button onclick="selectGrammarTopic('modals')" id="btn-grammar-modals" class="p-3 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition text-center flex items-center justify-center">
+                    <i class="fa-solid fa-shield-halved ml-2"></i> Modals (Can/Must)
+                </button>
+            </div>
+
+            <!-- Grammar Content Card -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
+                <div id="grammar-content-area">
+                    <!-- Dynamic grammar info populated via JS -->
+                </div>
+
+                <!-- Interactive Grammar Exercise -->
+                <div class="border-t border-gray-100 pt-6 mt-6">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fa-solid fa-list-check text-teal-600 ml-2"></i> תרגול מהיר (Quick Practice):
+                    </h4>
+                    <div id="grammar-quiz-box" class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ TAB -->
+        <section id="tab-quiz" class="hidden space-y-6">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <i class="fa-solid fa-award text-amber-500 ml-2"></i> מודול 3: חידון טריוויה מקיף (Trivia Quiz)
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1">בחר רמת קושי לחידון ובחן את ההבנה שלך.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex bg-gray-100 p-1 rounded-xl">
+                        <button onclick="setQuizDifficulty('easy')" id="quiz-diff-easy" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-amber-700 shadow-sm">רמה קלה</button>
+                        <button onclick="setQuizDifficulty('normal')" id="quiz-diff-normal" class="px-3 py-1 rounded-lg text-xs font-bold transition text-gray-600">רמה מתקדמת (ז')</button>
+                    </div>
+                    <div class="bg-amber-50 text-amber-800 border border-amber-200 font-bold px-3 py-1.5 rounded-xl text-sm">
+                        שאלה <span id="quiz-current-num">1</span> מתוך <span id="quiz-total-num">5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div id="quiz-card-container" class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 max-w-2xl mx-auto space-y-6">
+                <!-- Question text -->
+                <div>
+                    <span id="quiz-category-badge" class="bg-teal-50 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full">אוצר מילים</span>
+                    <h4 id="quiz-question" class="text-lg md:text-xl font-bold text-gray-900 mt-3 leading-snug">טוען שאלה...</h4>
+                </div>
+
+                <!-- Options -->
+                <div id="quiz-options" class="space-y-3">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Feedback & Next Button Area -->
+                <div id="quiz-feedback-box" class="hidden pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div id="quiz-feedback-msg" class="font-bold text-base"></div>
+                    <button onclick="nextQuizQuestion()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition">
+                        השאלה הבאה <i class="fa-solid fa-arrow-left mr-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Results Screen (Hidden initially) -->
+        <div id="quiz-results-card" class="hidden bg-white rounded-2xl p-8 shadow-sm border border-gray-100 max-w-xl mx-auto text-center space-y-6">
+            <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-extrabold text-gray-900">החידון הסתיים בהצלחה!</h3>
+                <p class="text-gray-500 mt-1">כל הכבוד על המאמץ וההתמדה בלמידת האנגלית שלך.</p>
+            </div>
+            <div class="bg-teal-50 border border-teal-100 rounded-2xl p-4 max-w-xs mx-auto">
+                <span class="text-xs text-teal-600 font-semibold uppercase">הציון הסופי שלך</span>
+                <div id="final-score-display" class="text-3xl font-extrabold text-teal-900 mt-1">0 / 5</div>
+            </div>
+            
+            <!-- WhatsApp Share Button -->
+            <div class="pt-2">
+                <button onclick="shareToWhatsApp()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition flex items-center justify-center mx-auto text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg ml-2"></i> שתף את הציון בוואטסאפ
+                </button>
+            </div>
+
+            <button onclick="restartQuiz()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition">
+                <i class="fa-solid fa-rotate-right ml-2"></i> שחק שוב בחידון
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 mt-12 py-6 text-center text-xs text-gray-400">
+        <p>English World Platform • מותאם במיוחד לתלמידי כיתה ז' • פותח באהבה ללמידה חווייתית</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Global State
+        let currentScore = 0;
+
+        // Navigation Switcher
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'vocabulary', 'grammar', 'quiz'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const navBtn = document.getElementById(`nav-${t}`);
+                if(navBtn) {
+                    navBtn.className = t === tabId ? "text-teal-700 hover:text-teal-900 transition pb-1 border-b-2 border-teal-600 font-semibold" : "text-gray-600 hover:text-teal-700 transition pb-1 border-b-2 border-transparent";
+                }
+                const mobBtn = document.getElementById(`mob-nav-${t}`);
+                if(mobBtn) {
+                    mobBtn.className = t === tabId ? "text-teal-700 flex flex-col items-center font-bold" : "text-gray-500 flex flex-col items-center";
+                }
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add Score Helper
+        function addScore(points) {
+            currentScore += points;
+            document.getElementById('global-score').innerText = currentScore;
+        }
+
+        /* --- MODULE 1: VOCABULARY DATA & LOGIC --- */
+        const vocabLevels = {
+            easy: [
+                { en: "Apple", he: "תפוח", pos: "noun (שם עצם)", example: "I eat a fresh apple every day.", exampleHe: "אני אוכל תפוח טרי בכל יום." },
+                { en: "Friend", he: "חבר / חברה", pos: "noun (שם עצם)", example: "She is my best friend at school.", exampleHe: "היא החברה הכי טובה שלי בבית הספר." },
+                { en: "School", he: "בית ספר", pos: "noun (שם עצם)", example: "We go to school in the morning.", exampleHe: "אנחנו הולכים לבית הספר בבוקר." },
+                { en: "Happy", he: "שמח / שמחה", pos: "adjective (תואר שם)", example: "The children are very happy today.", exampleHe: "הילדים מאוד שמחים היום." },
+                { en: "Book", he: "ספר", pos: "noun (שם עצם)", example: "Reading a book is a lot of fun.", exampleHe: "לקרוא ספר זה כיף גדול." },
+                { en: "Water", he: "מים", pos: "noun (שם עצם)", example: "It is important to drink water.", exampleHe: "חשוב לשתות מים." }
+            ],
+            grade7: [
+                { en: "Achievement", he: "הישג", pos: "noun (שם עצם)", example: "Winning the competition was a great achievement.", exampleHe: "הזכייה בתחרות הייתה הישג גדול." },
+                { en: "Curious", he: "סקרן / סקרנית", pos: "adjective (תואר שם)", example: "The curious student asked many interesting questions.", exampleHe: "התלמיד הסקרן שאל שאלות מעניינות רבות." },
+                { en: "Environment", he: "סביבה", pos: "noun (שם עצם)", example: "We must protect our environment by recycling plastic.", exampleHe: "עלינו להגן על הסביבה שלנו באמצעות מיחזור פלסטיק." },
+                { en: "Improve", he: "לשפר / להשתפר", pos: "verb (פועל)", example: "Reading books every day helps you improve your English.", exampleHe: "קריאת ספרים בכל יום עוזרת לך לשפר את האנגלית שלך." },
+                { en: "Confident", he: "בטוח בעצמו", pos: "adjective (תואר שם)", example: "She felt confident before giving her presentation.", exampleHe: "היא הרגישה בטוחה בעצמה לפני שהציגה את המצגת שלה." },
+                { en: "Discover", he: "לגלוֹת", pos: "verb (פועל)", example: "Scientists discover new facts about space every year.", exampleHe: "מדענים מגלים עובדות חדשות על החלל מדי שנה." },
+                { en: "Encourage", he: "לעודד", pos: "verb (פועל)", example: "Teachers always encourage students to do their best.", exampleHe: "מורים תמיד מעודדים תלמידים לעשות את המיטב שלהם." },
+                { en: "Valuable", he: "בעל ערך / יקר ערך", pos: "adjective (תואר שם)", example: "Time is our most valuable resource.", exampleHe: "הזמן הוא המשאב היקר ביותר שלנו." }
+            ]
+        };
+
+        let activeVocabLevel = 'easy';
+        let currentVocabIndex = 0;
+        let isCardFlipped = false;
+
+        function setVocabLevel(level) {
+            activeVocabLevel = level;
+            currentVocabIndex = 0;
+            if(level === 'easy') {
+                document.getElementById('vocab-level-easy').className = "px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-teal-700 shadow-sm";
+                document.getElementById('vocab-level-grade7').className = "px-3 py-1 rounded-lg text-xs font-bold transition text-gray-600";
+            } else {
+                document.getElementById('vocab-level-easy').className = "px-3 py-1 rounded-lg text-xs font-bold transition text-gray-600";
+                document.getElementById('vocab-level-grade7').className = "px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-teal-700 shadow-sm";
+            }
+            updateVocabCard();
+        }
+
+        function updateVocabCard() {
+            const vocabData = vocabLevels[activeVocabLevel];
+            const item = vocabData[currentVocabIndex];
+            document.getElementById('vocab-en').innerText = item.en;
+            document.getElementById('vocab-he').innerText = item.he;
+            document.getElementById('vocab-pos').innerText = item.pos;
+            document.getElementById('vocab-example').innerText = `"${item.example}"`;
+            document.getElementById('vocab-example-he').innerText = `"${item.exampleHe}"`;
+            document.getElementById('vocab-counter').innerText = `כרטיס ${currentVocabIndex + 1} מתוך ${vocabData.length}`;
+            
+            if(isCardFlipped) {
+                flipCard();
+            }
+        }
+
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            if(isCardFlipped) {
+                card.style.transform = 'rotateY(0deg)';
+                isCardFlipped = false;
+            } else {
+                card.style.transform = 'rotateY(180deg)';
+                isCardFlipped = true;
+                addScore(1);
+            }
+        }
+
+        function nextVocab() {
+            const vocabData = vocabLevels[activeVocabLevel];
+            currentVocabIndex = (currentVocabIndex + 1) % vocabData.length;
+            updateVocabCard();
+        }
+
+        function prevVocab() {
+            const vocabData = vocabLevels[activeVocabLevel];
+            currentVocabIndex = (currentVocabIndex - 1 + vocabData.length) % vocabData.length;
+            updateVocabCard();
+        }
+
+        function resetVocab() {
+            currentVocabIndex = 0;
+            updateVocabCard();
+        }
+
+        /* --- MODULE 2: GRAMMAR DATA & LOGIC --- */
+        const grammarData = {
+            basics: {
+                title: "היכרות בסיסית: כינויי גוף ופועל To Be",
+                desc: "הבסיס לכל משפט באנגלית מתחיל בכינויי הגוף (אני, אתה, הוא) ופועל העזר To Be (להיות).",
+                rules: [
+                    "<b>כינויי גוף (Pronouns):</b> I (אני), You (אתה/את), He (הוא), She (היא), It (זה/חי/דומם), We (אנחנו), They (הם/הן).",
+                    "<b>פועל To Be בהווה:</b> I am, You/We/They are, He/She/It is."
+                ],
+                examples: [
+                    "I am a student. (אני תלמיד)",
+                    "They are happy friends. (הם חברים שמחים)"
+                ],
+                exercise: {
+                    question: "Choose the correct form: Sarah _______ a smart girl.",
+                    options: [
+                        { text: "am", correct: false },
+                        { text: "are", correct: false },
+                        { text: "is", correct: true }
+                    ],
+                    explanation: "Correct! Sarah היא גוף שלישי יחיד (She), ולכן מקבלת is."
+                }
+            },
+            present: {
+                title: "Present Simple (הווה פשוט)",
+                desc: "משתמשים בהווה פשוט כדי לתאר פעולות שגרתיות, עובדות קבועות או הרגלים.",
+                rules: [
+                    "<b>מבנה חיובי:</b> I/You/We/They + פועל בבסיס (לדוגמה: play).",
+                    "<b>גוף שלישי יחיד (He/She/It):</b> מוסיפים S או ES לפועל (לדוגמה: plays, goes).",
+                    "<b>מילות מפתח נפוצות:</b> always, usually, every day, sometimes, never."
+                ],
+                examples: [
+                    "I play football on Mondays. (אני משחק כדורגל בימי שני)",
+                    "She speaks English very well. (היא מדברת אנגלית מצוין)"
+                ],
+                exercise: {
+                    question: "Choose the correct form: My brother _______ to school every morning.",
+                    options: [
+                        { text: "walk", correct: false },
+                        { text: "walks", correct: true },
+                        { text: "walking", correct: false }
+                    ],
+                    explanation: "Correct! 'My brother' הוא גוף שלישי יחיד (He), ולכן מוסיפים s לפועל."
+                }
+            },
+            past: {
+                title: "Past Simple (עבר פשוט)",
+                desc: "משתמשים בעבר פשוט כדי לתאר פעולות שהתרחשו והסתיימו בעבר בזמן מסוים.",
+                rules: [
+                    "<b>פעלים רגילים:</b> מוסיפים ed בסוף הפועל (לדוגמה: play -> played).",
+                    "<b>פעלים חריגים (Irregular Verbs):</b> משנים את צורתם לחלוטין (לדוגמה: go -> went, see -> saw).",
+                    "<b>מילות מפתח נפוצות:</b> yesterday, last week, in 2020, ago."
+                ],
+                examples: [
+                    "They visited their grandparents yesterday. (הם ביקרו את סבא וסבתא אתמול)",
+                    "I went to the cinema last night. (הלכתי לקולנוע אתמול בערב)"
+                ],
+                exercise: {
+                    question: "Choose the correct past form: We _______ a great movie last weekend.",
+                    options: [
+                        { text: "see", correct: false },
+                        { text: "sees", correct: false },
+                        { text: "saw", correct: true }
+                    ],
+                    explanation: "Correct! הפועל see הוא פועל חריג, והצורה שלו בעבר هي saw."
+                }
+            },
+            modals: {
+                title: "Modals: Can & Must (פעלי עזר)",
+                desc: "פעלי עזר המשמשים להבעת יכולת (can) או חובה והכרח (must).",
+                rules: [
+                    "<b>Can:</b> משמש ליכולת או בקשה (לדוגמה: I can swim - אני יכול לשחות). השלילה היא cannot או can't.",
+                    "<b>Must:</b> משמש לחובה או חוק שחייבים לציית לו (לדוגמה: You must wear a helmet - אתה חייב לחבוש קסדה). השלילה היא mustn't (אסור)."
+                ],
+                examples: [
+                    "You must finish your homework before playing. (אתה חייב לסיים שיעורי בית לפני משחק)",
+                    "Can you help me with this exercise? (אתה יכול לעזור לי בתרגיל הזה?)"
+                ],
+                exercise: {
+                    question: "Choose the correct modal: Students _______ be quiet during the test.",
+                    options: [
+                        { text: "can", correct: false },
+                        { text: "must", correct: true },
+                        { text: "can't", correct: false }
+                    ],
+                    explanation: "Correct! בזמן מבחן יש חובה להיות בשקט, ולכן משתמשים ב-must."
+                }
+            }
+        };
+
+        function selectGrammarTopic(topicKey) {
+            ['basics', 'present', 'past', 'modals'].forEach(k => {
+                const btn = document.getElementById(`btn-grammar-${k}`);
+                if(k === topicKey) {
+                    btn.className = "p-3 rounded-xl font-bold text-sm bg-blue-600 text-white shadow-md transition text-center flex items-center justify-center";
+                } else {
+                    btn.className = "p-3 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition text-center flex items-center justify-center";
+                }
+            });
+
+            const data = grammarData[topicKey];
+            let html = `
+                <h4 class="text-xl font-bold text-gray-900">${data.title}</h4>
+                <p class="text-gray-600 mt-2 text-sm md:text-base leading-relaxed">${data.desc}</p>
+                <div class="mt-4 space-y-2">
+                    <h5 class="font-bold text-sm text-gray-800">חוקים עיקריים:</h5>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                        ${data.rules.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="mt-4 bg-blue-50/60 p-4 rounded-xl border border-blue-100">
+                    <h5 class="font-bold text-sm text-blue-900 mb-2">דוגמאות:</h5>
+                    <ul class="space-y-1 text-sm text-blue-800">
+                        ${data.examples.map(ex => `<li>• ${ex}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            document.getElementById('grammar-content-area').innerHTML = html;
+
+            const ex = data.exercise;
+            let exHtml = `
+                <p class="font-semibold text-gray-800 text-sm md:text-base mb-3">${ex.question}</p>
+                <div id="grammar-options-list" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    ${ex.options.map((opt, idx) => `
+                        <button onclick="checkGrammarAnswer(${opt.correct}, this)" class="grammar-opt-btn bg-white border border-gray-200 hover:border-teal-500 font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm text-center">
+                            ${opt.text}
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="grammar-feedback" class="mt-3 hidden text-sm font-semibold"></div>
+            `;
+            document.getElementById('grammar-quiz-box').innerHTML = exHtml;
+        }
+
+        function checkGrammarAnswer(isCorrect, btnElement) {
+            const btns = document.querySelectorAll('.grammar-opt-btn');
+            btns.forEach(b => b.disabled = true);
+            const feedbackDiv = document.getElementById('grammar-feedback');
+            feedbackDiv.classList.remove('hidden');
+
+            if(isCorrect) {
+                btnElement.className = "grammar-opt-btn bg-emerald-500 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm text-center";
+                feedbackDiv.className = "mt-3 text-sm font-semibold text-emerald-600";
+                feedbackDiv.innerHTML = "<i class=\"fa-solid fa-circle-check ml-1\"></i> תשובה נכונה! כל הכבוד!";
+                addScore(3);
+            } else {
+                btnElement.className = "grammar-opt-btn bg-rose-500 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm text-center";
+                feedbackDiv.className = "mt-3 text-sm font-semibold text-rose-600";
+                feedbackDiv.innerHTML = "<i class=\"fa-solid fa-circle-xmark ml-1\"></i> טעות קטנה, נסה שוב או עבור לנושא הבא.";
+            }
+        }
+
+        /* --- MODULE 3: QUIZ DATA & LOGIC --- */
+        const quizLevels = {
+            easy: [
+                {
+                    category: "אוצר מילים בסיסי",
+                    question: "What is the Hebrew meaning of 'Apple'?",
+                    options: [
+                        { text: "בננה", correct: false },
+                        { text: "תפוח", correct: true },
+                        { text: "תפוז", correct: false },
+                        { text: "אבטיח", correct: false }
+                    ],
+                    explanation: "Correct! Apple פירושו תפוח."
+                },
+                {
+                    category: "פועל To Be",
+                    question: "Complete the sentence: I _______ a happy student.",
+                    options: [
+                        { text: "am", correct: true },
+                        { text: "is", correct: false },
+                        { text: "are", correct: false },
+                        { text: "be", correct: false }
+                    ],
+                    explanation: "Correct! עם כינוי הגוף I משתמשים תמיד ב-am."
+                },
+                {
+                    category: "אוצר מילים בסיסי",
+                    question: "Choose the correct translation for 'Friend':",
+                    options: [
+                        { text: "מורה", correct: false },
+                        { text: "משפחה", correct: false },
+                        { text: "חבר", correct: true },
+                        { text: "כלב", correct: false }
+                    ],
+                    explanation: "Correct! Friend פירושו חבר."
+                },
+                {
+                    category: "דקדוק בסיסי",
+                    question: "Choose the correct sentence:",
+                    options: [
+                        { text: "He have a dog.", correct: false },
+                        { text: "He has a dog.", correct: true },
+                        { text: "He having a dog.", correct: false },
+                        { text: "He to have a dog.", correct: false }
+                    ],
+                    explanation: "Correct! בגוף שלישי יחיד (He) הפועל have הופך ל-has."
+                }
+            ],
+            normal: [
+                {
+                    category: "אוצר מילים (מתקדם)",
+                    question: "What is the meaning of the word 'Curious'?",
+                    options: [
+                        { text: "עייף (Tired)", correct: false },
+                        { text: "סקרן (Curious)", correct: true },
+                        { text: "כועס (Angry)", correct: false },
+                        { text: "שמח (Happy)", correct: false }
+                    ],
+                    explanation: "Correct! 'Curious' פירושו סקרן."
+                },
+                {
+                    category: "Present Simple",
+                    question: "Choose the correct sentence in Present Simple:",
+                    options: [
+                        { text: "She like apples.", correct: false },
+                        { text: "She likes apples.", correct: true },
+                        { text: "She liking apples.", correct: false },
+                        { text: "She liked apples.", correct: false }
+                    ],
+                    explanation: "Correct! בגוף שלישי יחיד (She) מוסיפים s לפועל בהווה פשוט (likes)."
+                },
+                {
+                    category: "Past Simple",
+                    question: "What is the past form of the verb 'go'?",
+                    options: [
+                        { text: "goed", correct: false },
+                        { text: "going", correct: false },
+                        { text: "went", correct: true },
+                        { text: "gone", correct: false }
+                    ],
+                    explanation: "Correct! 'go' הוא פועל חריג שצורת העבר שלו היא 'went'."
+                },
+                {
+                    category: "Modals",
+                    question: "Complete the sentence: You _______ drive a car without a driver's license. It is illegal!",
+                    options: [
+                        { text: "must", correct: false },
+                        { text: "can", correct: false },
+                        { text: "mustn't (אסור)", correct: true },
+                        { text: "could", correct: false }
+                    ],
+                    explanation: "Correct! אסור לנהוג בלי רישיון נהיגה, לכן משתמשים ב-mustn't."
+                },
+                {
+                    category: "הבנת הנקרא",
+                    question: "Read: 'Tom woke up early, ate a quick breakfast, and ran to catch the school bus.' When did Tom eat breakfast?",
+                    options: [
+                        { text: "Before going to school", correct: true },
+                        { text: "After school", correct: false },
+                        { text: "In the evening", correct: false },
+                        { text: "He didn't eat", correct: false }
+                    ],
+                    explanation: "Correct! מהטקסט עולה שהוא אכל ארוחת בוקר מוקדם ואז רץ לאוטובוס."
+                }
+            ]
+        };
+
+        let activeQuizDiff = 'easy';
+        let currentQuizIdx = 0;
+        let quizScoreCount = 0;
+
+        function setQuizDifficulty(diff) {
+            activeQuizDiff = diff;
+            currentQuizIdx = 0;
+            quizScoreCount = 0;
+            if(diff === 'easy') {
+                document.getElementById('quiz-diff-easy').className = "px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-amber-700 shadow-sm";
+                document.getElementById('quiz-diff-normal').className = "px-3 py-1 rounded-lg text-xs font-bold transition text-gray-600";
+            } else {
+                document.getElementById('quiz-diff-easy').className = "px-3 py-1 rounded-lg text-xs font-bold transition text-gray-600";
+                document.getElementById('quiz-diff-normal').className = "px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-amber-700 shadow-sm";
+            }
+            document.getElementById('quiz-results-card').classList.add('hidden');
+            document.getElementById('quiz-card-container').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            const quizQuestions = quizLevels[activeQuizDiff];
+            document.getElementById('quiz-total-num').innerText = quizQuestions.length;
+
+            if(currentQuizIdx >= quizQuestions.length) {
+                document.getElementById('quiz-card-container').classList.add('hidden');
+                document.getElementById('quiz-results-card').classList.remove('hidden');
+                document.getElementById('final-score-display').innerText = `${quizScoreCount} / ${quizQuestions.length}`;
+                return;
+            }
+
+            const q = quizQuestions[currentQuizIdx];
+            document.getElementById('quiz-current-num').innerText = currentQuizIdx + 1;
+            document.getElementById('quiz-category-badge').innerText = q.category;
+            document.getElementById('quiz-question').innerText = q.question;
+            document.getElementById('quiz-feedback-box').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-right p-3.5 rounded-xl border border-gray-200 hover:border-teal-500 hover:bg-teal-50/50 font-medium text-sm transition flex items-center justify-between group";
+                btn.innerHTML = `<span>${opt.text}</span> <i class=\"fa-solid fa-circle text-gray-200 group-hover:text-teal-500 text-xs\"></i>`;
+                btn.onclick = () => selectQuizOption(opt.correct, btn, q.explanation);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectQuizOption(isCorrect, selectedBtn, explanationText) {
+            const optionsContainer = document.getElementById('quiz-options');
+            const allBtns = optionsContainer.getElementsByTagName('button');
+            for(let b of allBtns) {
+                b.disabled = true;
+            }
+
+            const feedbackMsg = document.getElementById('quiz-feedback-msg');
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            feedbackBox.classList.remove('hidden');
+
+            if(isCorrect) {
+                selectedBtn.className = "w-full text-right p-3.5 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 font-medium text-sm flex items-center justify-between";
+                feedbackMsg.className = "font-bold text-emerald-600 text-sm";
+                feedbackMsg.innerHTML = `<i class=\"fa-solid fa-circle-check ml-1.5\"></i> ${explanationText}`;
+                quizScoreCount++;
+                addScore(5);
+            } else {
+                selectedBtn.className = "w-full text-right p-3.5 rounded-xl border border-rose-500 bg-rose-50 text-rose-900 font-medium text-sm flex items-center justify-between";
+                feedbackMsg.className = "font-bold text-rose-600 text-sm";
+                feedbackMsg.innerHTML = `<i class=\"fa-solid fa-circle-xmark ml-1.5\"></i> לא מדויק. ${explanationText}`;
+            }
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIdx++;
+            loadQuizQuestion();
+        }
+
+        function restartQuiz() {
+            currentQuizIdx = 0;
+            quizScoreCount = 0;
+            document.getElementById('quiz-results-card').classList.add('hidden');
+            document.getElementById('quiz-card-container').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // WhatsApp Share Functionality
+        function shareToWhatsApp() {
+            const quizQuestions = quizLevels[activeQuizDiff];
+            const text = `היי! הרגע סיימתי חידון אנגלית באתר English World ברמת ${activeQuizDiff === 'easy' ? 'קלה' : 'מתקדמת'} והשגתי ציון של ${quizScoreCount} מתוך ${quizQuestions.length}! בואו תנסו גם אתם! 🚀🇬🇧`;
+            const encodedText = encodeURIComponent(text);
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Initialize application on load
+        window.onload = function() {
+            setVocabLevel('easy');
+            selectGrammarTopic('basics');
+            setQuizDifficulty('easy');
+        };
+    </script>
+</body>
+</html>
