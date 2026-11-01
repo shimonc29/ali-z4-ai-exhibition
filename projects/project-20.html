@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ספינר ארינה - Spinner.io</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Rubik', sans-serif;
+            user-select: none;
+        }
+        body {
+            background: radial-gradient(circle at center, #1a1c29 0%, #0d0e15 100%);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+        canvas {
+            display: block;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+        }
+        .custom-glass {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .character-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .character-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+        }
+        /* Custom animations */
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255,255,255,0.4)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255,255,255,0.8)); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="w-screen h-screen flex items-center justify-center relative">
+
+    <!-- HUD (כשהמשחק פעיל) -->
+    <div id="gameHud" class="hidden absolute top-0 left-0 w-full p-4 pointer-events-none flex justify-between items-start z-10">
+        <!-- סטטיסטיקות שחקן -->
+        <div class="custom-glass rounded-2xl p-4 flex flex-col gap-2 min-w-[200px] border border-white/20 shadow-xl">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300 text-sm font-semibold">ניקוד:</span>
+                <span id="scoreText" class="text-2xl font-extrabold text-yellow-400">0</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300 text-sm font-semibold">גודל ספינר:</span>
+                <span id="sizeText" class="text-lg font-bold text-cyan-400">100%</span>
+            </div>
+            <!-- מד ניסיון / רמה -->
+            <div class="w-full bg-gray-700/50 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div id="xpBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-300 w-0"></div>
+            </div>
+        </div>
+
+        <!-- לוח מובילים (Leaderboard) -->
+        <div class="custom-glass rounded-2xl p-4 min-w-[220px] border border-white/20 shadow-xl">
+            <h3 class="text-center font-black text-lg border-b border-white/10 pb-2 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500">
+                🏆 מובילים בזירה
+            </h3>
+            <ol id="leaderboardList" class="space-y-1.5 text-sm font-medium">
+                <!-- יתמלא ב-JS -->
+            </ol>
+        </div>
+    </div>
+
+    <!-- מסך בחירת דמות -->
+    <div id="selectScreen" class="absolute inset-0 z-20 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+        <div class="max-w-4xl w-full text-center">
+            <h1 class="text-4xl md:text-6xl font-black mb-3 tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 drop-shadow-lg">
+                ספינר ארינה SPINNER.IO
+            </h1>
+            <p class="text-gray-300 text-lg mb-8 max-w-xl mx-auto">
+                בחר את הספינר שלך, אכול כדורי אנרגיה וספינרים קטנים יותר, והפוך למלך הזירה!
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- דמות 1: אש -->
+                <div onclick="selectCharacter('fire')" class="character-card custom-glass rounded-3xl p-6 cursor-pointer border-2 border-red-500/40 hover:border-red-500 bg-gradient-to-b from-red-500/10 to-transparent flex flex-col items-center">
+                    <div class="w-28 h-28 mb-4 relative flex items-center justify-center">
+                        <svg class="w-full h-full animate-spin" style="animation-duration: 3s;" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="10 5" />
+                            <circle cx="50" cy="20" r="14" fill="#dc2626" />
+                            <circle cx="24" cy="65" r="14" fill="#dc2626" />
+                            <circle cx="76" cy="65" r="14" fill="#dc2626" />
+                            <circle cx="50" cy="50" r="16" fill="#f97316" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-red-400 mb-1">🔥 ספינר אש</h2>
+                    <p class="text-xs text-gray-300 mb-4">להבת דרקון עוצמתית</p>
+                    <div class="w-full space-y-2 text-xs">
+                        <div class="flex justify-between"><span>מהירות:</span><span class="text-red-400">מהיר מאוד ⚡⚡</span></div>
+                        <div class="flex justify-between"><span>כוח דחיפה:</span><span class="text-red-400">גבוה 💥</span></div>
+                    </div>
+                </div>
+
+                <!-- דמות 2: קרח -->
+                <div onclick="selectCharacter('ice')" class="character-card custom-glass rounded-3xl p-6 cursor-pointer border-2 border-cyan-500/40 hover:border-cyan-500 bg-gradient-to-b from-cyan-500/10 to-transparent flex flex-col items-center">
+                    <div class="w-28 h-28 mb-4 relative flex items-center justify-center">
+                        <svg class="w-full h-full animate-spin" style="animation-duration: 4s;" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="4" stroke-dasharray="8 4" />
+                            <rect x="40" y="10" width="20" height="20" rx="4" fill="#0891b2" />
+                            <rect x="15" y="55" width="20" height="20" rx="4" fill="#0891b2" />
+                            <rect x="65" y="55" width="20" height="20" rx="4" fill="#0891b2" />
+                            <circle cx="50" cy="50" r="16" fill="#38bdf8" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-1">❄️ ספינר קרח</h2>
+                    <p class="text-xs text-gray-300 mb-4">סופת שלג קפואה</p>
+                    <div class="w-full space-y-2 text-xs">
+                        <div class="flex justify-between"><span>טווח מגנוט:</span><span class="text-cyan-400">רחב 🧲</span></div>
+                        <div class="flex justify-between"><span>יציבות:</span><span class="text-cyan-400">חזקה 🛡️</span></div>
+                    </div>
+                </div>
+
+                <!-- דמות 3: ברק -->
+                <div onclick="selectCharacter('lightning')" class="character-card custom-glass rounded-3xl p-6 cursor-pointer border-2 border-amber-400/40 hover:border-amber-400 bg-gradient-to-b from-amber-400/10 to-transparent flex flex-col items-center">
+                    <div class="w-28 h-28 mb-4 relative flex items-center justify-center">
+                        <svg class="w-full h-full animate-spin" style="animation-duration: 2s;" viewBox="0 0 100 100">
+                            <polygon points="50,10 60,40 90,50 60,60 50,90 40,60 10,50 40,40" fill="#eab308" />
+                            <circle cx="50" cy="50" r="14" fill="#fef08a" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-amber-400 mb-1">⚡ ספינר ברק</h2>
+                    <p class="text-xs text-gray-300 mb-4">טורבו זהב מחשמל</p>
+                    <div class="w-full space-y-2 text-xs">
+                        <div class="flex justify-between"><span>סיבוב:</span><span class="text-amber-400">סופר מהיר 🌀</span></div>
+                        <div class="flex justify-between"><span>בונוס ניקוד:</span><span class="text-amber-400">+20% ⭐</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- קלטי השחקן והוראות -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
+                <input id="playerNameInput" type="text" maxlength="12" placeholder="הכנס את השם שלך..." value="ספינר-מאסטר" 
+                       class="w-full px-5 py-3 rounded-full bg-white/10 border border-white/20 focus:outline-none focus:border-cyan-400 text-center font-bold text-white placeholder-gray-400">
+            </div>
+            
+            <p class="text-xs text-gray-400 mt-6">
+                💡 **מקשי שליטה:** הזז את העכבר או השתמש במקשי החצים / WASD במקלדת כדי לנוע.
+            </p>
+        </div>
+    </div>
+
+    <!-- מסך Game Over -->
+    <div id="gameOverScreen" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="custom-glass rounded-3xl p-8 text-center max-w-md w-full border border-red-500/30">
+            <h2 class="text-5xl font-black text-red-500 mb-2">משחק נגמר!</h2>
+            <p id="gameOverReason" class="text-gray-300 mb-6">נאכלת על ידי ספינר גדול יותר</p>
+            
+            <div class="bg-white/5 rounded-2xl p-4 mb-6 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">ניקוד סופי:</span>
+                    <span id="finalScore" class="text-3xl font-extrabold text-yellow-400">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">שיא גודל:</span>
+                    <span id="finalSize" class="text-xl font-bold text-cyan-400">0</span>
+                </div>
+            </div>
+
+            <button onclick="restartGame()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 font-black text-xl hover:opacity-90 transition shadow-lg shadow-cyan-500/30">
+                נסה שוב 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- Canvas למשחק -->
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // הגדרת קנבס ומידות
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // גודל העולם של המשחק (כמה המסך רחב מעבר לקנבס)
+        const WORLD_SIZE = 3000;
+
+        // מצב המשחק
+        let gameActive = false;
+        let selectedType = 'fire';
+        let score = 0;
+        let camera = { x: 0, y: 0 };
+        let mousePos = { x: canvas.width / 2, y: canvas.height / 2 };
+        let keys = {};
+
+        // נתוני דמויות
+        const CHAR_TYPES = {
+            fire: {
+                name: 'אש',
+                color: '#ef4444',
+                accent: '#f97316',
+                speedMultiplier: 1.25,
+                blades: 3,
+                scoreMultiplier: 1.0,
+                glow: 'rgba(239, 68, 68, 0.6)'
+            },
+            ice: {
+                name: 'קרח',
+                color: '#06b6d4',
+                accent: '#38bdf8',
+                speedMultiplier: 1.0,
+                blades: 4,
+                scoreMultiplier: 1.0,
+                glow: 'rgba(6, 182, 212, 0.6)'
+            },
+            lightning: {
+                name: 'ברק',
+                color: '#eab308',
+                accent: '#fef08a',
+                speedMultiplier: 1.15,
+                blades: 5,
+                scoreMultiplier: 1.2,
+                glow: 'rgba(234, 179, 8, 0.6)'
+            }
+        };
+
+        // ישויות המשחק
+        let player;
+        let bots = [];
+        let foods = [];
+        let particles = [];
+
+        // שמות אקראיים לבוטים
+        const BOT_NAMES = [
+            'ספינר-על', 'טורבו-בוט', 'מלך-הזירה', 'סערה', 'בלאסטר',
+            'אלפא', 'צייד', 'ספין-מאסטר', 'פלאש', 'נינג׳ה',
+            'פניקס', 'טיטאן', 'ורטקס', 'גרוויטי', 'פלקון'
+        ];
+
+        // האזנה למקלדת
+        window.addEventListener('keydown', e => keys[e.key] = true);
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        // האזנה לעכבר ולמגע
+        window.addEventListener('mousemove', e => {
+            mousePos.x = e.clientX;
+            mousePos.y = e.clientY;
+        });
+
+        window.addEventListener('touchmove', e => {
+            if (e.touches.length > 0) {
+                mousePos.x = e.touches[0].clientX;
+                mousePos.y = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        // מחלקת ספינר (שחקן ובוטים)
+        class Spinner {
+            constructor(x, y, radius, name, type, isBot = false) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.name = name;
+                this.type = type;
+                this.config = CHAR_TYPES[type];
+                this.isBot = isBot;
+
+                this.vx = 0;
+                this.vy = 0;
+                this.angle = 0;
+                this.spinSpeed = 0.1;
+                this.targetRadius = radius;
+                this.score = Math.round((radius - 20) * 10);
+            }
+
+            update() {
+                // העלאת מהירות סיבוב לפי גודל
+                this.spinSpeed = 0.08 + (this.radius / 100) * 0.1;
+                this.angle += this.spinSpeed;
+
+                // החלקת גדילת הגודל
+                if (this.radius < this.targetRadius) {
+                    this.radius += (this.targetRadius - this.radius) * 0.05;
+                }
+
+                // לוגיקת תנועה
+                let targetDx = 0;
+                let targetDy = 0;
+
+                if (!this.isBot) {
+                    // שליטת שחקן (עכבר + מקלדת)
+                    let dxKeyboard = 0;
+                    let dyKeyboard = 0;
+                    if (keys['ArrowUp'] || keys['w'] || keys['W']) dyKeyboard -= 1;
+                    if (keys['ArrowDown'] || keys['s'] || keys['S']) dyKeyboard += 1;
+                    if (keys['ArrowLeft'] || keys['a'] || keys['A']) dxKeyboard -= 1;
+                    if (keys['ArrowRight'] || keys['d'] || keys['D']) dxKeyboard += 1;
+
+                    if (dxKeyboard !== 0 || dyKeyboard !== 0) {
+                        targetDx = dxKeyboard;
+                        targetDy = dyKeyboard;
+                    } else {
+                        // תנועה לפי עכבר (מביקוש למרכז הקנבס)
+                        const screenCenterX = canvas.width / 2;
+                        const screenCenterY = canvas.height / 2;
+                        targetDx = mousePos.x - screenCenterX;
+                        targetDy = mousePos.y - screenCenterY;
+                    }
+                } else {
+                    // בינה מלאכותית של בוטים
+                    this.updateBotAI();
+                    targetDx = this.targetVx || 0;
+                    targetDy = this.targetVy || 0;
+                }
+
+                // חישוב מהירות וכיוון
+                const dist = Math.hypot(targetDx, targetDy);
+                if (dist > 5) {
+                    const maxSpeed = (5.5 - (this.radius / 80)) * this.config.speedMultiplier;
+                    const speed = Math.min(dist * 0.05, Math.max(maxSpeed, 1.8));
+                    
+                    this.vx += ((targetDx / dist) * speed - this.vx) * 0.1;
+                    this.vy += ((targetDy / dist) * speed - this.vy) * 0.1;
+                } else {
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
+                }
+
+                // עדכון מיקום
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // חסימה בגבולות עולם המשחק
+                this.x = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.x));
+                this.y = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.y));
+            }
+
+            updateBotAI() {
+                // חיפוש האוכל / האויב הקרוב
+                if (!this.aiTimer || this.aiTimer <= 0) {
+                    this.aiTimer = Math.floor(Math.random() * 60) + 30; // שינוי החלטה מדי פעם
+
+                    let nearestTarget = null;
+                    let minDist = 600;
+
+                    // ניסיון לאכול ספינר קטן יותר או לברוח מגדול
+                    if (player && Math.hypot(player.x - this.x, player.y - this.y) < minDist) {
+                        if (player.radius < this.radius * 0.9) {
+                            // לרדוף אחרי השחקן
+                            nearestTarget = { x: player.x, y: player.y };
+                        } else if (player.radius > this.radius * 1.1) {
+                            // לברוח מהשחקן
+                            nearestTarget = { x: this.x * 2 - player.x, y: this.y * 2 - player.y };
+                        }
+                    }
+
+                    // אם אין שחקן רלוונטי, חפש אוכל קרוב
+                    if (!nearestTarget) {
+                        for (let f of foods) {
+                            let d = Math.hypot(f.x - this.x, f.y - this.y);
+                            if (d < minDist) {
+                                minDist = d;
+                                nearestTarget = f;
+                            }
+                        }
+                    }
+
+                    if (nearestTarget) {
+                        this.targetVx = nearestTarget.x - this.x;
+                        this.targetVy = nearestTarget.y - this.y;
+                    } else {
+                        // תנועה אקראית
+                        const angle = Math.random() * Math.PI * 2;
+                        this.targetVx = Math.cos(angle) * 100;
+                        this.targetVy = Math.sin(angle) * 100;
+                    }
+                } else {
+                    this.aiTimer--;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x - camera.x, this.y - camera.y);
+
+                // אפקט הילה חיצונית
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius * 1.25, 0, Math.PI * 2);
+                ctx.fillStyle = this.config.glow;
+                ctx.fill();
+
+                // סיבוב להבי הספינר
+                ctx.rotate(this.angle);
+
+                // ציור להבי הספינר
+                const numBlades = this.config.blades;
+                for (let i = 0; i < numBlades; i++) {
+                    const bladeAngle = (Math.PI * 2 / numBlades) * i;
+                    ctx.save();
+                    ctx.rotate(bladeAngle);
+
+                    // להב
+                    ctx.beginPath();
+                    ctx.ellipse(0, -this.radius * 0.65, this.radius * 0.35, this.radius * 0.65, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = this.config.color;
+                    ctx.fill();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.stroke();
+
+                    // טבעת פנימית על הלהב
+                    ctx.beginPath();
+                    ctx.arc(0, -this.radius * 0.75, this.radius * 0.15, 0, Math.PI * 2);
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fill();
+                    ctx.strokeStyle = this.config.accent;
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+
+                // ליבת הספינר המרכזית
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius * 0.45, 0, Math.PI * 2);
+                ctx.fillStyle = '#0f172a';
+                ctx.fill();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = this.config.accent;
+                ctx.stroke();
+
+                // נקודת מרכז מבריקה
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius * 0.2, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+
+                ctx.restore();
+
+                // ציור שם וניקוד מעל הספינר
+                ctx.save();
+                ctx.translate(this.x - camera.x, this.y - camera.y);
+                ctx.font = `bold ${Math.max(12, this.radius * 0.35)}px Rubik`;
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 4;
+                ctx.fillText(this.name, 0, -this.radius - 12);
+                ctx.restore();
+            }
+        }
+
+        // מחלקת אוכל (נקודות אנרגיה)
+        class Food {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * (WORLD_SIZE - 100) + 50;
+                this.y = Math.random() * (WORLD_SIZE - 100) + 50;
+                this.radius = Math.random() * 4 + 4;
+                
+                const colors = ['#38bdf8', '#f43f5e', '#a855f7', '#22c55e', '#eab308'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.pulseAngle = Math.random() * Math.PI * 2;
+            }
+
+            draw() {
+                this.pulseAngle += 0.05;
+                const r = this.radius + Math.sin(this.pulseAngle) * 1.5;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x - camera.x, this.y - camera.y, Math.max(1, r), 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // מחלקת חלקיקים ואפקטים
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.size = Math.random() * 4 + 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.03;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.beginPath();
+                ctx.arc(this.x - camera.x, this.y - camera.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // אפקט פיצוץ חלקיקים
+        function createExplosion(x, y, color, count = 15) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        // אתחול והתחלת משחק
+        function selectCharacter(type) {
+            selectedType = type;
+            document.getElementById('selectScreen').classList.add('hidden');
+            document.getElementById('gameHud').classList.remove('hidden');
+
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            const playerName = nameInput || 'שחקן';
+
+            // יצירת שחקן במיקום מקראי
+            player = new Spinner(WORLD_SIZE / 2, WORLD_SIZE / 2, 28, playerName, selectedType, false);
+            
+            // יצירת אוכל
+            foods = [];
+            for (let i = 0; i < 400; i++) {
+                foods.push(new Food());
+            }
+
+            // יצירת בוטים
+            bots = [];
+            for (let i = 0; i < 18; i++) {
+                spawnBot();
+            }
+
+            score = 0;
+            gameActive = true;
+        }
+
+        function spawnBot() {
+            const botTypes = ['fire', 'ice', 'lightning'];
+            const randomType = botTypes[Math.floor(Math.random() * botTypes.length)];
+            const randomName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+            const randomRadius = Math.random() * 30 + 20;
+
+            const x = Math.random() * (WORLD_SIZE - 200) + 100;
+            const y = Math.random() * (WORLD_SIZE - 200) + 100;
+
+            bots.push(new Spinner(x, y, randomRadius, randomName, randomType, true));
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('selectScreen').classList.remove('hidden');
+        }
+
+        function gameOver(reason) {
+            gameActive = false;
+            document.getElementById('gameOverReason').innerText = reason;
+            document.getElementById('finalScore').innerText = Math.round(score);
+            document.getElementById('finalSize').innerText = Math.round((player.radius / 28) * 100) + '%';
+            document.getElementById('gameHud').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+        }
+
+        // עדכון המשחק בכל פריים
+        function update() {
+            if (!gameActive) return;
+
+            // עדכון שחקן
+            player.update();
+
+            // המצלמה עוקבת אחר השחקן
+            camera.x = player.x - canvas.width / 2;
+            camera.y = player.y - canvas.height / 2;
+
+            // עדכון בוטים
+            for (let i = bots.length - 1; i >= 0; i--) {
+                const bot = bots[i];
+                bot.update();
+
+                // התנגשות שחקן מול בוטים
+                const dToPlayer = Math.hypot(player.x - bot.x, player.y - bot.y);
+                if (dToPlayer < player.radius + bot.radius) {
+                    // בדיקת מי אופק/אוכל את מי
+                    if (player.radius > bot.radius * 1.1) {
+                        // השחקן אוכל את הבוט
+                        player.targetRadius += bot.radius * 0.25;
+                        score += Math.round(bot.score * player.config.scoreMultiplier);
+                        createExplosion(bot.x, bot.y, bot.config.color, 30);
+                        bots.splice(i, 1);
+                        setTimeout(spawnBot, 3000);
+                        continue;
+                    } else if (bot.radius > player.radius * 1.1) {
+                        // הבוט אוכל את השחקן
+                        createExplosion(player.x, player.y, player.config.color, 40);
+                        gameOver(`נאכלת על ידי ${bot.name}!`);
+                        return;
+                    } else {
+                        // התנגשות רגילה (דחיפה)
+                        const angle = Math.atan2(player.y - bot.y, player.x - bot.x);
+                        const pushForce = 4;
+                        player.vx += Math.cos(angle) * pushForce;
+                        player.vy += Math.sin(angle) * pushForce;
+                        bot.vx -= Math.cos(angle) * pushForce;
+                        bot.vy -= Math.sin(angle) * pushForce;
+                        createExplosion((player.x + bot.x) / 2, (player.y + bot.y) / 2, '#ffffff', 5);
+                    }
+                }
+
+                // התנגשות בוטים מול בוטים
+                for (let j = i - 1; j >= 0; j--) {
+                    const otherBot = bots[j];
+                    const d = Math.hypot(bot.x - otherBot.x, bot.y - otherBot.y);
+                    if (d < bot.radius + otherBot.radius) {
+                        if (bot.radius > otherBot.radius * 1.1) {
+                            bot.targetRadius += otherBot.radius * 0.2;
+                            bot.score += otherBot.score;
+                            createExplosion(otherBot.x, otherBot.y, otherBot.config.color, 25);
+                            bots.splice(j, 1);
+                            setTimeout(spawnBot, 3000);
+                            break;
+                        } else if (otherBot.radius > bot.radius * 1.1) {
+                            otherBot.targetRadius += bot.radius * 0.2;
+                            otherBot.score += bot.score;
+                            createExplosion(bot.x, bot.y, bot.config.color, 25);
+                            bots.splice(i, 1);
+                            setTimeout(spawnBot, 3000);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // איסוף אוכל
+            const allSpinners = [player, ...bots];
+            for (let f of foods) {
+                for (let s of allSpinners) {
+                    const d = Math.hypot(s.x - f.x, s.y - f.y);
+                    if (d < s.radius + f.radius) {
+                        s.targetRadius += 0.35;
+                        s.score += 5;
+                        if (s === player) {
+                            score += Math.round(5 * player.config.scoreMultiplier);
+                        }
+                        f.reset();
+                    }
+                }
+            }
+
+            // עדכון חלקיקים
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+
+            // עדכון HUD
+            document.getElementById('scoreText').innerText = Math.round(score);
+            document.getElementById('sizeText').innerText = Math.round((player.radius / 28) * 100) + '%';
+            document.getElementById('xpBar').style.width = Math.min(100, ((player.radius - 28) / 100) * 100) + '%';
+
+            // עדכון לוח מובילים
+            updateLeaderboard();
+        }
+
+        // תצוגת לוח מובילים
+        function updateLeaderboard() {
+            if (!gameActive) return;
+            const all = [player, ...bots].sort((a, b) => b.radius - a.radius).slice(0, 5);
+            const listEl = document.getElementById('leaderboardList');
+            listEl.innerHTML = '';
+
+            all.forEach((sp, idx) => {
+                const li = document.createElement('li');
+                li.className = `flex justify-between items-center ${sp === player ? 'text-yellow-300 font-bold' : 'text-gray-300'}`;
+                li.innerHTML = `
+                    <span>${idx + 1}. ${sp.name} ${sp === player ? '(אתה)' : ''}</span>
+                    <span class="text-xs bg-white/10 px-2 py-0.5 rounded-full">${Math.round(sp.radius)}pt</span>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        // ציור רשת רקע המשחק
+        function drawGrid() {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.lineWidth = 1;
+
+            const gridSize = 80;
+            const startX = Math.floor(camera.x / gridSize) * gridSize;
+            const startY = Math.floor(camera.y / gridSize) * gridSize;
+
+            for (let x = startX; x < camera.x + canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x - camera.x, 0);
+                ctx.lineTo(x - camera.x, canvas.height);
+                ctx.stroke();
+            }
+
+            for (let y = startY; y < camera.y + canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y - camera.y);
+                ctx.lineTo(canvas.width, y - camera.y);
+                ctx.stroke();
+            }
+
+            // גבולות הזירה
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(-camera.x, -camera.y, WORLD_SIZE, WORLD_SIZE);
+
+            ctx.restore();
+        }
+
+        // לולאת הציור הראשית
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (gameActive) {
+                drawGrid();
+
+                // ציור אוכל
+                for (let f of foods) f.draw();
+
+                // ציור חלקיקים
+                for (let p of particles) p.draw();
+
+                // ציור בוטים
+                for (let bot of bots) bot.draw();
+
+                // ציור שחקן
+                if (player) player.draw();
+            }
+
+            update();
+            requestAnimationFrame(render);
+        }
+
+        // התחלת הלולאה
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>
