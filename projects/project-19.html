@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אנציקלופדיית הטנקים - Tankpedia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js for 3D Viewer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Inter & Rubik for Hebrew text -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #0f1410;
+            color: #e2e8f0;
+        }
+        
+        /* Custom Military Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #151c16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2e3d2f;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4d664e;
+        }
+
+        /* Camo pattern accent overlay */
+        .camo-bg {
+            background-color: #0f1410;
+            background-image: radial-gradient(#1e291f 15%, transparent 16%), radial-gradient(#151f16 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        .hud-border {
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.05);
+        }
+
+        .hud-border:hover {
+            border-color: rgba(74, 222, 128, 0.5);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+        }
+
+        /* Target Reticle Pulsing */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .aim-pulse {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="camo-bg min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-emerald-950/40 border-b border-emerald-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-emerald-700/30 border border-emerald-500/40 rounded-xl flex items-center justify-center text-emerald-400 shadow-lg">
+                    <i data-lucide="shield" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-wider text-emerald-400 flex items-center gap-2">
+                        <span>טנקופדיה</span>
+                        <span class="text-xs font-normal text-emerald-600 border border-emerald-800 px-2 py-0.5 rounded">גרסה 2.5</span>
+                    </h1>
+                    <p class="text-xs text-emerald-300/60 font-mono">מוזיאון וסימולטור טנקים אינטראקטיבי</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-1 space-x-reverse bg-emerald-950/60 p-1.5 rounded-xl border border-emerald-800/40">
+                <button id="nav-gallery" onclick="switchTab('gallery')" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-emerald-600 text-white shadow-md">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                    <span>גלריית טנקים</span>
+                </button>
+                <button id="nav-recommend" onclick="switchTab('recommend')" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-emerald-300 hover:text-white hover:bg-emerald-900/40">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>מערכת המלצה</span>
+                </button>
+                <button id="nav-articles" onclick="switchTab('articles')" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-emerald-300 hover:text-white hover:bg-emerald-900/40">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i>
+                    <span>כתבות ומאמרים</span>
+                </button>
+                <button id="nav-viewer3d" onclick="switchTab('viewer3d')" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-emerald-300 hover:text-white hover:bg-emerald-900/40">
+                    <i data-lucide="box" class="w-4 h-4"></i>
+                    <span>מבט תלת-ממדי</span>
+                </button>
+                <button id="nav-simulator" onclick="switchTab('simulator')" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-emerald-300 hover:text-white hover:bg-emerald-900/40">
+                    <i data-lucide="crosshair" class="w-4 h-4"></i>
+                    <span>סימולטור ירי</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- SECTION 1: TANK GALLERY & ENCYCLOPEDIA -->
+        <section id="tab-gallery" class="space-y-6">
+            <!-- Filter & Search Controls -->
+            <div class="bg-stone-900/80 border border-emerald-900/50 rounded-2xl p-4 sm:p-6 backdrop-blur-md">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-96">
+                        <i data-lucide="search" class="absolute right-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500/60"></i>
+                        <input type="text" id="searchInput" oninput="filterTanks()" placeholder="חפש לפי שם טנק או מדינה..." 
+                               class="w-full pl-4 pr-11 py-3 bg-stone-950/70 border border-emerald-800/40 rounded-xl text-emerald-100 placeholder-emerald-600/60 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Category Buttons -->
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
+                        <button onclick="setCategory('all')" id="cat-all" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-emerald-600 text-white">הכל</button>
+                        <button onclick="setCategory('mbt')" id="cat-mbt" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-stone-950/60 text-emerald-300 border border-emerald-900 hover:border-emerald-600">טנקי מערכה מודרניים</button>
+                        <button onclick="setCategory('ww2')" id="cat-ww2" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-stone-950/60 text-emerald-300 border border-emerald-900 hover:border-emerald-600">אגדות מלחמת העולם ה-2</button>
+                        <button onclick="setCategory('light')" id="cat-light" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-stone-950/60 text-emerald-300 border border-emerald-900 hover:border-emerald-600">טנקים קלים/מהירים</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tank Grid -->
+            <div id="tankGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic Tank Cards Rendered Here -->
+            </div>
+        </section>
+
+        <!-- SECTION 1.2: RECOMMENDATION SYSTEM -->
+        <section id="tab-recommend" class="hidden space-y-6">
+            <div class="bg-stone-900/80 border border-emerald-900/50 rounded-2xl p-6 backdrop-blur-md">
+                <div class="text-center max-w-2xl mx-auto mb-8">
+                    <h2 class="text-2xl font-bold text-emerald-400 flex items-center justify-center gap-2 mb-2">
+                        <i data-lucide="sparkles"></i> מערכת המלצת טנקים חכמה
+                    </h2>
+                    <p class="text-stone-300 text-sm">ענה על מספר שאלות קצרות ונגלה איזה טנק הכי מתאים להעדפות ולסגנון המועדף עליך!</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Question 1 -->
+                    <div class="bg-stone-950/70 p-5 rounded-xl border border-emerald-800/40 space-y-3">
+                        <label class="block text-emerald-400 font-bold text-sm">1. תקופה היסטורית מועדפת:</label>
+                        <select id="rec-era" class="w-full bg-stone-900 border border-emerald-800/60 rounded-lg p-2.5 text-emerald-100 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="any">הכל / ללא העדפה</option>
+                            <option value="modern">טנקים מודרניים (MBT)</option>
+                            <option value="ww2">מלחמת העולם השנייה</option>
+                        </select>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="bg-stone-950/70 p-5 rounded-xl border border-emerald-800/40 space-y-3">
+                        <label class="block text-emerald-400 font-bold text-sm">2. תכונה מרכזית חשובה:</label>
+                        <select id="rec-feature" class="w-full bg-stone-900 border border-emerald-800/60 rounded-lg p-2.5 text-emerald-100 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="any">הכל / ללא העדפה</option>
+                            <option value="protection">שרידות והגנה מרבית</option>
+                            <option value="firepower">עוצמת אש ודיוק</option>
+                            <option value="speed">מהירות וניידות בשטח</option>
+                        </select>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="bg-stone-950/70 p-5 rounded-xl border border-emerald-800/40 space-y-3">
+                        <label class="block text-emerald-400 font-bold text-sm">3. ייעוד מבצעי:</label>
+                        <select id="rec-role" class="w-full bg-stone-900 border border-emerald-800/60 rounded-lg p-2.5 text-emerald-100 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="any">הכל / ללא העדפה</option>
+                            <option value="frontline">הבקעת קו חזית כבד</option>
+                            <option value="recon">סיור ואיסוף מודיעין מהיר</option>
+                            <option value="versatile">ורסטיליות ואמינות בשטח</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mb-8">
+                    <button onclick="getRecommendation()" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                        <i data-lucide="compass"></i> מצא את הטנק המתאים לי
+                    </button>
+                </div>
+
+                <!-- Recommendation Result Box -->
+                <div id="recResultContainer" class="hidden">
+                    <div class="border-t border-emerald-800/50 pt-6">
+                        <h3 class="text-center text-xl font-bold text-emerald-300 mb-6">הטנק המומלץ עבורך:</h3>
+                        <div id="recResultCard" class="max-w-2xl mx-auto bg-stone-950 rounded-2xl border-2 border-emerald-500 overflow-hidden shadow-2xl p-6">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1.5: ARTICLES & NEWS -->
+        <section id="tab-articles" class="hidden space-y-6">
+            <div class="bg-stone-900/80 border border-emerald-900/50 rounded-2xl p-6 backdrop-blur-md">
+                <h2 class="text-2xl font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                    <i data-lucide="newspaper"></i> כתבות ומאמרים מקצועיים
+                </h2>
+                <p class="text-stone-400 text-sm mb-6">מאמרים היסטוריים, סקירות טכנולוגיות וניתוחים צבאיים על עולם השריון והטנקים.</p>
+                <div id="articlesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic Articles Rendered Here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: 3D INTERACTIVE VIEWER -->
+        <section id="tab-viewer3d" class="hidden space-y-6">
+            <div class="bg-stone-900/90 border border-emerald-900/60 rounded-2xl p-6 relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row gap-6 items-start">
+                    <!-- Controls Sidebar -->
+                    <div class="w-full lg:w-80 space-y-4">
+                        <h2 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                            <i data-lucide="box"></i> בחירת דגם 3D
+                        </h2>
+                        <p class="text-sm text-stone-400">סובב את המודל בעזרת העכבר, בצע זום והתרשם מהמבנה הטכנולוגי.</p>
+                        
+                        <div class="space-y-2">
+                            <label class="text-xs font-mono text-emerald-500">בחר טנק להצגה:</label>
+                            <select id="viewerTankSelect" onchange="load3DTankModel(this.value)" class="w-full bg-stone-950 border border-emerald-800 rounded-xl p-3 text-emerald-100 focus:outline-none focus:border-emerald-500">
+                                <!-- Options dynamically loaded -->
+                            </select>
+                        </div>
+
+                        <!-- Interactive Stats readout in 3D Mode -->
+                        <div id="viewerStats" class="bg-stone-950/70 p-4 rounded-xl border border-emerald-900/50 space-y-3 font-mono text-xs">
+                            <div class="text-emerald-400 font-bold border-b border-emerald-800/40 pb-1">נתונים טכניים בסיסיים</div>
+                            <div class="flex justify-between"><span class="text-stone-400">משקל:</span> <span id="view-weight" class="text-emerald-200">-</span></div>
+                            <div class="flex justify-between"><span class="text-stone-400">תותח ראשי:</span> <span id="view-gun" class="text-emerald-200">-</span></div>
+                            <div class="flex justify-between"><span class="text-stone-400">מהירות מרבית:</span> <span id="view-speed" class="text-emerald-200">-</span></div>
+                            <div class="flex justify-between"><span class="text-stone-400">צוות:</span> <span id="view-crew" class="text-emerald-200">-</span></div>
+                        </div>
+
+                        <div class="bg-emerald-950/30 p-3 rounded-xl border border-emerald-800/30 text-xs text-emerald-400/80 flex items-center gap-2">
+                            <i data-lucide="info" class="w-4 h-4 flex-shrink-0"></i>
+                            <span>לחץ וגרור כדי לסובב. גלול כדי להתקרב או להתרחק.</span>
+                        </div>
+                    </div>
+
+                    <!-- 3D Canvas Container -->
+                    <div class="w-full lg:flex-1 h-[500px] bg-stone-950 rounded-xl border border-emerald-800/40 relative overflow-hidden flex items-center justify-center">
+                        <div id="canvas3d-container" class="w-full h-full"></div>
+                        <div class="absolute bottom-4 left-4 bg-stone-900/80 px-3 py-1.5 rounded-lg border border-emerald-800/50 text-xs text-emerald-400 font-mono">
+                            מנוע תצוגה: תלת-ממד גרפי
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: TARGET PRACTICE SIMULATOR -->
+        <section id="tab-simulator" class="hidden space-y-6">
+            <div class="bg-stone-900/90 border border-emerald-900/60 rounded-2xl p-6 relative">
+                <!-- Header Stats Bar -->
+                <div class="flex flex-wrap justify-between items-center bg-stone-950/80 p-4 rounded-xl border border-emerald-800/40 mb-4 gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="text-center px-4 py-1 bg-emerald-950/50 border border-emerald-800/50 rounded-lg">
+                            <div class="text-xs text-emerald-500 font-mono">ניקוד</div>
+                            <div id="sim-score" class="text-2xl font-black text-emerald-400">0</div>
+                        </div>
+                        <div class="text-center px-4 py-1 bg-emerald-950/50 border border-emerald-800/50 rounded-lg">
+                            <div class="text-xs text-emerald-500 font-mono">פגיעות רצופות</div>
+                            <div id="sim-streak" class="text-2xl font-black text-amber-400">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Controls -->
+                    <div class="flex items-center gap-3">
+                        <button onclick="resetSim()" class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> איפוס
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Canvas Container -->
+                <div class="relative w-full h-[500px] bg-stone-950 rounded-xl border-2 border-emerald-800/60 overflow-hidden cursor-crosshair">
+                    <canvas id="simCanvas" class="w-full h-full block"></canvas>
+
+                    <!-- HUD Overlay -->
+                    <div class="pointer-events-none absolute inset-0 border-2 border-emerald-500/20 rounded-xl flex flex-col justify-between p-4">
+                        <div class="flex justify-between font-mono text-xs text-emerald-500/70">
+                            <div>SYS: TARGETING_ONLINE</div>
+                            <div>DIST: <span id="hud-dist">--</span>m</div>
+                        </div>
+                        <div class="flex justify-between font-mono text-xs text-emerald-500/70">
+                            <div>WIND: <span id="hud-wind">0.0</span> km/h</div>
+                            <div>MODE: ARTILLERY_BALLISTICS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-stone-950/50 border border-emerald-900/40 rounded-xl text-stone-400 text-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="help-circle" class="text-emerald-400 w-5 h-5"></i>
+                        <span><strong>הוראות משחק:</strong> כוונן את התותח באמצעות העכבר/מגע (זווית ועוצמה) ולחץ על <strong>מקש הרווח</strong> או <strong>קליק עכבר</strong> כדי לירות ולפגוע במטרה!</span>
+                    </div>
+                    <button onclick="fireSimCannon()" class="w-full sm:w-auto px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i data-lucide="flame" class="w-5 h-5"></i> אש!
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- TANK DETAILS MODAL -->
+    <div id="tankModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-stone-900 border border-emerald-700/60 w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="p-6 bg-emerald-950/40 border-b border-emerald-900/60 flex justify-between items-start">
+                <div>
+                    <span id="modal-country-flag" class="text-2xl ml-2"></span>
+                    <h2 id="modal-title" class="text-2xl font-black text-emerald-400 inline">---</h2>
+                    <p id="modal-subtitle" class="text-xs font-mono text-emerald-600/80 mt-1">---</p>
+                </div>
+                <button onclick="closeModal()" class="text-stone-400 hover:text-white p-2 rounded-lg bg-stone-800/50">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div class="p-6 overflow-y-auto space-y-6">
+                <div class="relative h-64 bg-stone-950 rounded-xl overflow-hidden border border-emerald-800/40">
+                    <img id="modal-image" src="" alt="" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 class="text-sm font-mono text-emerald-400 mb-1">תיאור ורקע מבצעי</h3>
+                    <p id="modal-desc" class="text-stone-300 text-sm leading-relaxed">---</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 font-mono text-xs">
+                    <div class="bg-stone-950/60 p-3 rounded-xl border border-emerald-900/40">
+                        <div class="text-stone-400">מדינה</div>
+                        <div id="modal-country" class="text-emerald-300 font-bold mt-0.5">---</div>
+                    </div>
+                    <div class="bg-stone-950/60 p-3 rounded-xl border border-emerald-900/40">
+                        <div class="text-stone-400">שנת ייצור</div>
+                        <div id="modal-year" class="text-emerald-300 font-bold mt-0.5">---</div>
+                    </div>
+                    <div class="bg-stone-950/60 p-3 rounded-xl border border-emerald-900/40">
+                        <div class="text-stone-400">משקל</div>
+                        <div id="modal-weight" class="text-emerald-300 font-bold mt-0.5">---</div>
+                    </div>
+                    <div class="bg-stone-950/60 p-3 rounded-xl border border-emerald-900/40">
+                        <div class="text-stone-400">תותח ראשי</div>
+                        <div id="modal-gun" class="text-emerald-300 font-bold mt-0.5">---</div>
+                    </div>
+                    <div class="bg-stone-950/60 p-3 rounded-xl border border-emerald-900/40">
+                        <div class="text-stone-400">מיגון</div>
+                        <div id="modal-armor" class="text-emerald-300 font-bold mt-0.5">---</div>
+                    </div>
+                    <div class="bg-stone-950/60 p-3 rounded-xl border border-emerald-900/40">
+                        <div class="text-stone-400">מהירות מירבית</div>
+                        <div id="modal-speed" class="text-emerald-300 font-bold mt-0.5">---</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-stone-950/80 border-t border-emerald-900/40 flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium transition-colors">
+                    סגור
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ARTICLE READING MODAL -->
+    <div id="articleModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-stone-900 border border-emerald-700/60 w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-6 bg-emerald-950/40 border-b border-emerald-900/60 flex justify-between items-start">
+                <div>
+                    <span id="art-modal-tag" class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-400 border border-emerald-700/50"></span>
+                    <h2 id="art-modal-title" class="text-2xl font-black text-emerald-300 mt-2">---</h2>
+                    <p id="art-modal-meta" class="text-xs font-mono text-stone-400 mt-1">---</p>
+                </div>
+                <button onclick="closeArticleModal()" class="text-stone-400 hover:text-white p-2 rounded-lg bg-stone-800/50">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4 text-stone-300 leading-relaxed text-sm" id="art-modal-content">
+                <!-- Article Content -->
+            </div>
+            <div class="p-4 bg-stone-950/80 border-t border-emerald-900/40 flex justify-end">
+                <button onclick="closeArticleModal()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium transition-colors">
+                    סגור
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Block -->
+    <script>
+        // ARTICLES DATABASE
+        const articlesData = [
+            {
+                id: 'art1',
+                title: 'התפתחות השריון המודרני: ממלחמת העולם הראשונה ועד היום',
+                category: 'היסטוריה צבאית',
+                date: '12 באוקטובר 2024',
+                readTime: '5 דק\' קריאה',
+                summary: 'כיצד הפך הטרקטור הממוגן של שנת 1916 למפלצת הפלדה הטכנולוגית המודרנית שמכריעה שדות קרב?',
+                content: `
+                    <p>הטנק הראשון שנכנס לשימוש מבצעי היה ה-Mark I הבריטי בשנת 1916 במהלך מלחמת העולם הראשונה. מטרתו המקורית הייתה פשוטה: לחצות את שטח ההפקר, לשבור את לוחמת השוקת והגדרות ולהגן על הלוחמים מאש מקלעים.</p>
+                    <p class="my-3">במהלך השנים ועם פריצת מלחמת העולם השנייה, שיטת הפעלת הטנקים השתנתה מקצה לקצה. דוקטרינת ה"בליצקריג" הראתה כי הטנק אינו רק כלי סיוע לרגל, אלא כוח מחץ עצמאי ומהיר שיכול להבקיע קווי הגנה עמוקים.</p>
+                    <p>כיום, טנקי מערכה מודרניים (MBT) משלבים שריון מורכב, מערכות הגנה אקטיביות, ייצוב תותח באמצעות מחשב ומערכות תקשוב דיגיטליות ההופכות אותם לניידים וקטלניים מאי פעם.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'art2',
+                title: 'מרכבה סימן 4 ומערכת "מעיל רוח": תפיסת השרידות הישראלית',
+                category: 'טכנולוגיה וטקטיקה',
+                date: '28 בספטמבר 2024',
+                readTime: '4 דק\' קריאה',
+                summary: 'סקירה טכנולוגית על אופן הפעולה של מערכות המזהות ומיירטות טילי נ"ט עוד בטרם פגעו בטנק המרכבה.',
+                content: `
+                    <p>במשך עשרות שנים ההגנה העיקרית של הטנק הייתה עובי הפלדה שלו. אך עם פיתוח טילי נ"ט מתקדמים ורקטות RPG בעלי רש"ק חלול, נדרשה פריצת דרך חדשה.</p>
+                    <p class="my-3">מערכת "מעיל רוח" (Trophy) הישראלית, שפותחה על ידי רפאל, שינתה את חוקי המשחק. המערכת משתמשת ברדאר היקפי המזהה איומים נכנסים בזמן אמת, מודדת את מרחקם ומסלולם, ומשגרת מטען מיירט המשמיד את הטיל באוויר במרחק בטוח מהטנק.</p>
+                    <p>מערכות אלו הופכות כיום לתקן מחייב בצבאות המובילים בעולם כולל צבא ארה"ב המצייד את טנקי האברמס במערכת זו.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'art3',
+                title: 'M1A2 אברמס: עוצמת האש של מנוע הטורבינה',
+                category: 'הנדסה וחימוש',
+                date: '15 באוגוסט 2024',
+                readTime: '4 דק\' קריאה',
+                summary: 'מנוע הטורבינה העוצמתי ושריון האורניום המועשר שהפכו את האברמס לאחד הטנקים הקטלניים בשדה הקרב.',
+                content: `
+                    <p>ה-M1A2 Abrams האמריקאי מצויד במנוע טורבינת גז העובד על מגוון סוגי דלק ומספק הספק מרשים של 1,500 כוחות סוס, מה שמעניק לטנק תאוצה יוצאת דופן.</p>
+                    <p class="my-3">בנוסף לתותח 120 מ"מ חלק-קדח, הטנק מצויד בשריון מורכב הכולל סגסוגת אורניום מועשר המעניקה עמידות נרחבת מול פגזים חודרי שריון וטילי נ"ט.</p>
+                    <p>המערכות הדיגיטליות של הטנק מאפשרות שיתוף נתוני מטרות בזמן אמת בין צוותי הקרב השונים בשדה הקרב המודרני.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'art4',
+                title: 'לאופרד 2A7: הנדסת דיווח ודיוק ירי גרמני',
+                category: 'הנדסה וחימוש',
+                date: '02 באוגוסט 2024',
+                readTime: '3 דק\' קריאה',
+                summary: 'כיצד תותח ה-120 מ"מ ארוך הקנה ומערכות הייצוב מאפשרים פגיעה מדויקת במטרה תוך כדי תנועה במהירות גבוהה.',
+                content: `
+                    <p>הטנק הגרמני לאופרד 2A7 נחשב על ידי מומחים רבים כבעל יכולת הירי המדויקת ביותר בתנועה. תותח L55 המוארך מאפשר מהירות לוע גבוהה במיוחד לפגזים חודרי שריון.</p>
+                    <p class="my-3">תותח חלק-קדח (Smoothbore) מאפשר לפגז לצאת במהירות ללא חיכוך של סלילים, כאשר היציבות מושגת באמצעות כנפונים הנפתחים מיד עם יציאת הפגז מהקנה.</p>
+                    <p>מערכת ה-HVAC והמיזוג המתקדמת בשילוב מיגון גחון ומודולים היקפיים מעניקים לצוות הגנה מירבית גם בסביבות לחימה אורבניות צפופות.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'art5',
+                title: 'סודות הטייגר 1: עוצמת אש ושריון כבד במלחמת העולם ה-2',
+                category: 'היסטוריה צבאית',
+                date: '20 ביולי 2024',
+                readTime: '5 דק\' קריאה',
+                summary: 'סיפורו של הטנק שהטיל אימה על כוחות בעלות הברית בזכות תותח ה-88 מ"מ ועובי הפלדה שלו.',
+                content: `
+                    <p>הטנק הכבד Panzerkampfwagen VI Tiger I נכנס לשימוש בשנת 1942 ונחשב באותה תקופה לאחד הכלים המאיימים ביותר בשדה הקרב.</p>
+                    <p class="my-3">תותח ה-88 מ"מ שלו מסוג KwK 36 היה מסוגל להשמיד טנקי יריב ממרחקים שבהם תותחי היריב לא יכלו אפילו לחדור את השריון החזיתי שלו שעמד על 100 מ"מ פלדה מחושלת.</p>
+                    <p>למרות עוצמתו, משקלו הכבד (54 טון) גרם לקשיים טכניים, תקלות מכניות וצריכת דלק גבוהה במיוחד שהגבילו את ניידותו המבצעית.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'art6',
+                title: 'T-34: הטנק שהכריע את המערכה במזרח אירופה',
+                category: 'היסטוריה צבאית',
+                date: '10 ביוני 2024',
+                readTime: '4 דק\' קריאה',
+                summary: 'עיצוב השריון המשופע, ייצור המוני ופשטות מכנית שהפכו את ה-T-34 לפורץ דרך.',
+                content: `
+                    <p>ה-T-34 הסובייטי נחשב על ידי היסטוריונים רבים לעיצוב הטנק המשפיע ביותר במלחמת העולם השנייה.</p>
+                    <p class="my-3">החידוש העיקרי ב-T-34 היה השריון המשופע (Sloped Armor). בזכות זווית הפלדה, פגזי היריב החליקו או שנדרשו לעבור עובי פלדה אפקטיבי גדול בהרבה ללא תוספת משקל משמעותית.</p>
+                    <p>פשטות הייצור שלו אפשרה לברה"מ לייצר עשרות אלפי יחידות שהכריעו בסופו של דבר את כוחות השריון של גרמניה הנאצית.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1508873696983-2df5057d0256?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'art7',
+                title: 'M4 שרמן ו-AMX-10RC: תפקידם של טנקים קלים ובינוניים',
+                category: 'טקטיקה וסיור',
+                date: '18 במאי 2024',
+                readTime: '4 דק\' קריאה',
+                summary: 'מגמישות לוגיסטית של השרמן במלחמת העולם השנייה ועד למהירות הסיור האורבנית של ה-AMX-10RC הצרפתי.',
+                content: `
+                    <p>שדה הקרב אינו דורש תמיד רק טנקים כבדים. ה-M4 Sherman האמריקאי הוכיח כי אמינות מכנית, קלות שינוע בים וביבשה ואפשרות לתיקוני שדה מהירים הם מפתח לניצחון במערכות מתמשכות.</p>
+                    <p class="my-3">מן הצד השני, ה-AMX-10RC הצרפתי מציג תפיסה שונה: טנק קל המונע על גבי 6 גלגלים, בעל מהירות של 85 קמ"ש ותותח 105 מ"מ, המיועד למשימות סיור מהירות והתקפות פתע במרחבים פתוחים ובמדבר.</p>
+                    <p>שילוב בין ניידות גבוהה, כוח אש קל וזמינות לוגיסטית ממשיך להוות מרכיב קריטי בתורות הלחימה של צבאות מודרניים.</p>
+                `,
+                image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80'
+            }
+        ];
+
+        // TANK DATA ENCYCLOPEDIA DATABASE
+        const tankData = [
+            {
+                id: 'merkava4',
+                name: 'מרכבה סימן 4',
+                subtitle: 'טנק מערכה עיקרי - ישראל',
+                category: 'mbt',
+                country: 'ישראל',
+                flag: '🇮🇱',
+                year: '2004',
+                weight: '65 טון',
+                gun: '120 מ"מ חלק-קדח',
+                armor: 'מודולרי מתקדם + מעיל רוח',
+                speed: '64 קמ"ש',
+                crew: '4 לוחמים',
+                desc: 'טנק המערכה העיקרי של צה"ל. מתוכנן בדגש מירבי על שרידות הצוות, כולל המנוע הממוקם בחזית ומערכת הגנה אקטיבית "מעיל רוח".',
+                color: 0x4a5d4e,
+                image: 'https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=600&q=80',
+                likes: 42,
+                userLiked: false,
+                rating: 5,
+                ratingsCount: 18,
+                comments: [
+                    { name: 'דניאל', text: 'הטנק המתקדם ביותר! מערכת מעיל רוח עושה את כל ההבדל.' },
+                    { name: 'עומר', text: 'שרידות הצוות מעל הכל, תכנון הנדסי מבריק.' }
+                ]
+            },
+            {
+                id: 'abrams',
+                name: 'M1A2 אברמס',
+                subtitle: 'טנק מערכה עיקרי - ארה"ב',
+                category: 'mbt',
+                country: 'ארה"ב',
+                flag: '🇺🇸',
+                year: '1992',
+                weight: '69.5 טון',
+                gun: '120 מ"מ חלק-קדח',
+                armor: 'שריון מורכב + אורניום מועשר',
+                speed: '67 קמ"ש',
+                crew: '4 לוחמים',
+                desc: 'טנק המערכה המרכזי של צבא ארה"ב. מצויד במנוע טורבינת גז עוצמתי, בקרת אש מתקדמת ומגוון שדרוגים טכנולוגיים.',
+                color: 0x8c7853,
+                image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80',
+                likes: 31,
+                userLiked: false,
+                rating: 4.8,
+                ratingsCount: 14,
+                comments: [
+                    { name: 'מיכאל', text: 'מנוע הטורבינה נותן לו עוצמה אדירה בשטח.' }
+                ]
+            },
+            {
+                id: 'leopard2',
+                name: 'לאופרד 2A7',
+                subtitle: 'טנק מערכה עיקרי - גרמניה',
+                category: 'mbt',
+                country: 'גרמניה',
+                flag: '🇩🇪',
+                year: '2014',
+                weight: '67.5 טון',
+                gun: '120 מ"מ ארוך קנה',
+                armor: 'שריון מורכב דור שלישי',
+                speed: '70 קמ"ש',
+                crew: '4 לוחמים',
+                desc: 'אחד הטנקים המתקדמים והמוערכים בעולם. נחשב לבעל דיוק ירי יוצא דופן בתנועה ומערכות ייצוב תותח מתקדמות ביותר.',
+                color: 0x3d4839,
+                image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80',
+                likes: 27,
+                userLiked: false,
+                rating: 4.9,
+                ratingsCount: 11,
+                comments: []
+            },
+            {
+                id: 'tiger1',
+                name: 'טייגר 1',
+                subtitle: 'טנק כבד היסטורי',
+                category: 'ww2',
+                country: 'גרמניה (מלחמת העולם ה-2)',
+                flag: '🇩🇪',
+                year: '1942',
+                weight: '54 טון',
+                gun: '88 מ"מ',
+                armor: '100-120 מ"מ פלדה מחושלת',
+                speed: '45 קמ"ש',
+                crew: '5 לוחמים',
+                desc: 'טנק כבד מפורסם ממלחמת העולם השנייה, שהתאפיין בעוצמת אש אדירה מתותח ה-88 מ"מ ושריון עבה שהיה קשה להבקעה בזמנו.',
+                color: 0x5a5c5a,
+                image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=600&q=80',
+                likes: 54,
+                userLiked: false,
+                rating: 4.7,
+                ratingsCount: 22,
+                comments: [
+                    { name: 'אלון', text: 'אגדה היסטורית מבחינת כוח אש ושריון.' }
+                ]
+            },
+            {
+                id: 't34',
+                name: 'T-34-85',
+                subtitle: 'טנק בינוני היסטורי',
+                category: 'ww2',
+                country: 'בריה"מ',
+                flag: '🇷🇺',
+                year: '1944',
+                weight: '32 טון',
+                gun: '85 מ"מ',
+                armor: '45 מ"מ משופע',
+                speed: '55 קמ"ש',
+                crew: '5 לוחמים',
+                desc: 'הטנק שהכריע את המערכה במזרח אירופה. עיצוב השריון המשופע הייחודי בשילוב פשטות ייצור ואמינות הפכו אותו לאגדה.',
+                color: 0x2b382b,
+                image: 'https://images.unsplash.com/photo-1508873696983-2df5057d0256?auto=format&fit=crop&w=600&q=80',
+                likes: 19,
+                userLiked: false,
+                rating: 4.5,
+                ratingsCount: 9,
+                comments: []
+            },
+            {
+                id: 'sherman',
+                name: 'M4 שרמן',
+                subtitle: 'טנק בינוני היסטורי',
+                category: 'ww2',
+                country: 'ארה"ב',
+                flag: '🇺🇸',
+                year: '1942',
+                weight: '30.3 טון',
+                gun: '75 מ"מ / 76 מ"מ',
+                armor: '76 מ"מ חזיתי',
+                speed: '48 קמ"ש',
+                crew: '5 לוחמים',
+                desc: 'עמוד השדרה של כוחות השריון של בעלות הברית במלחמת העולם השנייה. יוצר בכמויות אדירות והיה קל לתחזוקה ולשינוע.',
+                color: 0x474937,
+                image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80',
+                likes: 16,
+                userLiked: false,
+                rating: 4.3,
+                ratingsCount: 8,
+                comments: []
+            },
+            {
+                id: 'amx10rc',
+                name: 'AMX-10RC',
+                subtitle: 'טנק סיור קל ומהיר',
+                category: 'light',
+                country: 'צרפת',
+                flag: '🇫🇷',
+                year: '1981',
+                weight: '15.8 טון',
+                gun: '105 מ"מ',
+                armor: 'אלומיניום מוגן קליעים',
+                speed: '85 קמ"ש',
+                crew: '4 לוחמים',
+                desc: 'טנק קל רכוב על גלגלים המיועד לסיור מהיר והתקפות פתע. מתאפיין בניידות יוצאת דופן בשטח יבשתי.',
+                color: 0x6e7054,
+                image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80',
+                likes: 12,
+                userLiked: false,
+                rating: 4.2,
+                ratingsCount: 6,
+                comments: []
+            }
+        ];
+
+        let activeCategory = 'all';
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderGallery();
+            renderArticles();
+            populate3DDropdown();
+            init3DViewer();
+            initSimulator();
+        });
+
+        // TAB SWITCHING LOGIC
+        function switchTab(tabId) {
+            ['gallery', 'recommend', 'articles', 'viewer3d', 'simulator'].forEach(id => {
+                const el = document.getElementById(`tab-${id}`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`nav-${id}`);
+                if (btn) btn.className = 'flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-emerald-300 hover:text-white hover:bg-emerald-900/40';
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) activeBtn.className = 'flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-emerald-600 text-white shadow-md';
+
+            if (tabId === 'viewer3d') {
+                onViewerResize();
+            } else if (tabId === 'simulator') {
+                resizeSimCanvas();
+            }
+        }
+
+        // RECOMMENDATION ENGINE LOGIC
+        function getRecommendation() {
+            const era = document.getElementById('rec-era').value;
+            const feature = document.getElementById('rec-feature').value;
+            const role = document.getElementById('rec-role').value;
+
+            // Expanded attribute profile mapping for accurate matching across all 7 tanks
+            const tankProfiles = {
+                'merkava4': { era: 'modern', feature: 'protection', role: 'frontline', fallbackRole: 'versatile' },
+                'abrams':   { era: 'modern', feature: 'protection', role: 'frontline', fallbackFeature: 'firepower' },
+                'leopard2': { era: 'modern', feature: 'firepower',  role: 'frontline', fallbackFeature: 'speed' },
+                'amx10rc':  { era: 'modern', feature: 'speed',      role: 'recon' },
+                'tiger1':   { era: 'ww2',    feature: 'protection', role: 'frontline', fallbackFeature: 'firepower' },
+                't34':      { era: 'ww2',    feature: 'speed',      role: 'versatile' },
+                'sherman':  { era: 'ww2',    feature: 'speed',      role: 'versatile' }
+            };
+
+            let candidates = [];
+
+            tankData.forEach(t => {
+                const profile = tankProfiles[t.id] || {};
+                let score = 0;
+
+                // 1. Era Match
+                if (era === 'any') {
+                    score += 1;
+                } else if (era === profile.era) {
+                    score += 5;
+                }
+
+                // 2. Main Feature Match
+                if (feature === 'any') {
+                    score += 1;
+                } else if (feature === profile.feature) {
+                    score += 6;
+                } else if (feature === profile.fallbackFeature) {
+                    score += 3;
+                }
+
+                // 3. Operational Role Match
+                if (role === 'any') {
+                    score += 1;
+                } else if (role === profile.role) {
+                    score += 6;
+                } else if (role === profile.fallbackRole) {
+                    score += 3;
+                }
+
+                // Small randomize bias among close score ties for natural variety
+                score += Math.random() * 0.5;
+
+                candidates.push({ tank: t, score: score });
+            });
+
+            // Sort candidates by highest score
+            candidates.sort((a, b) => b.score - a.score);
+            const bestTank = candidates[0].tank;
+
+            // Display Result
+            const container = document.getElementById('recResultContainer');
+            const card = document.getElementById('recResultCard');
+
+            card.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-6 items-center">
+                    <img src="${bestTank.image}" alt="${bestTank.name}" class="w-full sm:w-1/2 h-52 object-cover rounded-xl border border-emerald-800">
+                    <div class="space-y-3 w-full sm:w-1/2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${bestTank.flag}</span>
+                            <h4 class="text-2xl font-black text-emerald-400">${bestTank.name}</h4>
+                        </div>
+                        <p class="text-xs font-mono text-emerald-600">${bestTank.subtitle}</p>
+                        <p class="text-sm text-stone-300">${bestTank.desc}</p>
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="openModal('${bestTank.id}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1">
+                                <i data-lucide="info" class="w-4 h-4"></i> מפרט מלא
+                            </button>
+                            <button onclick="switchTab('viewer3d'); load3DTankModel('${bestTank.id}');" class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1">
+                                <i data-lucide="box" class="w-4 h-4"></i> הצג ב-3D
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // RENDER ARTICLES
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            if (!grid) return;
+            grid.innerHTML = articlesData.map(a => `
+                <div class="hud-border bg-stone-900/80 rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                    <div class="relative h-44 bg-stone-950 overflow-hidden">
+                        <img src="${a.image}" alt="${a.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100">
+                        <span class="absolute top-3 right-3 bg-emerald-950/90 text-emerald-400 border border-emerald-800/60 text-xs px-2.5 py-1 rounded-full font-mono">
+                            ${a.category}
+                        </span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-stone-400 font-mono mb-2">
+                                <span>${a.date}</span>
+                                <span>${a.readTime}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-emerald-300 group-hover:text-emerald-200 transition-colors leading-snug">${a.title}</h3>
+                            <p class="text-sm text-stone-300 mt-2 line-clamp-3">${a.summary}</p>
+                        </div>
+                        <button onclick="openArticleModal('${a.id}')" class="w-full py-2.5 bg-emerald-950/60 hover:bg-emerald-800/50 border border-emerald-800/40 rounded-xl text-emerald-300 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2">
+                            <i data-lucide="book-open" class="w-4 h-4"></i> קרא את הכתבה המלאה
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function openArticleModal(artId) {
+            const art = articlesData.find(a => a.id === artId);
+            if (!art) return;
+
+            document.getElementById('art-modal-tag').innerText = art.category;
+            document.getElementById('art-modal-title').innerText = art.title;
+            document.getElementById('art-modal-meta').innerText = `${art.date} • ${art.readTime}`;
+            document.getElementById('art-modal-content').innerHTML = art.content;
+
+            document.getElementById('articleModal').classList.remove('hidden');
+        }
+
+        function closeArticleModal() {
+            document.getElementById('articleModal').classList.add('hidden');
+        }
+
+        // GALLERY FILTER & RENDER
+        function setCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-stone-950/60 text-emerald-300 border border-emerald-900 hover:border-emerald-600';
+            });
+            document.getElementById(`cat-${cat}`).className = 'cat-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-emerald-600 text-white';
+            filterTanks();
+        }
+
+        function filterTanks() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = tankData.filter(t => {
+                const matchCat = activeCategory === 'all' || t.category === activeCategory;
+                const matchQuery = t.name.toLowerCase().includes(query) || t.country.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+            renderGallery(filtered);
+        }
+
+        function renderGallery(tanks = tankData) {
+            const grid = document.getElementById('tankGrid');
+            grid.innerHTML = tanks.map(t => `
+                <div class="hud-border bg-stone-900/80 rounded-2xl overflow-hidden transition-all duration-300 flex flex-col group">
+                    <div class="relative h-48 bg-stone-950 overflow-hidden">
+                        <img src="${t.image}" alt="${t.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100">
+                        <div class="absolute top-3 right-3 bg-stone-900/90 backdrop-blur border border-emerald-800/40 px-3 py-1 rounded-full text-xs text-emerald-300 flex items-center gap-1 font-mono">
+                            <span>${t.flag}</span>
+                            <span>${t.country}</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">${t.name}</h3>
+                                <!-- Star Rating Display -->
+                                <div class="flex items-center gap-1 text-amber-400 text-xs font-mono">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                                    <span>${t.rating.toFixed(1)}</span>
+                                </div>
+                            </div>
+                            <p class="text-xs font-mono text-emerald-600/80 mb-2">${t.subtitle}</p>
+                            <p class="text-sm text-stone-300 line-clamp-2">${t.desc}</p>
+                        </div>
+
+                        <!-- Interactive Social Toolbar (Likes, Comments Count, Share) -->
+                        <div class="flex items-center justify-between border-t border-emerald-900/40 pt-3 text-xs">
+                            <button onclick="toggleLike('${t.id}')" class="flex items-center gap-1.5 ${t.userLiked ? 'text-red-400 font-bold' : 'text-stone-400 hover:text-red-400'} transition-colors">
+                                <i data-lucide="heart" class="w-4 h-4 ${t.userLiked ? 'fill-red-400' : ''}"></i>
+                                <span>${t.likes}</span>
+                            </button>
+                            <button onclick="openModal('${t.id}')" class="flex items-center gap-1.5 text-stone-400 hover:text-emerald-300 transition-colors">
+                                <i data-lucide="message-square" class="w-4 h-4"></i>
+                                <span>${t.comments.length} תגובות</span>
+                            </button>
+                            <button onclick="shareWhatsApp('${t.id}')" class="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>וואטסאפ</span>
+                            </button>
+                        </div>
+
+                        <button onclick="openModal('${t.id}')" class="w-full py-2.5 bg-emerald-950/60 hover:bg-emerald-800/50 border border-emerald-800/40 rounded-xl text-emerald-300 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> לצפייה במפרט ותגובות
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // SOCIAL INTERACTIONS (LIKE, RATE, SHARE, COMMENT)
+        function toggleLike(tankId) {
+            const tank = tankData.find(t => t.id === tankId);
+            if (!tank) return;
+            if (tank.userLiked) {
+                tank.likes--;
+                tank.userLiked = false;
+            } else {
+                tank.likes++;
+                tank.userLiked = true;
+            }
+            filterTanks();
+            if (!document.getElementById('tankModal').classList.contains('hidden')) {
+                openModal(tankId);
+            }
+        }
+
+        function rateTank(tankId, stars) {
+            const tank = tankData.find(t => t.id === tankId);
+            if (!tank) return;
+            // Calculate new average rating
+            const totalScore = (tank.rating * tank.ratingsCount) + stars;
+            tank.ratingsCount++;
+            tank.rating = totalScore / tank.ratingsCount;
+            filterTanks();
+            openModal(tankId);
+        }
+
+        function addComment(tankId) {
+            const nameInput = document.getElementById('comment-name');
+            const textInput = document.getElementById('comment-text');
+            const name = nameInput.value.trim() || 'משתמש אנונימי';
+            const text = textInput.value.trim();
+
+            if (!text) return;
+
+            const tank = tankData.find(t => t.id === tankId);
+            if (!tank) return;
+
+            tank.comments.push({ name, text });
+            textInput.value = '';
+            nameInput.value = '';
+
+            filterTanks();
+            openModal(tankId);
+        }
+
+        function shareWhatsApp(tankId) {
+            const tank = tankData.find(t => t.id === tankId);
+            if (!tank) return;
+
+            const text = encodeURIComponent(`בדוק את הטנק ${tank.name} (${tank.country}) באפליקציית טנקופדיה! 🛡️\nלפרטים נוספים: https://tankpedia.app/#${tank.id}`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        function shareTank(tankId) {
+            const tank = tankData.find(t => t.id === tankId);
+            if (!tank) return;
+
+            const shareText = `בדוק את הטנק ${tank.name} באפליקציית טנקופדיה!`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(`${shareText}\nhttps://tankpedia.app/#${tank.id}`);
+            }
+
+            // Custom Notification HUD Banner
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-900 border border-emerald-500 text-emerald-100 px-6 py-3 rounded-xl shadow-2xl z-50 text-sm font-bold flex items-center gap-2 transition-all';
+            notification.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i> הקישור לטנק ${tank.name} הועתק ללוח!`;
+            document.body.appendChild(notification);
+            lucide.createIcons();
+
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // MODAL LOGIC WITH RATING & COMMENTS
+        let currentModalTankId = null;
+
+        function openModal(tankId) {
+            const tank = tankData.find(t => t.id === tankId);
+            if (!tank) return;
+            currentModalTankId = tankId;
+
+            document.getElementById('modal-title').innerText = tank.name;
+            document.getElementById('modal-subtitle').innerText = tank.subtitle;
+            document.getElementById('modal-country-flag').innerText = tank.flag;
+            document.getElementById('modal-image').src = tank.image;
+            document.getElementById('modal-desc').innerText = tank.desc;
+            document.getElementById('modal-year').innerText = tank.year;
+            document.getElementById('modal-country').innerText = tank.country;
+            document.getElementById('modal-gun').innerText = tank.gun;
+            document.getElementById('modal-armor').innerText = tank.armor;
+            document.getElementById('modal-speed').innerText = tank.speed;
+            document.getElementById('modal-weight').innerText = tank.weight;
